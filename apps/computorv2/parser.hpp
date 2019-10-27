@@ -65,7 +65,7 @@ namespace client
 		auto const value_resolution_def = expression >> '=' >> '?';
 		auto const polynomial_resolution_def = expression >> '=' >> expression >> '?';
 
-		auto const command_def = string("list variables");
+		auto const command_def = string("list variables") | string("exit");
 
 		auto const input_def = command | variable_assignation | function_assignation | value_resolution | polynomial_resolution | expression;
 

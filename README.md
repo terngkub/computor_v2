@@ -14,6 +14,9 @@ A command-line calculator in C++
 ```
 
 ## Features
+* Commands
+    * list variables - list all the assigned variables
+    * exit - exit the program
 * Expression evaluation
     ```
     expression = ?
@@ -23,9 +26,17 @@ A command-line calculator in C++
     expression = expression ?
     ```
 * Variable assignation
+    Grammar
     ```
     variable = expression
     ```
+    Examples
+    ```
+    x = 42
+    y = x^2 + 2x + 1
+    ```
+    Warning:
+    * If the variable is already assigned, this command will reassign it with the new value;
 * Function assignation
     ```
     function = expression

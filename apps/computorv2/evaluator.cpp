@@ -15,6 +15,10 @@ void evaluator::operator()(client::ast::command x)
 	{
 		print_variable_list();
 	}
+	else if (x == "exit")
+	{
+		exit(EXIT_SUCCESS);
+	}
 	else
 	{
 		std::cout << "unknown command\n";
