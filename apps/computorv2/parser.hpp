@@ -11,6 +11,7 @@ namespace client
 	{
 		using x3::char_;
 		using x3::double_;
+		using x3::string;
 		using x3::lexeme;
 		using x3::ascii::alpha;
 		using x3::ascii::alnum;
@@ -38,6 +39,7 @@ namespace client
 		x3::rule<class value_resolution, ast::value_resolution> const value_resolution("value_resolution");
 		x3::rule<class polynomial_resolution, ast::polynomial_resolution> const polynomial_resolution("polynomial_resolution");
 
+		x3::rule<class command, ast::command> const command("command");
 		x3::rule<class input, ast::input> const input("input");
 
 
@@ -63,7 +65,9 @@ namespace client
 		auto const value_resolution_def = expression >> '=' >> '?';
 		auto const polynomial_resolution_def = expression >> '=' >> expression >> '?';
 
-		auto const input_def = variable_assignation | function_assignation | value_resolution | polynomial_resolution | expression;
+		auto const command_def = string("list variables");
+
+		auto const input_def = command | variable_assignation | function_assignation | value_resolution | polynomial_resolution | expression;
 
 		BOOST_SPIRIT_DEFINE(rational);
 		BOOST_SPIRIT_DEFINE(imaginary);
@@ -81,6 +85,7 @@ namespace client
 		BOOST_SPIRIT_DEFINE(function_assignation);
 		BOOST_SPIRIT_DEFINE(value_resolution);
 		BOOST_SPIRIT_DEFINE(polynomial_resolution);
+		BOOST_SPIRIT_DEFINE(command);
 		BOOST_SPIRIT_DEFINE(input);
 
 		auto calculator = input;

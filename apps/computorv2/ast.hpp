@@ -7,6 +7,7 @@ namespace client { namespace ast
 {
     namespace x3 = boost::spirit::x3;
 
+	using command = std::string;
 	using rational = double;
 	using imaginary = char;
 	using matrix_row = std::vector<double>;
@@ -78,7 +79,8 @@ namespace client { namespace ast
 	};
 
 	struct input : x3::variant<
-		variable_assignation
+		command
+		, variable_assignation
 		, function_assignation
 		, value_resolution
 		, polynomial_resolution
