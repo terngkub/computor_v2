@@ -11,8 +11,8 @@ A command-line calculator in C++
     ```
     * Ubuntu - install with apt
     ```
-    apt update
-    sudo apt install boost
+    sudo apt update
+    sudo apt install libboost-all-dev
     ```
 
 ### Command

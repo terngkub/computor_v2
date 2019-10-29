@@ -1,4 +1,4 @@
-find_package(Boost 1.71.0)
+find_package(Boost)
 if (Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   add_executable(computorv2
