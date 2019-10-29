@@ -1,4 +1,5 @@
+*.swp
 .DS_Store
-.vs_code
-a.out
-boost
+.vscode
+bin
+build

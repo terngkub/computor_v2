@@ -2,15 +2,31 @@
 A command-line calculator in C++
 
 ## How to build the project
-* copy boost folder to thirdparty/boost
-* build the program (TODO using cmake instead)
+
+### Requirements
+* Boost version 1.71.0
+    * MacOS - install with brew
     ```
-    g++ -I thirdpart/boost apps/computorv2/*.cpp -o computorv2
+    brew install boost
     ```
+    * Ubuntu - install with apt
+    ```
+    apt update
+    sudo apt install boost
+    ```
+
+### Command
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+cd ..
+```
 
 ## How to run the project
 ```
-./computorv2
+./bin/computorv2
 ```
 
 ## Features
