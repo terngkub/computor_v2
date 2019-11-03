@@ -6,6 +6,8 @@ if (Boost_FOUND)
     ast.hpp
     computor.cpp
     computor.hpp
+    complex.cpp
+    complex.hpp
     evaluator.cpp
     evaluator.hpp
     expr.cpp

@@ -1,5 +1,6 @@
 #pragma once
 #include "ast.hpp"
+#include "complex.hpp"
 #include <map>
 #include <unordered_map>
 #include <iostream>
@@ -7,20 +8,12 @@
 namespace computorv2
 {
 
-struct number
-{
-	number(double rational, double imaginary) :rational{rational}, imaginary{imaginary} {}
-	double rational;
-	double imaginary;
-};
-
-
 struct term
 {
 public:
 	// Constructor, Destructor
 	term();
-	term(number nb);
+	term(complex nb);
 	term(client::ast::matrix matrix);
 	term(client::ast::variable variable);
 	~term() = default;
@@ -28,7 +21,7 @@ public:
 	// Operations
 	term operator+(term const &rhs) const;
 
-	number coef;
+	complex coef;
 	std::string variable;
 	client::ast::matrix matrix;
 	bool has_matrix;
@@ -41,7 +34,7 @@ struct expr
 {
 	// Constructor and Destructor
 	expr();
-	expr(number nb);
+	expr(complex nb);
 	expr(client::ast::matrix matrix);
 	expr(client::ast::variable variable);
 	expr(term t);
