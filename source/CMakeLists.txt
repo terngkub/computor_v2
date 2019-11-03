@@ -12,6 +12,8 @@ if (Boost_FOUND)
     evaluator.hpp
     expr.cpp
     expr.hpp
+    expr_factory.cpp
+    expr_factory.hpp
     main.cpp
     parser.hpp
     printer.cpp

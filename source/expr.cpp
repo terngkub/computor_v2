@@ -1,6 +1,4 @@
 #include "expr.hpp"
-#include <iostream>
-#include <set>
 
 namespace computorv2
 {
@@ -30,15 +28,9 @@ expr::expr(term t) : term_map()
 	term_map[0] = term{t};
 }
 
-
-
 expr & expr::operator+(expr & rhs)
 {
-	std::set<int> degree_set{};
-	for (auto const & elem : this->term_map)
-		degree_set.insert(elem.first);
-	for (auto const & elem : rhs.term_map)
-		degree_set.insert(elem.first);
+	auto degree_set = get_all_degrees(rhs);
 
 	for (auto const degree : degree_set)
 	{
@@ -55,11 +47,7 @@ expr & expr::operator+(expr & rhs)
 
 expr & expr::operator-(expr & rhs)
 {
-	std::set<int> degree_set{};
-	for (auto const & elem : this->term_map)
-		degree_set.insert(elem.first);
-	for (auto const & elem : rhs.term_map)
-		degree_set.insert(elem.first);
+	auto degree_set = get_all_degrees(rhs);
 
 	for (auto const degree : degree_set)
 	{
@@ -83,61 +71,14 @@ std::ostream &operator<<(std::ostream &os, expr const &rhs)
 	return os;
 }
 
-// expr_factory
-
-expr expr_factory::operator()(client::ast::operand operand)
+std::set<int> expr::get_all_degrees(expr const & rhs)
 {
-	return boost::apply_visitor(*this, operand);
-}
-
-expr expr_factory::operator()(client::ast::rational rational)
-{
-	complex nb{rational, 0};
-	return expr{nb};
-}
-
-expr expr_factory::operator()(client::ast::imaginary imaginary)
-{
-	complex nb{0, 1};
-	return expr{nb};
-}
-
-expr expr_factory::operator()(client::ast::matrix matrix)
-{
-	return expr{matrix};
-}
-
-expr expr_factory::operator()(client::ast::variable variable)
-{
-	if (variable_map.find(variable) != variable_map.end())
-	{
-		return variable_map[variable];
-	}
-	return expr{variable};
-}
-
-expr expr_factory::operator()(client::ast::function function)
-{
-	(void)function;
-	return expr{};
-}
-
-expr expr_factory::operator()(client::ast::expression expression)
-{
-	return (*this)(expression.first);
-}
-
-void expr_factory::print_variables() const
-{
-	for (auto it = variable_map.cbegin(); it != variable_map.cend(); ++it)
-	{
-		std::cout << it->first << " = " << it->second << '\n';
-	}
-}
-
-void expr_factory::print_functions() const
-{
-	// TODO add this
+	std::set<int> degree_set{};
+	for (auto const & elem : this->term_map)
+		degree_set.insert(elem.first);
+	for (auto const & elem : rhs.term_map)
+		degree_set.insert(elem.first);
+	return degree_set;
 }
 
 } // namespace computorv2
