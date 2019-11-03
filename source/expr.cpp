@@ -1,44 +1,9 @@
 #include "expr.hpp"
 #include <iostream>
+#include <set>
 
 namespace computorv2
 {
-
-// term
-
-term::term()
-	: coef{complex{0, 0}}, variable{""}, matrix{}, has_matrix{false}
-{
-}
-
-term::term(complex nb)
-	: coef{nb}, variable{""}, matrix{}, has_matrix{false}
-{
-}
-
-term::term(client::ast::matrix matrix)
-	: coef{complex{1, 0}}, variable{""}, matrix{matrix}, has_matrix{true}
-{
-}
-
-term::term(client::ast::variable variable)
-	: coef{complex{1, 0}}, variable{variable}, matrix{}, has_matrix{false}
-{
-}
-
-term term::operator+(term const &rhs) const
-{
-	complex nb{this->coef.rational + rhs.coef.rational, this->coef.imaginary + rhs.coef.imaginary};
-	return term{nb};
-}
-
-std::ostream &operator<<(std::ostream &os, term const &rhs)
-{
-	std::cout << rhs.coef;
-	return os;
-}
-
-// epxr
 
 expr::expr() : term_map()
 {
@@ -65,10 +30,48 @@ expr::expr(term t) : term_map()
 	term_map[0] = term{t};
 }
 
-expr expr::operator+(expr const &rhs) const
+
+
+expr & expr::operator+(expr & rhs)
 {
-	auto new_term = this->term_map.at(0) + rhs.term_map.at(0);
-	return expr{new_term};
+	std::set<int> degree_set{};
+	for (auto const & elem : this->term_map)
+		degree_set.insert(elem.first);
+	for (auto const & elem : rhs.term_map)
+		degree_set.insert(elem.first);
+
+	for (auto const degree : degree_set)
+	{
+		if (this->term_map.find(degree) == this->term_map.end())
+			this->term_map[degree] = rhs.term_map.at(degree);
+		else if (rhs.term_map.find(degree) == rhs.term_map.end())
+			continue;
+		else
+			this->term_map[degree] = this->term_map[degree] + rhs.term_map.at(degree);
+	}
+
+	return *this;
+}
+
+expr & expr::operator-(expr & rhs)
+{
+	std::set<int> degree_set{};
+	for (auto const & elem : this->term_map)
+		degree_set.insert(elem.first);
+	for (auto const & elem : rhs.term_map)
+		degree_set.insert(elem.first);
+
+	for (auto const degree : degree_set)
+	{
+		if (this->term_map.find(degree) == this->term_map.end())
+			this->term_map[degree] = -rhs.term_map.at(degree);
+		else if (rhs.term_map.find(degree) == rhs.term_map.end())
+			continue;
+		else
+			this->term_map[degree] = this->term_map[degree] - rhs.term_map.at(degree);
+	}
+
+	return *this;
 }
 
 std::ostream &operator<<(std::ostream &os, expr const &rhs)

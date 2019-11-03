@@ -25,6 +25,7 @@ struct complex
 	complex & operator*(complex const & rhs);
 	complex & operator/(complex const & rhs);
 	complex & operator%(complex const & rhs);
+	complex & operator-();
 };
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs);

@@ -16,6 +16,8 @@ if (Boost_FOUND)
     parser.hpp
     printer.cpp
     printer.hpp
+    term.cpp
+    term.hpp
   )
   target_link_libraries(computorv2 ${Boost_LIBRARIES})
 endif()

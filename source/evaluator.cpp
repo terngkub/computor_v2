@@ -71,6 +71,12 @@ expr evaluator::evaluate(client::ast::expression expression)
 		switch (operation.operator_)
 		{
 		case '+': ret = ret + rhs; break;
+		case '-': ret = ret - rhs; break;
+		/*
+		case '*': ret = ret * rhs; break;
+		case '/': ret = ret / rhs; break;
+		case '%': ret = ret % rhs; break;
+		*/
 		default: throw std::runtime_error("invalid operation");
 		}
 	}

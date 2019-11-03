@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
 #include "complex.hpp"
+#include "term.hpp"
 #include <map>
 #include <unordered_map>
 #include <iostream>
@@ -8,30 +9,10 @@
 namespace computorv2
 {
 
-struct term
-{
-public:
-	// Constructor, Destructor
-	term();
-	term(complex nb);
-	term(client::ast::matrix matrix);
-	term(client::ast::variable variable);
-	~term() = default;
-
-	// Operations
-	term operator+(term const &rhs) const;
-
-	complex coef;
-	std::string variable;
-	client::ast::matrix matrix;
-	bool has_matrix;
-};
-
-std::ostream & operator<<(std::ostream & os, term const & rhs);
-
-
 struct expr
 {
+	std::map<int, term> term_map;
+
 	// Constructor and Destructor
 	expr();
 	expr(complex nb);
@@ -41,8 +22,13 @@ struct expr
 	~expr() = default;
 
 	// Operations
-	expr operator+(expr const &rhs) const;
-	std::map<int, term> term_map;
+	expr & operator+(expr & rhs);
+	expr & operator-(expr & rhs);
+	/*
+	expr & operator*(expr & rhs);
+	expr & operator/(expr & rhs);
+	expr & operator%(expr & rhs);
+	*/
 };
 
 std::ostream & operator<<(std::ostream & os, expr const & rhs);

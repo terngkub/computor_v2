@@ -71,6 +71,13 @@ complex & complex::operator%(complex const & rhs)
 	this->rational = fmod(this->rational, rhs.rational);
 }
 
+complex & complex::operator-()
+{
+	this->rational = -this->rational;
+	this->imaginary = -this->imaginary;
+	return *this;
+}
+
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
 	if (rhs.is_zero())
