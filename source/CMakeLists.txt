@@ -8,6 +8,8 @@ if (Boost_FOUND)
     computor.hpp
     evaluator.cpp
     evaluator.hpp
+    expr.cpp
+    expr.hpp
     main.cpp
     parser.hpp
     printer.cpp

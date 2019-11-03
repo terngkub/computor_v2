@@ -57,7 +57,7 @@ namespace client
 		auto const expression_def = term >> *((char_('+') >> term | char_('-') >> term));
 		auto const term_def = power >> *((char_('*') >> power) | (char_('/') >> power) | (char_('%') >> power));
 		auto const power_def = factor >> *(char_('^') >> factor);
-		auto const factor_def = coef_variable | rational | imaginary | ('(' >> expression >> ')') | function | variable | matrix | ('-' >> factor);
+		auto const factor_def = rational | imaginary | ('(' >> expression >> ')') | function | variable | matrix | ('-' >> factor);
 
 		auto const variable_assignation_def = variable >> '=' >> expression;
 		auto const function_assignation_def = function >> '=' >> expression;
@@ -67,7 +67,7 @@ namespace client
 
 		auto const command_def = string("list variables") | string("exit");
 
-		auto const input_def = command | variable_assignation | function_assignation | value_resolution | polynomial_resolution | expression;
+		auto const input_def = command | variable_assignation | function_assignation | value_resolution | polynomial_resolution;
 
 		BOOST_SPIRIT_DEFINE(rational);
 		BOOST_SPIRIT_DEFINE(imaginary);

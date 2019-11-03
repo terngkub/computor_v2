@@ -14,6 +14,7 @@ A command-line calculator in C++
     sudo apt update
     sudo apt install libboost-all-dev
     ```
+* CMake version 3.10+
 
 ### Command
 ```

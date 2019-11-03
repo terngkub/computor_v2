@@ -30,8 +30,7 @@ namespace client { namespace ast
 	struct expression;
 
 	struct operand : x3::variant<
-		coef_variable
-		, rational
+		rational
 		, imaginary
 		, function
 		, variable
@@ -84,7 +83,6 @@ namespace client { namespace ast
 		, function_assignation
 		, value_resolution
 		, polynomial_resolution
-		, expression
 	>
 	{
 		using base_type::base_type;

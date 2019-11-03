@@ -13,7 +13,7 @@ void evaluator::operator()(client::ast::command x)
 {
 	if (x == "list variables")
 	{
-		print_variable_list();
+		factory.print_variables();
 	}
 	else if (x == "exit")
 	{
@@ -25,42 +25,56 @@ void evaluator::operator()(client::ast::command x)
 	}
 }
 
-void evaluator::operator()(client::ast::variable_assignation x)
+void evaluator::operator()(client::ast::variable_assignation input)
 {
 	std::cout << "variable_assignation\n";
-	if (variable_map.find(x.variable_) != variable_map.end())
-	{
-		std::cout << "warning: reassign variable " << x.variable_;
-	}
-	variable_map[x.variable_] = x.expression_;
+	auto rhs = evaluate(input.expression_);
+	factory.variable_map[input.variable_] = rhs;
 }
 
-void evaluator::operator()(client::ast::function_assignation x)
+void evaluator::operator()(client::ast::function_assignation input)
 {
 	std::cout << "function_assignation\n";
+	auto rhs = evaluate(input.expression_);
+	factory.function_map[input.function_.function_] = std::pair<client::ast::variable, expr>{input.function_.variable_, rhs};
 }
 
 void evaluator::operator()(client::ast::value_resolution x)
 {
 	std::cout << "value_resolution\n";
+	auto ret = evaluate(x.expression_);
+	std::cout << ret << '\n';
 }
 
 void evaluator::operator()(client::ast::polynomial_resolution x)
 {
 	std::cout << "polynomial_resolution\n";
+	// expression = expression ?
+	// evaluate left
+	// evaluate right
+	// evaluate (left - right)
+	// check validity
+	// solve polynomial
 }
 
-void evaluator::operator()(client::ast::expression x)
+expr evaluator::get_expr(client::ast::operand operand)
 {
-	std::cout << "expression\n";
+	return factory(operand);
 }
 
-void evaluator::print_variable_list() const
+expr evaluator::evaluate(client::ast::expression expression)
 {
-	for(auto it = variable_map.cbegin(); it != variable_map.cend(); ++it)
+	auto ret = get_expr(expression.first);
+	for (auto const & operation : expression.rest)
 	{
-		std::cout << it->first << '\n';
+		auto rhs = get_expr(operation.operand_);
+		switch (operation.operator_)
+		{
+		case '+': ret = ret + rhs; break;
+		default: throw std::runtime_error("invalid operation");
+		}
 	}
+	return ret;
 }
 
 }
