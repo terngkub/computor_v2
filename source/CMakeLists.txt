@@ -2,7 +2,6 @@ find_package(Boost)
 if (Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   add_executable(computorv2
-    ast_adapted.hpp
     ast.hpp
     computor.cpp
     computor.hpp

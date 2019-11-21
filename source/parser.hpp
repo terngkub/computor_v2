@@ -1,7 +1,6 @@
 #pragma once
 #include <boost/spirit/home/x3.hpp>
 #include "ast.hpp"
-#include "ast_adapted.hpp"
 
 namespace grammar
 {
