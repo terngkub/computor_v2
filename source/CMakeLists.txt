@@ -11,14 +11,13 @@ if (Boost_FOUND)
     evaluator.hpp
     expr.cpp
     expr.hpp
-    expr_factory.cpp
-    expr_factory.hpp
     main.cpp
     parser.hpp
     printer.cpp
     printer.hpp
     term.cpp
     term.hpp
+    utils.hpp
   )
   target_link_libraries(computorv2 ${Boost_LIBRARIES})
 endif()

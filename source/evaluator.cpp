@@ -4,6 +4,8 @@
 namespace computorv2
 {
 
+// Function Object
+
 void evaluator::operator()(ast::input x)
 {
 	boost::apply_visitor(*this, x);
@@ -13,7 +15,7 @@ void evaluator::operator()(ast::command x)
 {
 	if (x == "list variables")
 	{
-		factory.print_variables();
+		// factory.print_variables();
 	}
 	else if (x == "exit")
 	{
@@ -28,15 +30,19 @@ void evaluator::operator()(ast::command x)
 void evaluator::operator()(ast::variable_assignation input)
 {
 	std::cout << "variable_assignation\n";
+	/*
 	auto rhs = evaluate(input.expression_);
 	factory.variable_map[input.variable_] = rhs;
+	*/
 }
 
 void evaluator::operator()(ast::function_assignation input)
 {
 	std::cout << "function_assignation\n";
+	/*
 	auto rhs = evaluate(input.expression_);
 	factory.function_map[input.function_.function_] = std::pair<ast::variable, expr>{input.function_.variable_, rhs};
+	*/
 }
 
 void evaluator::operator()(ast::value_resolution x)
@@ -57,17 +63,29 @@ void evaluator::operator()(ast::polynomial_resolution x)
 	// solve polynomial
 }
 
-expr evaluator::get_expr(ast::operand operand)
+
+// Private Methods
+
+expr evaluator::create_expr(ast::operand const & operand)
 {
-	return factory(operand);
+	return boost::apply_visitor(overloaded
+	{
+		[this](ast::rational const & rational)	{ return expr{complex{rational, 0}}; },
+		[this](ast::imaginary const & imaginary)	{ return expr{complex{0, 1}}; },
+		[this](ast::matrix const & matrix)		{ return expr{matrix}; },
+		[this](ast::variable const & variable)	{ return expr{}; },
+		[this](ast::function const & function)	{ return expr{}; },
+		[this](ast::expression const & expression)	{ return evaluate(expression); }
+	}
+	, operand);
 }
 
 expr evaluator::evaluate(ast::expression expression)
 {
-	auto ret = get_expr(expression.first);
+	auto ret = create_expr(expression.first);
 	for (auto const & operation : expression.rest)
 	{
-		auto rhs = get_expr(operation.operand_);
+		auto rhs = create_expr(operation.operand_);
 		switch (operation.operator_)
 		{
 		case '+': ret = ret + rhs; break;

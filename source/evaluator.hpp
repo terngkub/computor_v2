@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
-#include "expr_factory.hpp"
+#include "expr.hpp"
+#include "utils.hpp"
 #include <unordered_map>
 
 namespace computorv2
@@ -9,7 +10,7 @@ namespace computorv2
 class evaluator : public boost::static_visitor<>
 {
 public:
-	// Public operator()
+	// Function Object 
 	void operator()(ast::input x);
 	void operator()(ast::command x);
 	void operator()(ast::variable_assignation x);
@@ -19,11 +20,11 @@ public:
 
 private:
 	// Private attributes
-	expr_factory factory;
+	std::unordered_map<ast::variable, expr> variable_map;
+	std::unordered_map<ast::name, std::pair<ast::variable, expr>> function_map;
 
-    void print_variable_list() const;
-
-	expr get_expr(ast::operand operand);
+	// Private Methods
+	expr create_expr(ast::operand const & operand);
 	expr evaluate(ast::expression expression);
 };
 

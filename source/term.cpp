@@ -3,6 +3,8 @@
 namespace computorv2
 {
 
+// Constructors
+
 term::term()
 	: coef{complex{0, 0}}
     , variable{""}
@@ -26,6 +28,9 @@ term::term(ast::variable variable)
     , variable{variable}
     , matrix{}
 {}
+
+
+// Operations
 
 term & term::operator+(term const & rhs)
 {
@@ -82,6 +87,9 @@ term & term::operator-()
     this->coef = -coef;
     return *this;
 }
+
+
+// Printing
 
 std::ostream &operator<<(std::ostream & os, term const & rhs)
 {

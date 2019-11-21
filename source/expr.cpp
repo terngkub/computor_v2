@@ -3,32 +3,42 @@
 namespace computorv2
 {
 
-expr::expr() : term_map()
+// Constructors
+
+expr::expr()
+: term_map{}
 {
 	term_map[0] = term{};
 }
 
-expr::expr(complex nb) : term_map()
+expr::expr(complex nb)
+: term_map{}
 {
 	term_map[0] = term{nb};
 }
 
-expr::expr(ast::matrix matrix) : term_map()
+expr::expr(ast::matrix matrix)
+: term_map{}
 {
 	term_map[0] = term{matrix};
 }
 
-expr::expr(ast::variable variable) : term_map()
+expr::expr(ast::variable variable)
+: term_map{}
 {
 	term_map[0] = term{variable};
 }
 
-expr::expr(term t) : term_map()
+expr::expr(term t)
+: term_map{}
 {
 	term_map[0] = term{t};
 }
 
-expr & expr::operator+(expr & rhs)
+
+// Operations
+
+expr expr::operator+(expr & rhs)
 {
 	auto degree_set = get_all_degrees(rhs);
 
@@ -42,10 +52,10 @@ expr & expr::operator+(expr & rhs)
 			this->term_map[degree] = this->term_map[degree] + rhs.term_map.at(degree);
 	}
 
-	return *this;
+	return ;
 }
 
-expr & expr::operator-(expr & rhs)
+expr expr::operator-(expr & rhs)
 {
 	auto degree_set = get_all_degrees(rhs);
 
@@ -62,14 +72,8 @@ expr & expr::operator-(expr & rhs)
 	return *this;
 }
 
-std::ostream &operator<<(std::ostream &os, expr const &rhs)
-{
-	for (auto const &t : rhs.term_map)
-	{
-		os << t.second << ' ';
-	}
-	return os;
-}
+
+// Private Methods
 
 std::set<int> expr::get_all_degrees(expr const & rhs)
 {
@@ -80,5 +84,18 @@ std::set<int> expr::get_all_degrees(expr const & rhs)
 		degree_set.insert(elem.first);
 	return degree_set;
 }
+
+
+// Printing
+
+std::ostream & operator<<(std::ostream &os, expr const &rhs)
+{
+	for (auto const &t : rhs.term_map)
+	{
+		os << t.second << ' ';
+	}
+	return os;
+}
+
 
 } // namespace computorv2
