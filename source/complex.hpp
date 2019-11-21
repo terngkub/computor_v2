@@ -6,26 +6,33 @@ namespace computorv2
 
 struct complex
 {
-	double rational;
-	double imaginary;
+	double real;
+	double imag;
 
+	// Constructors and Destructors
 	complex();
 	complex(double rational, double imaginary);
 	~complex() = default;
+
+	// Copy - Enable
 	complex(complex const &) = default;
-	complex(complex &&) = default;
 	complex & operator=(complex const &) = default;
+
+	// Move - Enable
+	complex(complex &&) = default;
 	complex & operator=(complex &&) = default;
 
+	// Checkers
 	bool is_zero() const;
 	bool is_complex() const;
 
-	complex & operator+(complex const & rhs);
-	complex & operator-(complex const & rhs);
-	complex & operator*(complex const & rhs);
-	complex & operator/(complex const & rhs);
-	complex & operator%(complex const & rhs);
-	complex & operator-();
+	// Operations
+	complex operator+(complex const & rhs) const;
+	complex operator-(complex const & rhs) const;
+	complex operator*(complex const & rhs) const;
+	complex operator/(complex const & rhs) const;
+	complex operator%(complex const & rhs) const;
+	complex operator-() const;
 };
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs);

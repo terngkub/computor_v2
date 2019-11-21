@@ -38,50 +38,57 @@ expr::expr(term t)
 
 // Operations
 
-expr expr::operator+(expr & rhs)
+expr expr::operator+(expr const & rhs) const
 {
 	auto degree_set = get_all_degrees(rhs);
 
+	expr new_expr{};
+
 	for (auto const degree : degree_set)
 	{
-		if (this->term_map.find(degree) == this->term_map.end())
-			this->term_map[degree] = rhs.term_map.at(degree);
+		if (term_map.find(degree) == term_map.end())
+			new_expr.term_map[degree] = rhs.term_map.at(degree);
 		else if (rhs.term_map.find(degree) == rhs.term_map.end())
-			continue;
+			new_expr.term_map[degree] = term_map.at(degree);
 		else
-			this->term_map[degree] = this->term_map[degree] + rhs.term_map.at(degree);
+			new_expr.term_map[degree] = term_map.at(degree) + rhs.term_map.at(degree);
 	}
 
-	return ;
+	return new_expr;
 }
 
-expr expr::operator-(expr & rhs)
+expr expr::operator-(expr const & rhs) const
 {
 	auto degree_set = get_all_degrees(rhs);
 
+	expr new_expr{};
+
 	for (auto const degree : degree_set)
 	{
-		if (this->term_map.find(degree) == this->term_map.end())
-			this->term_map[degree] = -rhs.term_map.at(degree);
+		if (term_map.find(degree) == term_map.end())
+			new_expr.term_map[degree] = -rhs.term_map.at(degree);
 		else if (rhs.term_map.find(degree) == rhs.term_map.end())
-			continue;
+			new_expr.term_map[degree] = term_map.at(degree);
 		else
-			this->term_map[degree] = this->term_map[degree] - rhs.term_map.at(degree);
+			new_expr.term_map[degree] = term_map.at(degree) - rhs.term_map.at(degree);
 	}
 
-	return *this;
+	return new_expr;
 }
 
 
 // Private Methods
 
-std::set<int> expr::get_all_degrees(expr const & rhs)
+std::set<int> expr::get_all_degrees(expr const & rhs) const
 {
 	std::set<int> degree_set{};
-	for (auto const & elem : this->term_map)
+
+	for (auto const & elem : term_map)
 		degree_set.insert(elem.first);
+
 	for (auto const & elem : rhs.term_map)
 		degree_set.insert(elem.first);
+
 	return degree_set;
 }
 

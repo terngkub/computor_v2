@@ -22,8 +22,8 @@ struct expr
 	~expr() = default;
 
 	// Operations
-	expr & operator+(expr & rhs);
-	expr & operator-(expr & rhs);
+	expr operator+(expr const & rhs) const;
+	expr operator-(expr const & rhs) const;
 	/*
 	expr & operator*(expr & rhs);
 	expr & operator/(expr & rhs);
@@ -31,7 +31,7 @@ struct expr
 	*/
 
 private:
-	std::set<int> get_all_degrees(expr const & rhs);
+	std::set<int> get_all_degrees(expr const & rhs) const;
 };
 
 std::ostream & operator<<(std::ostream & os, expr const & rhs);

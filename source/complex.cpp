@@ -4,91 +4,107 @@
 namespace computorv2
 {
 
+// Constructors
+
 complex::complex()
-	: rational{0}
-	, imaginary{0}
+	: real{0}
+	, imag{0}
 {}
 
-complex::complex(double rational, double imaginary)
-	: rational{rational}
-	, imaginary{imaginary}
+complex::complex(double real, double imag)
+	: real{real}
+	, imag{imag}
 {}
+
+
+// Checkers
 
 bool complex::is_zero() const
 {
-	return rational == 0 && imaginary == 0;
+	return real == 0 && imag == 0;
 }
 
 bool complex::is_complex() const
 {
-	return imaginary != 0;
+	return imag != 0;
 }
 
-complex & complex::operator+(complex const & rhs)
+
+// Operations
+
+complex complex::operator+(complex const & rhs) const
 {
-	this->rational += rhs.rational;
-	this->imaginary += rhs.imaginary;
-	return *this;
+	auto new_real = real + rhs.real;
+	auto new_imag = imag + rhs.imag;
+	return complex{new_real, new_imag};
 }
 
-complex & complex::operator-(complex const & rhs)
+complex complex::operator-(complex const & rhs) const
 {
-	this->rational -= rhs.rational;
-	this->imaginary -= rhs.imaginary;
-	return *this;
+	auto new_real = real - rhs.real;
+	auto new_imag = imag- rhs.imag;
+	return complex{new_real, new_imag};
 }
 
-complex & complex::operator*(complex const & rhs)
+complex complex::operator*(complex const & rhs) const
 {
-	auto lhs = *this;
-	this->rational = lhs.rational * rhs.rational - lhs.imaginary * rhs.imaginary;
-	this->imaginary = lhs.rational + rhs.imaginary + lhs.imaginary * rhs.rational;
-	return *this;
+	auto new_real = real * rhs.real - imag * rhs.imag;
+	auto new_imag = real * rhs.imag + imag * rhs.real;
+	return complex{new_real, new_imag};
 }
 
-complex & complex::operator/(complex const & rhs)
+complex complex::operator/(complex const & rhs) const
 {
 	if (rhs.is_zero())
 		throw std::runtime_error("divide by zero");
-	if (this->is_zero())
-		return *this;
-	auto lhs = *this;
-	double denominator = rhs.rational * rhs.rational + rhs.imaginary * rhs.imaginary;
-	this->rational = lhs.rational * rhs.rational + lhs.imaginary * rhs.imaginary;
-	this->imaginary = lhs.imaginary * rhs.rational - lhs.rational * rhs.imaginary;
-	return *this;
+
+	if (is_zero())
+		return complex{};
+
+	auto denom = rhs.real * rhs.real + rhs.imag * rhs.imag;
+	auto new_real = (real * rhs.real + imag * rhs.imag) / denom;
+	auto new_imag = (imag * rhs.real - real * rhs.imag) / denom;
+
+	return complex{new_real, new_imag};
 }
 
-complex & complex::operator%(complex const & rhs)
+complex complex::operator%(complex const & rhs) const
 {
 	if (rhs.is_zero())
 		throw std::runtime_error("modulo by zero");
-	if (this->is_zero())
-		return *this;
-	if (this->is_complex() || rhs.is_complex())	
+
+	if (is_zero())
+		return complex{};
+
+	if (is_complex() || rhs.is_complex())	
 		throw std::runtime_error("modulo with complex number isn't handled yet");
+
 	// TODO check if I have to implement this myself
-	this->rational = fmod(this->rational, rhs.rational);
+	auto new_real = fmod(real, rhs.real);
+	return complex{new_real, 0};
 }
 
-complex & complex::operator-()
+complex complex::operator-() const
 {
-	this->rational = -this->rational;
-	this->imaginary = -this->imaginary;
-	return *this;
+	auto new_real = -real;
+	auto new_imag = -imag;
+	return complex{new_real, new_imag};
 }
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
-	if (rhs.is_zero())
+	if (rhs.real == 0)
 	{
-		os << '0';
-		return os;
+		if (rhs.imag == 0)
+			os << '0';
+		else
+			os << rhs.imag + 'i';
 	}
-	os << rhs.rational;
-	if (rhs.is_complex())
+	else
 	{
-		os << " + " << rhs.imaginary << 'i';
+		os << rhs.real;
+		if (rhs.imag != 0)
+			os << " + " << rhs.imag << 'i';
 	}
 	return os;
 }
