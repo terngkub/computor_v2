@@ -13,12 +13,12 @@ expr::expr(complex nb) : term_map()
 	term_map[0] = term{nb};
 }
 
-expr::expr(client::ast::matrix matrix) : term_map()
+expr::expr(ast::matrix matrix) : term_map()
 {
 	term_map[0] = term{matrix};
 }
 
-expr::expr(client::ast::variable variable) : term_map()
+expr::expr(ast::variable variable) : term_map()
 {
 	term_map[0] = term{variable};
 }

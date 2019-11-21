@@ -10,14 +10,14 @@ void computor::operator()()
 {
     using boost::spirit::x3::ascii::space;
 
-    constexpr auto & grammar = client::calculator;
+    constexpr auto & grammar = grammar::input;
     std::string str;
 
     while (std::getline(std::cin, str))
     {
         auto iter = str.cbegin();
         auto const end = str.cend();
-        client::ast::input res;
+        ast::input res;
 
         bool r = phrase_parse(iter, end, grammar, space, res);
 

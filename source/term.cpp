@@ -15,13 +15,13 @@ term::term(complex nb)
     , matrix{}
 {}
 
-term::term(client::ast::matrix matrix)
+term::term(ast::matrix matrix)
 	: coef{complex{1, 0}}
     , variable{""}
     , matrix{matrix}
 {}
 
-term::term(client::ast::variable variable)
+term::term(ast::variable variable)
 	: coef{complex{1, 0}}
     , variable{variable}
     , matrix{}

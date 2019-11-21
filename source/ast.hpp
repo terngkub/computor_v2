@@ -3,7 +3,7 @@
 #include <list>
 #include <vector>
 
-namespace client { namespace ast
+namespace ast
 {
     namespace x3 = boost::spirit::x3;
 
@@ -88,4 +88,4 @@ namespace client { namespace ast
 		using base_type::base_type;
 		using base_type::operator=;
 	};
-}}
+}

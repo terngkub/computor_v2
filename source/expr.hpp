@@ -16,8 +16,8 @@ struct expr
 	// Constructor and Destructor
 	expr();
 	expr(complex nb);
-	expr(client::ast::matrix matrix);
-	expr(client::ast::variable variable);
+	expr(ast::matrix matrix);
+	expr(ast::variable variable);
 	expr(term t);
 	~expr() = default;
 

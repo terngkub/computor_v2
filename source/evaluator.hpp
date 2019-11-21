@@ -10,12 +10,12 @@ class evaluator : public boost::static_visitor<>
 {
 public:
 	// Public operator()
-	void operator()(client::ast::input x);
-	void operator()(client::ast::command x);
-	void operator()(client::ast::variable_assignation x);
-	void operator()(client::ast::function_assignation x);
-	void operator()(client::ast::value_resolution x);
-	void operator()(client::ast::polynomial_resolution x);
+	void operator()(ast::input x);
+	void operator()(ast::command x);
+	void operator()(ast::variable_assignation x);
+	void operator()(ast::function_assignation x);
+	void operator()(ast::value_resolution x);
+	void operator()(ast::polynomial_resolution x);
 
 private:
 	// Private attributes
@@ -23,8 +23,8 @@ private:
 
     void print_variable_list() const;
 
-	expr get_expr(client::ast::operand operand);
-	expr evaluate(client::ast::expression expression);
+	expr get_expr(ast::operand operand);
+	expr evaluate(ast::expression expression);
 };
 
 }

@@ -11,13 +11,13 @@ struct term
 public:
 	complex coef;
 	std::string variable;
-	client::ast::matrix matrix;
+	ast::matrix matrix;
 
 	// Constructor, Destructor
 	term();
 	term(complex nb);
-	term(client::ast::matrix matrix);
-	term(client::ast::variable variable);
+	term(ast::matrix matrix);
+	term(ast::variable variable);
 	~term() = default;
 
 	// Operations

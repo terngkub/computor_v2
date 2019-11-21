@@ -3,29 +3,29 @@
 namespace computorv2
 {
 
-expr expr_factory::operator()(client::ast::operand operand)
+expr expr_factory::operator()(ast::operand operand)
 {
 	return boost::apply_visitor(*this, operand);
 }
 
-expr expr_factory::operator()(client::ast::rational rational)
+expr expr_factory::operator()(ast::rational rational)
 {
 	complex nb{rational, 0};
 	return expr{nb};
 }
 
-expr expr_factory::operator()(client::ast::imaginary imaginary)
+expr expr_factory::operator()(ast::imaginary imaginary)
 {
 	complex nb{0, 1};
 	return expr{nb};
 }
 
-expr expr_factory::operator()(client::ast::matrix matrix)
+expr expr_factory::operator()(ast::matrix matrix)
 {
 	return expr{matrix};
 }
 
-expr expr_factory::operator()(client::ast::variable variable)
+expr expr_factory::operator()(ast::variable variable)
 {
 	if (variable_map.find(variable) != variable_map.end())
 	{
@@ -34,13 +34,13 @@ expr expr_factory::operator()(client::ast::variable variable)
 	return expr{variable};
 }
 
-expr expr_factory::operator()(client::ast::function function)
+expr expr_factory::operator()(ast::function function)
 {
 	(void)function;
 	return expr{};
 }
 
-expr expr_factory::operator()(client::ast::expression expression)
+expr expr_factory::operator()(ast::expression expression)
 {
 	return (*this)(expression.first);
 }

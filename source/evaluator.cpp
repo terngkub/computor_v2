@@ -4,12 +4,12 @@
 namespace computorv2
 {
 
-void evaluator::operator()(client::ast::input x)
+void evaluator::operator()(ast::input x)
 {
 	boost::apply_visitor(*this, x);
 }
 
-void evaluator::operator()(client::ast::command x)
+void evaluator::operator()(ast::command x)
 {
 	if (x == "list variables")
 	{
@@ -25,28 +25,28 @@ void evaluator::operator()(client::ast::command x)
 	}
 }
 
-void evaluator::operator()(client::ast::variable_assignation input)
+void evaluator::operator()(ast::variable_assignation input)
 {
 	std::cout << "variable_assignation\n";
 	auto rhs = evaluate(input.expression_);
 	factory.variable_map[input.variable_] = rhs;
 }
 
-void evaluator::operator()(client::ast::function_assignation input)
+void evaluator::operator()(ast::function_assignation input)
 {
 	std::cout << "function_assignation\n";
 	auto rhs = evaluate(input.expression_);
-	factory.function_map[input.function_.function_] = std::pair<client::ast::variable, expr>{input.function_.variable_, rhs};
+	factory.function_map[input.function_.function_] = std::pair<ast::variable, expr>{input.function_.variable_, rhs};
 }
 
-void evaluator::operator()(client::ast::value_resolution x)
+void evaluator::operator()(ast::value_resolution x)
 {
 	std::cout << "value_resolution\n";
 	auto ret = evaluate(x.expression_);
 	std::cout << ret << '\n';
 }
 
-void evaluator::operator()(client::ast::polynomial_resolution x)
+void evaluator::operator()(ast::polynomial_resolution x)
 {
 	std::cout << "polynomial_resolution\n";
 	// expression = expression ?
@@ -57,12 +57,12 @@ void evaluator::operator()(client::ast::polynomial_resolution x)
 	// solve polynomial
 }
 
-expr evaluator::get_expr(client::ast::operand operand)
+expr evaluator::get_expr(ast::operand operand)
 {
 	return factory(operand);
 }
 
-expr evaluator::evaluate(client::ast::expression expression)
+expr evaluator::evaluate(ast::expression expression)
 {
 	auto ret = get_expr(expression.first);
 	for (auto const & operation : expression.rest)
