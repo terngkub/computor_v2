@@ -23,13 +23,13 @@ term::term(ast::variable variable)
     , matrix{}
 {}
 
-term::term(ast::matrix matrix)
+term::term(Matrix matrix)
 	: coef{complex{1, 0}}
     , variable{""}
     , matrix{matrix}
 {}
 
-term::term(complex const & nb, ast::variable const & variable, ast::matrix const & matrix)
+term::term(complex const & nb, ast::variable const & variable, Matrix const & matrix)
 	: coef{nb}
     , variable{variable}
     , matrix{matrix}
@@ -42,13 +42,17 @@ void term::check_validity(term const & rhs) const
         throw std::runtime_error("multiple variables");
 
     if (!matrix.empty() || !rhs.matrix.empty())
-        throw std::runtime_error("operation on matrix");
+        throw std::runtime_error("invalid operation between scalar and matrix");
 }
+
 
 // Operations
 
 term term::operator+(term const & rhs) const
 {
+    if (!matrix.empty() && !rhs.matrix.empty())
+        return term{matrix + rhs.matrix};
+
     check_validity(rhs);
     auto new_coef = coef + rhs.coef;
     return term{new_coef, variable, matrix};
@@ -56,6 +60,9 @@ term term::operator+(term const & rhs) const
 
 term term::operator-(term const & rhs) const
 {
+    if (!matrix.empty() && !rhs.matrix.empty())
+        return term{matrix - rhs.matrix};
+
     check_validity(rhs);
     auto new_coef = coef - rhs.coef;
     return term{new_coef, variable, matrix};
@@ -63,11 +70,24 @@ term term::operator-(term const & rhs) const
 
 term term::operator*(term const & rhs) const
 {
+    if (!matrix.empty() && !rhs.matrix.empty())
+        throw std::runtime_error("scalar multiplication with matrix on left and right side");
+
+    // m * m error
+    // m * c ok
+    // c * m ok
+    // c * c ok
+    
     return term{};
 }
 
 term term::operator/(term const & rhs) const
 {
+    // m / m error
+    // m / c ok
+    // c / m error
+    // c / c ok
+
     return term{};
 }
 
@@ -80,6 +100,7 @@ term term::operator-() const
 {
     return term{};
 }
+
 
 
 // Printing

@@ -77,6 +77,7 @@ expr expr::operator-(expr const & rhs) const
 }
 
 
+
 // Private Methods
 
 std::set<int> expr::get_all_degrees(expr const & rhs) const

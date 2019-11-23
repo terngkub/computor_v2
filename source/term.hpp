@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
 #include "complex.hpp"
+#include "matrix.hpp"
 #include <iostream>
 
 namespace computorv2
@@ -11,14 +12,14 @@ struct term
 public:
 	complex coef;
 	std::string variable;
-	ast::matrix matrix;
+	Matrix matrix;
 
 	// Constructor, Destructor
 	term();
 	term(complex nb);
-	term(ast::matrix matrix);
+	term(Matrix matrix);
 	term(ast::variable variable);
-	term(complex const & nb, ast::variable const & variable, ast::matrix const & matrix);
+	term(complex const & nb, ast::variable const & variable, Matrix const & matrix);
 	~term() = default;
 
 	// Operations

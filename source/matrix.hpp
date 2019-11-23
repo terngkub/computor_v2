@@ -5,24 +5,26 @@
 namespace computorv2
 {
 
-struct matrix
+struct Matrix
 {
 	size_t row_nb;
 	size_t col_nb;
 	std::vector<std::vector<double>> values;
 
 	// Constructors
-	matrix();
-	matrix(std::vector<std::vector<double>> const & values);
-	matrix(size_t row_nb, size_t col_nb);
-	~matrix() = default;
+	Matrix();
+	Matrix(std::vector<std::vector<double>> const & values);
+	Matrix(size_t row_nb, size_t col_nb);
+	~Matrix() = default;
+
+	bool empty() const;
 
 	// Operation
-	matrix operator+(matrix const & rhs) const;
-	matrix operator-(matrix const & rhs) const;
-	matrix multiply(matrix const & rhs) const;
+	Matrix operator+(Matrix const & rhs) const;
+	Matrix operator-(Matrix const & rhs) const;
+	Matrix multiply(Matrix const & rhs) const;
 };
 
-std::ostream & operator<<(std::ostream & os, matrix const & rhs);
+std::ostream & operator<<(std::ostream & os, Matrix const & rhs);
 
 }

@@ -12,6 +12,8 @@ if (Boost_FOUND)
     expr.cpp
     expr.hpp
     main.cpp
+    matrix.cpp
+    matrix.hpp
     parser.hpp
     printer.cpp
     printer.hpp
