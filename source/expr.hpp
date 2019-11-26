@@ -21,6 +21,9 @@ struct expr
 	expr(term t);
 	~expr() = default;
 
+	// Checker
+	bool is_matrix() const;
+
 	// Operations
 	expr operator+(expr const & rhs) const;
 	expr operator-(expr const & rhs) const;

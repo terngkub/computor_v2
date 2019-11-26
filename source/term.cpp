@@ -36,6 +36,13 @@ term::term(complex const & nb, ast::variable const & variable, matrix const & mt
 {}
 
 
+// Checker
+
+bool term::is_matrix() const
+{
+    return !mt.empty();
+}
+
 // Operations
 
 term term::operator+(term const & rhs) const
@@ -118,6 +125,13 @@ term term::operator-() const
         return term{mt.scalar_mul(complex{-1, 0})};
 
     return term{-coef};
+}
+
+term term::matrix_mul(term const & rhs) const
+{
+	if (mt.empty() || rhs.mt.empty())
+		throw std::runtime_error("matrix multiplication: both side isn't matrix");
+	return term{mt.matrix_mul(rhs.mt)};
 }
 
 

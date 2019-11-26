@@ -22,13 +22,17 @@ public:
 	term(complex const & nb, ast::variable const & variable, matrix const & mt);
 	~term() = default;
 
+	// Checker
+	bool is_matrix() const;
+
 	// Operations
-	term operator+(term const &rhs) const;
-	term operator-(term const &rhs) const;
-	term operator*(term const &rhs) const;
-	term operator/(term const &rhs) const;
+	term operator+(term const & rhs) const;
+	term operator-(term const & rhs) const;
+	term operator*(term const & rhs) const;
+	term operator/(term const & rhs) const;
 	// term operator%(term const &rhs) const;
 	term operator-() const;
+	term matrix_mul(term const & rhs) const;
 };
 
 std::ostream & operator<<(std::ostream & os, term const & rhs);

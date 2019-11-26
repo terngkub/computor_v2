@@ -36,6 +36,20 @@ expr::expr(term t)
 }
 
 
+// Checker
+
+bool expr::is_matrix() const
+{
+	if (term_map.size() != 1)
+		return false;
+	if (term_map.find(0) == term_map.end())
+		return false;
+	if (!term_map.at(0).is_matrix())
+		return false;
+	return true;
+}
+
+
 // Operations
 
 expr expr::operator+(expr const & rhs) const
@@ -130,12 +144,15 @@ expr expr::operator/(expr const & rhs) const
 	return new_expr;
 }
 
-/*
-expr epxr::matrix_mul(expr const & rhs) const
+expr expr::matrix_mul(expr const & rhs) const
 {
-	return expr{};
+	if (!is_matrix() || !rhs.is_matrix())
+		throw std::runtime_error("expr matrix multiplication: both side isn't matrix");
+
+	expr new_expr{};
+	new_expr.term_map[0] = term_map.at(0).matrix_mul(rhs.term_map.at(0));
+	return new_expr;
 }
-*/
 
 
 
