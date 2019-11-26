@@ -26,7 +26,7 @@ public:
 	term operator+(term const &rhs) const;
 	term operator-(term const &rhs) const;
 	term operator*(term const &rhs) const;
-	// term operator/(term const &rhs) const;
+	term operator/(term const &rhs) const;
 	// term operator%(term const &rhs) const;
 	term operator-() const;
 };

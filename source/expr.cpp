@@ -87,45 +87,50 @@ expr expr::operator*(expr const & rhs) const
 			auto new_degree = left.first + right.first;
 			auto new_value = left.second * right.second;
 			
-			std::cout << new_degree << '\n';
 			if (new_expr.term_map.find(new_degree) == new_expr.term_map.end() || (new_degree == 0 && new_expr.term_map[new_degree].coef.is_zero()))
-			{
-				std::cout << "not found\n";
 				new_expr.term_map[new_degree] = new_value;
-			}
 			else
-			{
-				std::cout << "found\n";
 				new_expr.term_map[new_degree] = new_expr.term_map[new_degree] + new_value;
-
-			}
 		}
 	}
 
 	return new_expr;
 }
 
-/*
 expr expr::operator/(expr const & rhs) const
 {
-	// TODO
-	auto degree_set = get_all_degrees(rhs);
 
+	if (rhs.term_map.size() > 1)
+		throw std::runtime_error("expression can't be denominator");
+
+	for (auto const & right : rhs.term_map)
+	{
+		if (!right.second.mt.empty())
+			throw std::runtime_error("matrix can't be denominator");
+	}
+	
 	expr new_expr{};
 
-	for (auto const degree : degree_set)
+	if (rhs.term_map.find(0) != rhs.term_map.end())
 	{
-		if (term_map.find(degree) == term_map.end())
-			new_expr.term_map[degree] = -rhs.term_map.at(degree);
-		else if (rhs.term_map.find(degree) == rhs.term_map.end())
-			new_expr.term_map[degree] = term_map.at(degree);
-		else
-			new_expr.term_map[degree] = term_map.at(degree) - rhs.term_map.at(degree);
+		for (auto const & left : term_map)
+		{
+			new_expr.term_map[left.first] = left.second / rhs.term_map.at(0);
+		}
 	}
-
+	else
+	{
+		auto const & denom = *rhs.term_map.begin();
+		for (auto const & left : term_map)
+		{
+			new_expr.term_map[left.first - denom.first] = left.second / denom.second;
+		}
+	}
+	
 	return new_expr;
 }
 
+/*
 expr epxr::matrix_mul(expr const & rhs) const
 {
 	return expr{};

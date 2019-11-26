@@ -87,22 +87,22 @@ term term::operator*(term const & rhs) const
     return term{new_coef, variable, mt};
 }
 
-/*
 term term::operator/(term const & rhs) const
 {
-    // TODO
-
     // right = matrix
     if (!rhs.mt.empty())
         throw std::runtime_error("matrix can't be denominator");
 
     // left = matrix, right = scalar
+    if (!mt.empty())
+        return term{mt.scalar_div(rhs.coef)};
 
     // both scalar
-
-    return term{};
+    auto new_coef = coef / rhs.coef;
+    return term{new_coef, variable, mt};
 }
 
+/*
 term term::operator%(term const & rhs) const
 {
     // TODO

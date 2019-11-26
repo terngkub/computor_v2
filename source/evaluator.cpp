@@ -91,7 +91,7 @@ expr evaluator::evaluate(ast::expression expression)
 		case '+': ret = ret + rhs; break;
 		case '-': ret = ret - rhs; break;
 		case '*': ret = ret * rhs; break;
-		// case '/': ret = ret / rhs; break;
+		case '/': ret = ret / rhs; break;
 		// case '%': ret = ret % rhs; break;
 		default: throw std::runtime_error("invalid operation");
 		}

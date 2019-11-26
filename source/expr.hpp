@@ -25,7 +25,7 @@ struct expr
 	expr operator+(expr const & rhs) const;
 	expr operator-(expr const & rhs) const;
 	expr operator*(expr const & rhs) const;
-	// expr operator/(expr const & rhs) const;
+	expr operator/(expr const & rhs) const;
 	// expr & operator%(expr const & rhs) const;
 	expr matrix_mul(expr const & rhs) const;
 
