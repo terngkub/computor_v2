@@ -45,7 +45,7 @@ namespace ast
 
 	struct operation
 	{
-		char operator_;
+		std::string operator_;
 		operand operand_;
 	};
 

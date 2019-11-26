@@ -51,9 +51,9 @@ namespace grammar
 	auto const coef_variable_def = double_ >> variable;
 	auto const function_def = name >> '(' >> variable >> ')';
 
-	auto const expression_def = term >> *((char_('+') >> term | char_('-') >> term));
-	auto const term_def = power >> *((char_('*') >> power) | (char_('/') >> power) | (char_('%') >> power));
-	auto const power_def = factor >> *(char_('^') >> factor);
+	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
+	auto const term_def = power >> *((string("*") >> power) | (string("/") >> power) | (string("%") >> power));
+	auto const power_def = factor >> *(string("^") >> factor);
 	auto const factor_def = rational | imaginary | ('(' >> expression >> ')') | function | variable | matrix | ('-' >> factor);
 
 	auto const variable_assignation_def = variable >> '=' >> expression;

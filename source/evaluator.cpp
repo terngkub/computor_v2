@@ -1,5 +1,7 @@
 #include "evaluator.hpp"
 #include <iostream>
+#include <map>
+#include <functional>
 
 namespace computorv2
 {
@@ -86,15 +88,15 @@ expr evaluator::evaluate(ast::expression expression)
 	for (auto const & operation : expression.rest)
 	{
 		auto rhs = create_expr(operation.operand_);
-		switch (operation.operator_)
+
+		static std::map<std::string, std::function<expr(expr const &, expr const &)>> operation_map
 		{
-		case '+': ret = ret + rhs; break;
-		case '-': ret = ret - rhs; break;
-		case '*': ret = ret * rhs; break;
-		case '/': ret = ret / rhs; break;
-		// case '%': ret = ret % rhs; break;
-		default: throw std::runtime_error("invalid operation");
-		}
+			{"+", [](expr const & ret, expr const & rhs){ return ret + rhs; }},
+			{"-", [](expr const & ret, expr const & rhs){ return ret - rhs; }},
+			{"*", [](expr const & ret, expr const & rhs){ return ret * rhs; }},
+			{"/", [](expr const & ret, expr const & rhs){ return ret / rhs; }}
+		};
+		ret = operation_map[operation.operator_](ret, rhs);
 	}
 	return ret;
 }
