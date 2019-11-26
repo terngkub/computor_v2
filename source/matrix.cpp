@@ -3,85 +3,106 @@
 namespace computorv2
 {
 
-Matrix::Matrix()
+// Constructors
+
+matrix::matrix()
 	: row_nb{0}
 	, col_nb{0}
 	, values{}
 {}
 
-Matrix::Matrix(std::vector<std::vector<double>> const & values)
-	: row_nb{values.size()}
-	, col_nb{row_nb > 0 ? values[0].size() : 0}
-	, values{values}
+matrix::matrix(std::vector<std::vector<double>> const & double_matrix)
+	: row_nb{double_matrix.size()}
+	, col_nb{row_nb > 0 ? double_matrix[0].size() : 0}
+	, values{}
 {
-	for (auto const & row : values)
+	for (auto const & row : double_matrix)
 	{
 		if (row.size() != col_nb)
-			throw std::runtime_error("Matrix doesn't contain the same column numbers for each rows");
+			throw std::runtime_error("matrix doesn't contain the same column numbers for each rows");
+
+		values.push_back(std::vector<complex>{});
+		auto current_row = values.end() - 1;
+		for (auto const & col : row)
+		{
+			current_row->emplace_back(col, 0);
+		}
 	}
 }
 
-Matrix::Matrix(size_t row_nb, size_t col_nb)
+matrix::matrix(size_t row_nb, size_t col_nb)
 	: row_nb{row_nb}
 	, col_nb{col_nb}
-	, values(row_nb, std::vector<double>(col_nb, 0))
+	, values(row_nb, std::vector<complex>(col_nb, complex{}))
 {}
 
-bool Matrix::empty() const
+
+// Checker
+
+bool matrix::empty() const
 {
 	return (row_nb == 0 || col_nb == 0);
 }
 
-Matrix Matrix::operator+(Matrix const & rhs) const
+
+// Matrix Operations
+
+matrix matrix::matrix_add(matrix const & rhs) const
 {
-	if (row_nb != rhs.row_nb || col_nb != rhs.col_nb)
-		throw std::runtime_error("Matrix addition: left and right don't have the same dimension");
+	auto const & lhs = *this;
 
-	Matrix ret{*this};
+	if (lhs.row_nb != rhs.row_nb || lhs.col_nb != rhs.col_nb)
+		throw std::runtime_error("matrix addition: left and right don't have the same dimension");
 
-	for (auto i = 0; i < row_nb; ++i)
+	matrix ret{lhs};
+
+	for (auto i = 0; i < lhs.row_nb; ++i)
 	{
-		for (auto j = 0; j < col_nb; ++j)
+		for (auto j = 0; j < lhs.col_nb; ++j)
 		{
-			ret.values[i][j] += rhs.values[i][j];
+			ret.values[i][j] = ret.values[i][j] + rhs.values[i][j];
 		}
 	}
 
 	return ret;
 }
 
-Matrix Matrix::operator-(Matrix const & rhs) const
+matrix matrix::matrix_sub(matrix const & rhs) const
 {
-	if (row_nb != rhs.row_nb || col_nb != rhs.col_nb)
-		throw std::runtime_error("Matrix subtraction: left and right don't have the same dimension");
+	auto const & lhs = *this;
 
-	Matrix ret{*this};
+	if (lhs.row_nb != rhs.row_nb || lhs.col_nb != rhs.col_nb)
+		throw std::runtime_error("matrix subtraction: left and right don't have the same dimension");
 
-	for (auto i = 0; i < row_nb; ++i)
+	matrix ret{lhs};
+
+	for (auto i = 0; i < lhs.row_nb; ++i)
 	{
-		for (auto j = 0; j < col_nb; ++j)
+		for (auto j = 0; j < lhs.col_nb; ++j)
 		{
-			ret.values[i][j] -= rhs.values[i][j];
+			ret.values[i][j] = ret.values[i][j] - rhs.values[i][j];
 		}
 	}
 
 	return ret;
 }
 
-Matrix Matrix::multiply(Matrix const & rhs) const
+matrix matrix::matrix_mul(matrix const & rhs) const
 {
-	if (col_nb != rhs.row_nb)
-		throw std::runtime_error("Matrix multiplication: left column number and right row number aren't the same");
+	auto const & lhs = *this;
 
-	Matrix ret{row_nb, rhs.col_nb};
+	if (lhs.col_nb != rhs.row_nb)
+		throw std::runtime_error("matrix multiplication: left column number and right row number aren't the same");
 
-	for (auto lr = 0; lr < row_nb; ++lr)
+	matrix ret{lhs.row_nb, rhs.col_nb};
+
+	for (auto lr = 0; lr < lhs.row_nb; ++lr)
 	{
 		for (auto rc = 0; rc < rhs.col_nb; ++rc)
 		{
-			for (auto i = 0; i < col_nb; ++i)
+			for (auto i = 0; i < lhs.col_nb; ++i)
 			{
-				ret.values[lr][rc] += values[lr][i] * rhs.values[i][rc];
+				ret.values[lr][rc] = ret.values[lr][rc] + lhs.values[lr][i] * rhs.values[i][rc];
 			}
 		}
 	}
@@ -89,7 +110,43 @@ Matrix Matrix::multiply(Matrix const & rhs) const
 	return ret;
 }
 
-std::ostream & operator<<(std::ostream & os, Matrix const & rhs)
+matrix matrix::scalar_mul(complex nb) const
+{
+	matrix ret{*this};
+
+	for (auto & row : ret.values)
+	{
+		for (auto & col : row)
+		{
+			col = col * nb;
+		}
+	}
+
+	return ret;
+}
+
+matrix matrix::scalar_div(complex nb) const
+{
+	if (nb.is_zero())
+		throw std::runtime_error("division by zero");
+
+	matrix ret{*this};
+
+	for (auto & row : ret.values)
+	{
+		for (auto & col : row)
+		{
+			col = col / nb;
+		}
+	}
+
+	return ret;
+}
+
+
+// Printing
+
+std::ostream & operator<<(std::ostream & os, matrix const & rhs)
 {
 	for (auto rit = rhs.values.cbegin(); rit != rhs.values.cend(); ++rit)
 	{

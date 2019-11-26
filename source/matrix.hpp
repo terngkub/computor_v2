@@ -1,30 +1,37 @@
 #pragma once
+#include "complex.hpp"
 #include <ostream>
 #include <vector>
 
 namespace computorv2
 {
 
-struct Matrix
+struct matrix
 {
 	size_t row_nb;
 	size_t col_nb;
-	std::vector<std::vector<double>> values;
+	std::vector<std::vector<complex>> values;
 
 	// Constructors
-	Matrix();
-	Matrix(std::vector<std::vector<double>> const & values);
-	Matrix(size_t row_nb, size_t col_nb);
-	~Matrix() = default;
+	matrix();
+	matrix(std::vector<std::vector<double>> const & values);
+	matrix(size_t row_nb, size_t col_nb);
+	~matrix() = default;
 
+	// Checker
 	bool empty() const;
 
-	// Operation
-	Matrix operator+(Matrix const & rhs) const;
-	Matrix operator-(Matrix const & rhs) const;
-	Matrix multiply(Matrix const & rhs) const;
+	// Matrix operation
+	matrix matrix_add(matrix const & rhs) const;
+	matrix matrix_sub(matrix const & rhs) const;
+	matrix matrix_mul(matrix const & rhs) const;
+
+	// Scalar operation
+	matrix scalar_mul(complex nb) const;
+	matrix scalar_div(complex nb) const;
 };
 
-std::ostream & operator<<(std::ostream & os, Matrix const & rhs);
+// Printing
+std::ostream & operator<<(std::ostream & os, matrix const & rhs);
 
 }

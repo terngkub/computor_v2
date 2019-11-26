@@ -8,97 +8,116 @@ namespace computorv2
 term::term()
 	: coef{complex{0, 0}}
     , variable{""}
-    , matrix{}
+    , mt{}
 {}
 
 term::term(complex nb)
 	: coef{nb}
     , variable{""}
-    , matrix{}
+    , mt{}
 {}
 
 term::term(ast::variable variable)
 	: coef{complex{1, 0}}
     , variable{variable}
-    , matrix{}
+    , mt{}
 {}
 
-term::term(Matrix matrix)
+term::term(matrix mt)
 	: coef{complex{1, 0}}
     , variable{""}
-    , matrix{matrix}
+    , mt{mt}
 {}
 
-term::term(complex const & nb, ast::variable const & variable, Matrix const & matrix)
+term::term(complex const & nb, ast::variable const & variable, matrix const & mt)
 	: coef{nb}
     , variable{variable}
-    , matrix{matrix}
+    , mt{mt}
 {}
-
-
-void term::check_validity(term const & rhs) const
-{
-    if (variable != rhs.variable)
-        throw std::runtime_error("multiple variables");
-
-    if (!matrix.empty() || !rhs.matrix.empty())
-        throw std::runtime_error("invalid operation between scalar and matrix");
-}
 
 
 // Operations
 
 term term::operator+(term const & rhs) const
 {
-    if (!matrix.empty() && !rhs.matrix.empty())
-        return term{matrix + rhs.matrix};
+    // both matrix
+    if (!mt.empty() && !rhs.mt.empty())
+        return term{mt.matrix_add(rhs.mt)};
 
-    check_validity(rhs);
+    // one matrix, on scalar
+    if (!mt.empty() || !rhs.mt.empty())
+        throw std::runtime_error("invalid operation between scalar and matrix");
+
+    // both scalar
     auto new_coef = coef + rhs.coef;
-    return term{new_coef, variable, matrix};
+    return term{new_coef, variable, mt};
 }
 
 term term::operator-(term const & rhs) const
 {
-    if (!matrix.empty() && !rhs.matrix.empty())
-        return term{matrix - rhs.matrix};
+    // both matrix
+    if (!mt.empty() && !rhs.mt.empty())
+        return term{mt.matrix_sub(rhs.mt)};
 
-    check_validity(rhs);
+    // one matrix, on scalar
+    if (!mt.empty() || !rhs.mt.empty())
+        throw std::runtime_error("invalid operation between scalar and matrix");
+
+    // both scalar
     auto new_coef = coef - rhs.coef;
-    return term{new_coef, variable, matrix};
+    return term{new_coef, variable, mt};
 }
 
 term term::operator*(term const & rhs) const
 {
-    if (!matrix.empty() && !rhs.matrix.empty())
-        throw std::runtime_error("scalar multiplication with matrix on left and right side");
+    // both matrix
+    if (!mt.empty() && !rhs.mt.empty())
+        throw std::runtime_error("term multiplication: both sides are matrix");
 
-    // m * m error
-    // m * c ok
-    // c * m ok
-    // c * c ok
-    
-    return term{};
+    // left = matrix, right = scalar
+    if (!mt.empty() && rhs.mt.empty())
+        return term{mt.scalar_mul(rhs.coef)};
+
+    // left = scalar, right = matrix
+    if (!mt.empty() && rhs.mt.empty())
+        return term{rhs.mt.scalar_mul(coef)};
+
+    // both scalar
+    auto new_coef = coef + rhs.coef;
+    return term{new_coef, variable, mt};
 }
 
+/*
 term term::operator/(term const & rhs) const
 {
-    // m / m error
-    // m / c ok
-    // c / m error
-    // c / c ok
+    // TODO
+
+    // right = matrix
+    if (!rhs.mt.empty())
+        throw std::runtime_error("matrix can't be denominator");
+
+    // left = matrix, right = scalar
+
+    // both scalar
 
     return term{};
 }
 
 term term::operator%(term const & rhs) const
 {
+    // TODO
     return term{};
 }
+*/
 
 term term::operator-() const
 {
-    return term{};
+    // TODOo
+    // matrix
+    if (!mt.empty())
+        return term{mt.scalar_mul(complex{-1, 0})};
+
+    return term{-coef};
 }
 
 
@@ -113,13 +132,13 @@ std::ostream &operator<<(std::ostream & os, term const & rhs)
         return os;
     }
 
-    if (rhs.coef.is_complex() && (!rhs.matrix.empty() || !rhs.variable.empty()))
+    if (rhs.coef.is_complex() && (!rhs.mt.empty() || !rhs.variable.empty()))
         os << '(' << rhs.coef << ')';
     else
 	    os << rhs.coef;
 
-    if (!rhs.matrix.empty())
-        os << " * " << rhs.matrix;
+    if (!rhs.mt.empty())
+        os << " * " << rhs.mt;
 
     if (!rhs.variable.empty())
         os << " * " << rhs.variable;
