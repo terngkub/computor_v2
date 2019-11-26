@@ -90,7 +90,7 @@ term term::operator*(term const & rhs) const
         return term{rhs.mt.scalar_mul(coef)};
 
     // both scalar
-    auto new_coef = coef + rhs.coef;
+    auto new_coef = coef * rhs.coef;
     return term{new_coef, variable, mt};
 }
 

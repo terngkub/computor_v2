@@ -26,6 +26,7 @@ private:
 	// Private Methods
 	expr create_expr(ast::operand const & operand);
 	expr evaluate(ast::expression expression);
+	void print_variables() const;
 };
 
 }
