@@ -154,6 +154,28 @@ expr expr::matrix_mul(expr const & rhs) const
 	return new_expr;
 }
 
+expr expr::substitute_variable(expr const & value)
+{
+	expr new_expr{};
+
+	for (auto & term : term_map)
+	{
+		if (term.second.is_variable())
+		{
+			// TODO implement power function
+			// power with degree
+			term.second.variable = "";
+			auto new_value = term.second * value;
+			new_expr.push_back
+
+			// power the input
+			// time input with term
+			// push_back to the return
+		}
+		new_expr.term_map[term.first] = term.second;
+	}
+	return new_expr;
+}
 
 
 // Private Methods

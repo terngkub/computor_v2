@@ -16,24 +16,25 @@ namespace ast
 	using name = std::string;
 	using variable = name;
 
+	struct expression;
+	struct used_function;
+
 	struct coef_variable
 	{
 		double coef;
 		variable variable_;
 	};
 
-	struct function
+	struct assigned_function
 	{
 		name function_;
 		variable variable_;
 	};
 
-	struct expression;
-
 	struct operand : x3::variant<
 		rational
 		, imaginary
-		, function
+		, x3::forward_ast<used_function>
 		, variable
 		, matrix
 		, x3::forward_ast<expression>
@@ -55,6 +56,12 @@ namespace ast
 		std::list<operation> rest;
 	};
 
+	struct used_function
+	{
+		name function_;
+		expression expression_;
+	};
+
 	struct variable_assignation
 	{
 		variable variable_;
@@ -63,7 +70,7 @@ namespace ast
 
 	struct function_assignation
 	{
-		function function_;
+		assigned_function function_;
 		expression expression_;
 	};
 
@@ -92,7 +99,8 @@ namespace ast
 }
 
 BOOST_FUSION_ADAPT_STRUCT(ast::coef_variable, coef, variable_)
-BOOST_FUSION_ADAPT_STRUCT(ast::function, function_, variable_)
+BOOST_FUSION_ADAPT_STRUCT(ast::used_function, function_, expression_)
+BOOST_FUSION_ADAPT_STRUCT(ast::assigned_function, function_, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::operation, operator_, operand_)
 BOOST_FUSION_ADAPT_STRUCT(ast::expression, first, rest)
 BOOST_FUSION_ADAPT_STRUCT(ast::variable_assignation, variable_, expression_)

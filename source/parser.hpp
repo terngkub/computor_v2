@@ -23,7 +23,8 @@ namespace grammar
 	x3::rule<class name, ast::name> const name("name");
 	x3::rule<class variable, ast::variable> const variable("variable");
 	x3::rule<class coef_variable, ast::coef_variable> const coef_variable("coef_variable");
-	x3::rule<class function, ast::function> const function("function");
+	x3::rule<class assigned_function, ast::assigned_function> const assigned_function("assigned function");
+	x3::rule<class used_function, ast::used_function> const used_function("used function");
 
 	x3::rule<class expression, ast::expression> const expression("expression");
 	x3::rule<class term, ast::expression> const term("term");
@@ -49,16 +50,16 @@ namespace grammar
 	auto const name_def = alpha >> *(alnum);
 	auto const variable_def = name;
 	auto const coef_variable_def = double_ >> variable;
-	auto const function_def = name >> '(' >> variable >> ')';
+	auto const assigned_function_def = name >> '(' >> variable >> ')';
+	auto const used_function_def = name >> '(' >> expression >> ')';
 
-	// how can I add matrix multiplication here
 	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
 	auto const term_def = power >> *(((string("**") >> power) | string("*") >> power) | (string("/") >> power) | (string("%") >> power));
 	auto const power_def = factor >> *(string("^") >> factor);
-	auto const factor_def = rational | imaginary | ('(' >> expression >> ')') | function | variable | matrix | ('-' >> factor);
+	auto const factor_def = rational | imaginary | ('(' >> expression >> ')') | used_function | variable | matrix | ('-' >> factor);
 
 	auto const variable_assignation_def = variable >> '=' >> expression;
-	auto const function_assignation_def = function >> '=' >> expression;
+	auto const function_assignation_def = assigned_function >> '=' >> expression;
 
 	auto const value_resolution_def = expression >> '=' >> '?';
 	auto const polynomial_resolution_def = expression >> '=' >> expression >> '?';
@@ -74,7 +75,8 @@ namespace grammar
 	BOOST_SPIRIT_DEFINE(name);
 	BOOST_SPIRIT_DEFINE(variable);
 	BOOST_SPIRIT_DEFINE(coef_variable);
-	BOOST_SPIRIT_DEFINE(function);
+	BOOST_SPIRIT_DEFINE(assigned_function);
+	BOOST_SPIRIT_DEFINE(used_function);
 	BOOST_SPIRIT_DEFINE(expression);
 	BOOST_SPIRIT_DEFINE(term);
 	BOOST_SPIRIT_DEFINE(power);

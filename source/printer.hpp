@@ -11,7 +11,8 @@ struct printer
 	void operator()(ast::matrix const &matrix_) const;
 	void operator()(ast::variable const &variable_) const;
 	void operator()(ast::coef_variable const &coef_variable_) const;
-	void operator()(ast::function const &function_) const;
+	void operator()(ast::assigned_function const &function_) const;
+	void operator()(ast::used_function const &function_) const;
 	void operator()(ast::operation const &x) const;
 	void operator()(ast::expression const &x) const;
 	void operator()(ast::variable_assignation const &x) const;

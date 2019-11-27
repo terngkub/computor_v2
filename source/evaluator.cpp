@@ -38,11 +38,10 @@ void evaluator::operator()(ast::variable_assignation input)
 
 void evaluator::operator()(ast::function_assignation input)
 {
+	// TODO check if function have extra unkown variable
 	std::cout << "function_assignation\n";
-	/*
 	auto rhs = evaluate(input.expression_);
-	factory.function_map[input.function_.function_] = std::pair<ast::variable, expr>{input.function_.variable_, rhs};
-	*/
+	function_map[input.function_.function_] = std::pair<ast::variable, expr>{input.function_.variable_, rhs};
 }
 
 void evaluator::operator()(ast::value_resolution x)
@@ -74,7 +73,23 @@ expr evaluator::create_expr(ast::operand const & operand)
 		[this](ast::imaginary const & imaginary)	{ return expr{complex{0, 1}}; },
 		[this](ast::matrix const & matrix)		{ return expr{matrix}; },
 		[this](ast::variable const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
-		[this](ast::function const & function)	{ return expr{}; },
+		[this](ast::used_function const & function)
+		{
+			auto it = function_map.find(function.function_);
+			if (it == function_map.end())
+				throw std::runtime_error("unknown function");
+
+			// this is a bit hard since the expr eval isn't stable yet
+
+			/*
+			expr contain term
+			term contain variable
+			so for each term that have variable
+				change it to new_expr and then time it to the old value
+			*/
+			
+			return expr{};
+		},
 		[this](ast::expression const & expression)	{ return evaluate(expression); }
 	}
 	, operand);

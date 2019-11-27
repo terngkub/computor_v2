@@ -24,6 +24,7 @@ public:
 
 	// Checker
 	bool is_matrix() const;
+	bool is_variable() const;
 
 	// Operations
 	term operator+(term const & rhs) const;

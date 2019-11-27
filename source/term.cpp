@@ -43,6 +43,11 @@ bool term::is_matrix() const
     return !mt.empty();
 }
 
+bool term::is_variable() const
+{
+    return !variable.empty();
+}
+
 // Operations
 
 term term::operator+(term const & rhs) const
