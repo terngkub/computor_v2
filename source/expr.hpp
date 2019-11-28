@@ -32,8 +32,6 @@ struct expr
 	// expr & operator%(expr const & rhs) const;
 	expr matrix_mul(expr const & rhs) const;
 	
-	expr substitute_variable(expr const & value);
-
 private:
 	std::set<int> get_all_degrees(expr const & rhs) const;
 };

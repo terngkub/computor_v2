@@ -24,7 +24,7 @@ void computor::operator()()
         if (r && iter == end)
         {
             evaluate(res);
-            print(res);
+            // print(res);
         }
         else
         {

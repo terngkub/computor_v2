@@ -56,7 +56,7 @@ namespace grammar
 	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
 	auto const term_def = power >> *(((string("**") >> power) | string("*") >> power) | (string("/") >> power) | (string("%") >> power));
 	auto const power_def = factor >> *(string("^") >> factor);
-	auto const factor_def = rational | imaginary | ('(' >> expression >> ')') | used_function | variable | matrix | ('-' >> factor);
+	auto const factor_def = rational | ('(' >> expression >> ')') | used_function | imaginary | variable | matrix | ('-' >> factor);
 
 	auto const variable_assignation_def = variable >> '=' >> expression;
 	auto const function_assignation_def = assigned_function >> '=' >> expression;

@@ -26,7 +26,7 @@ expr::expr(ast::matrix matrix)
 expr::expr(ast::variable variable)
 : term_map{}
 {
-	term_map[0] = term{variable};
+	term_map[1] = term{variable};
 }
 
 expr::expr(term t)
@@ -151,29 +151,6 @@ expr expr::matrix_mul(expr const & rhs) const
 
 	expr new_expr{};
 	new_expr.term_map[0] = term_map.at(0).matrix_mul(rhs.term_map.at(0));
-	return new_expr;
-}
-
-expr expr::substitute_variable(expr const & value)
-{
-	expr new_expr{};
-
-	for (auto & term : term_map)
-	{
-		if (term.second.is_variable())
-		{
-			// TODO implement power function
-			// power with degree
-			term.second.variable = "";
-			auto new_value = term.second * value;
-			new_expr.push_back
-
-			// power the input
-			// time input with term
-			// push_back to the return
-		}
-		new_expr.term_map[term.first] = term.second;
-	}
 	return new_expr;
 }
 
