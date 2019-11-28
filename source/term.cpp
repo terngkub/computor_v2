@@ -1,4 +1,5 @@
 #include "term.hpp"
+#include <cmath>
 
 namespace computorv2
 {
@@ -46,6 +47,24 @@ bool term::is_matrix() const
 bool term::is_variable() const
 {
     return !variable.empty();
+}
+
+bool term::is_zero() const
+{
+    return (coef.is_zero() && variable == "" && mt.empty());
+}
+
+bool term::is_valid_degree() const
+{
+    if (is_matrix()
+        || is_variable()
+        || coef.is_complex() 
+        || fmod(coef.real, 1) != 0.0
+        || coef.real < 0.0)
+    {
+        return false;
+    }
+    return true;
 }
 
 // Operations

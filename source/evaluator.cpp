@@ -133,7 +133,30 @@ expr evaluator::evaluate(ast::expression expression)
 			{"-", [](expr const & ret, expr const & rhs){ return ret - rhs; }},
 			{"*", [](expr const & ret, expr const & rhs){ return ret * rhs; }},
 			{"/", [](expr const & ret, expr const & rhs){ return ret / rhs; }},
-			{"**", [](expr const & ret, expr const & rhs){ return ret.matrix_mul(rhs); }}
+			{"**", [](expr const & ret, expr const & rhs){ return ret.matrix_mul(rhs); }},
+			{"^", [](expr const & ret, expr const & rhs)
+			{
+				if (!rhs.is_valid_degree())
+					throw std::runtime_error("degree isn't positive number");
+
+				if (rhs.is_zero())
+					return expr{complex{1, 0}};
+
+				expr new_expr{};
+
+				for (auto const & left : ret.term_map)
+				{
+					for (auto const & right : ret.term_map)
+					{
+						auto degree = left.first + right.first;
+						if (new_expr.term_map.find(degree) == new_expr.term_map.end())
+							new_expr.term_map[degree] = left.second * right.second;
+						else
+							new_expr.term_map[degree] = new_expr.term_map[degree] + (left.second * right.second);
+					}
+				}
+				return new_expr;
+			}}
 		};
 		if (operation_map.find(operation.operator_) == operation_map.end())
 			throw std::runtime_error("invalid operator " + operation.operator_);

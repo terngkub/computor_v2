@@ -22,7 +22,10 @@ struct expr
 	~expr() = default;
 
 	// Checker
+	bool is_value() const;
 	bool is_matrix() const;
+	bool is_valid_degree() const;
+	bool is_zero() const;
 
 	// Operations
 	expr operator+(expr const & rhs) const;

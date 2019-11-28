@@ -25,6 +25,8 @@ public:
 	// Checker
 	bool is_matrix() const;
 	bool is_variable() const;
+	bool is_zero() const;
+	bool is_valid_degree() const;
 
 	// Operations
 	term operator+(term const & rhs) const;

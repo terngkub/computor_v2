@@ -38,15 +38,24 @@ expr::expr(term t)
 
 // Checker
 
+bool expr::is_value() const
+{
+	return term_map.size() == 1 && term_map.find(0) != term_map.end();
+}
+
 bool expr::is_matrix() const
 {
-	if (term_map.size() != 1)
-		return false;
-	if (term_map.find(0) == term_map.end())
-		return false;
-	if (!term_map.at(0).is_matrix())
-		return false;
-	return true;
+	return is_value() && term_map.at(0).is_matrix();
+}
+
+bool expr::is_valid_degree() const
+{
+	return is_value() && term_map.at(0).is_valid_degree();
+}
+
+bool expr::is_zero() const
+{
+	return is_value() && term_map.at(0).is_zero();
 }
 
 
