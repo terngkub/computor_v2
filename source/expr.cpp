@@ -153,6 +153,42 @@ expr expr::operator/(expr const & rhs) const
 	return new_expr;
 }
 
+expr expr::operator^(expr const & rhs) const
+{
+	if (!rhs.is_valid_degree())
+		throw std::runtime_error("degree isn't positive number");
+
+	if (rhs.is_zero())
+		return expr{complex{1, 0}};
+
+	int degree = rhs.term_map.at(0).coef.real;
+
+	if (degree == 1)
+		return *this;
+
+	expr ret_expr{*this};
+	expr tmp_expr{};
+
+	for (int i = 1; i < degree; ++i)
+	{
+		for (auto const & left : ret_expr.term_map)
+		{
+			for (auto const & right : term_map)
+			{
+				auto degree = left.first + right.first;
+				if (tmp_expr.term_map.find(degree) == tmp_expr.term_map.end())
+					tmp_expr.term_map[degree] = left.second * right.second;
+				else
+					tmp_expr.term_map[degree] = tmp_expr.term_map[degree] + (left.second * right.second);
+			}
+		}
+		ret_expr = tmp_expr;
+		tmp_expr = expr{};
+	}
+
+	return ret_expr;
+}
+
 expr expr::matrix_mul(expr const & rhs) const
 {
 	if (!is_matrix() || !rhs.is_matrix())

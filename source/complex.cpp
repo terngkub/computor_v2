@@ -98,7 +98,7 @@ std::ostream & operator<<(std::ostream & os, complex const & rhs)
 		if (rhs.imag == 0)
 			os << '0';
 		else
-			os << rhs.imag + 'i';
+			os << rhs.imag << 'i';
 	}
 	else
 	{
