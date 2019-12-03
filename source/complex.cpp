@@ -1,5 +1,6 @@
 #include "complex.hpp"
 #include <cmath>
+#include <iostream>
 
 namespace computorv2
 {
@@ -101,6 +102,15 @@ bool complex::operator==(double rhs) const
 	return real == rhs && imag == 0;
 }
 
+complex complex::sqrt(complex const & nb)
+{
+	auto a = nb.real;
+	auto b = nb.imag;
+    auto x = (pow(pow(a, 2) + pow(b, 2), 0.5) + a ) / 2;
+    auto y = b / (2 * x);
+	return complex{x, y};
+}
+
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
 	if (rhs.real == 0)
@@ -118,5 +128,6 @@ std::ostream & operator<<(std::ostream & os, complex const & rhs)
 	}
 	return os;
 }
+
 
 }

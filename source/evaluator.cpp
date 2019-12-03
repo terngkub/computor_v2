@@ -189,9 +189,9 @@ void evaluator::solve_polynomial(expr const & equation) const
 {
 	// TODO handle when b or c isn't in the map
 	// TODO handle complex
-	auto a = equation.term_map.at(2).coef.real;
-	auto b = equation.term_map.at(1).coef.real;
-	auto c = equation.term_map.at(0).coef.real;
+	auto a = equation.term_map.find(2) != equation.term_map.cend() ? equation.term_map.at(2).coef.real : 0;
+	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef.real : 0;
+	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef.real : 0;
 
 	// TODO handle negative b^2 - 4ac
 
@@ -199,12 +199,11 @@ void evaluator::solve_polynomial(expr const & equation) const
 	auto result_one = (-b + pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
 	auto result_two = (-b - pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
 
-	std::cout << "a = " << a << '\n';
-	std::cout << "b = " << b << '\n';
-	std::cout << "c = " << c << '\n';
-
-	std::cout << "result_one: " << result_one << '\n';
-	std::cout << "result_two: " << result_two << '\n';
+	std::cout << equation.get_variable() << " = ";
+	if (result_one == result_two)
+		std::cout << result_one << '\n';
+	else
+		std::cout << result_one << ", " << result_two << '\n';
 }
 
 }
