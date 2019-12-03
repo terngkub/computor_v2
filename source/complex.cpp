@@ -1,6 +1,6 @@
 #include "complex.hpp"
+#include "math.hpp"
 #include <cmath>
-#include <iostream>
 
 namespace computorv2
 {
@@ -106,7 +106,7 @@ complex complex::sqrt(complex const & nb)
 {
 	auto a = nb.real;
 	auto b = nb.imag;
-    auto x = (pow(pow(a, 2) + pow(b, 2), 0.5) + a ) / 2;
+    auto x = (math::sqrt(math::power(a, 2) + math::power(b, 2)) + a ) / 2;
     auto y = b / (2 * x);
 	return complex{x, y};
 }

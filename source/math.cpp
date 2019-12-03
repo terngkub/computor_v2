@@ -1,5 +1,8 @@
 #include "math.hpp"
 
+namespace math
+{
+
 double power(double base, int degree)
 {
     if (degree == 0)
@@ -36,4 +39,6 @@ double sqrt(double nb)
     }
 
     return x;
+}
+
 }
