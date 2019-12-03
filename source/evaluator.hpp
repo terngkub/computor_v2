@@ -27,6 +27,10 @@ private:
 	expr create_expr(ast::operand const & operand);
 	expr evaluate(ast::expression expression);
 	void print_variables() const;
+
+	void polynomial_resolution(expr const & equation) const;
+	void solve_equation(expr const & equation) const;
+	void solve_polynomial(expr const & equation) const;
 };
 
 }
