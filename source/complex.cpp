@@ -91,6 +91,16 @@ complex complex::operator-() const
 	return complex{new_real, new_imag};
 }
 
+bool complex::operator==(complex const & rhs) const
+{
+	return real == rhs.real && imag == rhs.imag;
+}
+
+bool complex::operator==(double rhs) const
+{
+	return real == rhs && imag == 0;
+}
+
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
 	if (rhs.real == 0)

@@ -33,6 +33,9 @@ struct complex
 	complex operator/(complex const & rhs) const;
 	complex operator%(complex const & rhs) const;
 	complex operator-() const;
+
+	bool operator==(complex const & rhs) const;
+	bool operator==(double rhs) const;
 };
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs);

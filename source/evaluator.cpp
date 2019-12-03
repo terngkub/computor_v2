@@ -151,25 +151,38 @@ void evaluator::print_variables() const
 	}
 }
 
+
+// Polynomial resolution
+
 void evaluator::polynomial_resolution(expr const & equation) const
 {
 	auto max_degree = equation.term_map.crbegin()->first;
-	switch(max_degree)
-	{
-		case 1: solve_equation(equation); break;
-		case 2: solve_polynomial(equation); break;
-		default: throw std::runtime_error("max degree is not one or two");
-	}
+	if (max_degree == 1)
+		solve_equation(equation);
+	else if (max_degree == 2)
+		solve_polynomial(equation);
+	else if (max_degree == 0)
+		std::cout << "x can be any numbers\n";
+	else if (max_degree < 0)
+		throw std::runtime_error("polynomial with negative degree");
+	else
+		throw std::runtime_error("polynomial with degree more than two");
 }
 
 void evaluator::solve_equation(expr const & equation) const
 {
-	auto b = equation.term_map.at(1).coef.real;
-	auto c = equation.term_map.at(0).coef.real;
+	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef : complex{};
+	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef : complex{};
+
+	if (c == 0)
+	{
+		std::cout << equation.get_variable() << " = 0\n";
+		return ;
+	}
 
 	auto result = b / -c;
 
-	std::cout << "x = " << result << '\n';
+	std::cout << equation.get_variable() << " = " << result << '\n';
 }
 
 void evaluator::solve_polynomial(expr const & equation) const

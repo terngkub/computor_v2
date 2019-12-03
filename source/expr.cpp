@@ -59,6 +59,32 @@ bool expr::is_zero() const
 }
 
 
+// Getters
+
+std::string expr::get_variable() const
+{
+	std::string variable{};
+	for (auto const & term : term_map)
+	{
+		if (term.second.variable != "")
+		{
+			if (variable != "")
+			{
+				if (term.second.variable != variable)
+					throw std::runtime_error("get_variable: multiple variables in one expression");
+			}
+			else
+				variable = term.second.variable;
+		}
+	}
+
+	if (variable == "")
+		throw std::runtime_error("get_variable: no variable in the expression");
+
+	return variable;
+}
+
+
 // Operations
 
 expr expr::operator+(expr const & rhs) const
