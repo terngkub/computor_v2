@@ -4,41 +4,46 @@
 namespace computorv2
 {
 
-struct complex
+class complex
 {
-	double real;
-	double imag;
+	double _real;
+	double _imag;
 
-	// Constructors and Destructors
+public:
+
+	// Constructors and Destructor
 	complex();
-	complex(double rational, double imaginary);
+	complex(double real);
+	complex(double real, double imag);
 	~complex() = default;
 
-	// Copy - Enable
+	// Copy and Move
 	complex(complex const &) = default;
-	complex & operator=(complex const &) = default;
-
-	// Move - Enable
 	complex(complex &&) = default;
+	complex & operator=(complex const &) = default;
 	complex & operator=(complex &&) = default;
+
+	// Getters
+	double real() const;
+	double imag() const;
+	std::string str() const;
 
 	// Checkers
 	bool is_zero() const;
 	bool is_complex() const;
 
-	// Operations
-	complex operator+(complex const & rhs) const;
-	complex operator-(complex const & rhs) const;
-	complex operator*(complex const & rhs) const;
-	complex operator/(complex const & rhs) const;
-	complex operator%(complex const & rhs) const;
-	complex operator-() const;
-	bool operator==(complex const & rhs) const;
-	bool operator==(double rhs) const;
-
-	static complex sqrt(complex const & nb);
 };
 
+// Opeartor Overloads
+complex operator+(complex const & lhs, complex const & rhs);
+complex operator-(complex const & lhs, complex const & rhs);
+complex operator*(complex const & lhs, complex const & rhs);
+complex operator/(complex const & lhs, complex const & rhs);
+complex operator%(complex const & lhs, complex const & rhs);
+complex operator-(complex const & rhs);
+bool operator==(complex const & lhs, complex const & rhs);
 std::ostream & operator<<(std::ostream & os, complex const & rhs);
+
+complex sqrt(complex const & nb);
 
 }

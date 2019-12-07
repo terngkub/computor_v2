@@ -1,5 +1,5 @@
 include_directories(
-    ${computorv2_SOURCE_DIR/source}
+    ${computorv2_SOURCE_DIR}/source
     ${Boost_INCLUDE_DIRS}
 )
 

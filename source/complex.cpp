@@ -1,6 +1,7 @@
 #include "complex.hpp"
 #include "math.hpp"
 #include <cmath>
+#include <sstream>
 
 namespace computorv2
 {
@@ -8,126 +9,158 @@ namespace computorv2
 // Constructors
 
 complex::complex()
-	: real{0}
-	, imag{0}
+	: _real{0}
+	, _imag{0}
+{}
+
+complex::complex(double real)
+	: _real{real}
+	, _imag{0}
 {}
 
 complex::complex(double real, double imag)
-	: real{real}
-	, imag{imag}
+	: _real{real}
+	, _imag{imag}
 {}
+
+
+// Getters
+
+double complex::real() const
+{
+	return _real;
+}
+
+double complex::imag() const
+{
+	return _imag;
+}
+
+std::string complex::str() const
+{
+	std::stringstream ss;
+	
+	if (_real == 0)
+	{
+		if (_imag == 0)
+			ss << '0';
+		else if (_imag == 1)
+			ss << 'i';
+		else if (_imag == -1)
+			ss << "-i";
+		else
+			ss << _imag << 'i';
+	}
+	else
+	{
+		ss << _real;
+		if (_imag == 0)
+			return ss.str();
+		else if (_imag == 1)
+			ss << " + i";
+		else if (_imag == -1)
+			ss << " - i";
+		else if (_imag > 0)
+			ss << " + " << _imag << 'i';
+		else
+			ss << " - " << -_imag << 'i';
+	}
+	return ss.str();
+}
 
 
 // Checkers
 
 bool complex::is_zero() const
 {
-	return real == 0 && imag == 0;
+	return _real == 0 && _imag == 0;
 }
 
 bool complex::is_complex() const
 {
-	return imag != 0;
+	return _imag != 0;
 }
 
 
 // Operations
 
-complex complex::operator+(complex const & rhs) const
+complex operator+(complex const & lhs, complex const & rhs)
 {
-	auto new_real = real + rhs.real;
-	auto new_imag = imag + rhs.imag;
-	return complex{new_real, new_imag};
+	auto real = lhs.real() + rhs.real();
+	auto imag = lhs.imag() + rhs.imag();
+	return complex{real, imag};
 }
 
-complex complex::operator-(complex const & rhs) const
+complex operator-(complex const & lhs, complex const & rhs)
 {
-	auto new_real = real - rhs.real;
-	auto new_imag = imag- rhs.imag;
-	return complex{new_real, new_imag};
+	auto real = lhs.real() - rhs.real();
+	auto imag = lhs.imag() - rhs.imag();
+	return complex{real, imag};
 }
 
-complex complex::operator*(complex const & rhs) const
+complex operator*(complex const & lhs, complex const & rhs)
 {
-	auto new_real = real * rhs.real - imag * rhs.imag;
-	auto new_imag = real * rhs.imag + imag * rhs.real;
-	return complex{new_real, new_imag};
+	auto real = lhs.real() * rhs.real() - lhs.imag() * rhs.imag();
+	auto imag = lhs.real() * rhs.imag() + lhs.imag() * rhs.real();
+	return complex{real, imag};
 }
 
-complex complex::operator/(complex const & rhs) const
+complex operator/(complex const & lhs, complex const & rhs)
 {
 	if (rhs.is_zero())
 		throw std::runtime_error("divide by zero");
 
-	if (is_zero())
+	if (lhs.is_zero())
 		return complex{};
 
-	auto denom = rhs.real * rhs.real + rhs.imag * rhs.imag;
-	auto new_real = (real * rhs.real + imag * rhs.imag) / denom;
-	auto new_imag = (imag * rhs.real - real * rhs.imag) / denom;
+	auto denom = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
+	auto real = (lhs.real() * rhs.real() + lhs.imag() * rhs.imag()) / denom;
+	auto imag = (lhs.imag() * rhs.real() - lhs.real() * rhs.imag()) / denom;
 
-	return complex{new_real, new_imag};
+	return complex{real, imag};
 }
 
-complex complex::operator%(complex const & rhs) const
+complex operator%(complex const & lhs, complex const & rhs)
 {
 	if (rhs.is_zero())
 		throw std::runtime_error("modulo by zero");
 
-	if (is_zero())
+	if (lhs.is_zero())
 		return complex{};
 
-	if (is_complex() || rhs.is_complex())	
+	if (lhs.is_complex() || rhs.is_complex())	
 		throw std::runtime_error("modulo with complex number isn't handled yet");
 
 	// TODO check if I have to implement this myself
-	auto new_real = fmod(real, rhs.real);
-	return complex{new_real, 0};
+	auto real = fmod(lhs.real(), rhs.real());
+	return complex{real, 0};
 }
 
-complex complex::operator-() const
+complex operator-(complex const & rhs)
 {
-	auto new_real = -real;
-	auto new_imag = -imag;
-	return complex{new_real, new_imag};
+	auto real = -rhs.real();
+	auto imag = -rhs.imag();
+	return complex{real, imag};
 }
 
-bool complex::operator==(complex const & rhs) const
+bool operator==(complex const & lhs, complex const & rhs)
 {
-	return real == rhs.real && imag == rhs.imag;
-}
-
-bool complex::operator==(double rhs) const
-{
-	return real == rhs && imag == 0;
-}
-
-complex complex::sqrt(complex const & nb)
-{
-	auto a = nb.real;
-	auto b = nb.imag;
-    auto x = (math::sqrt(math::power(a, 2) + math::power(b, 2)) + a ) / 2;
-    auto y = b / (2 * x);
-	return complex{x, y};
+	return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
 }
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
-	if (rhs.real == 0)
-	{
-		if (rhs.imag == 0)
-			os << '0';
-		else
-			os << rhs.imag << 'i';
-	}
-	else
-	{
-		os << rhs.real;
-		if (rhs.imag != 0)
-			os << " + " << rhs.imag << 'i';
-	}
-	return os;
+	os << rhs.str();
 }
 
+complex sqrt(complex const & nb)
+{
+	// TODO check if this work with only real number
+	auto a = nb.real();
+	auto b = nb.imag();
+    auto x = (math::sqrt(math::power(a, 2) + math::power(b, 2)) + a ) / 2;
+    auto y = b / (2 * x);
+	return complex{x, y};
+}
 
 }

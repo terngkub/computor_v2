@@ -187,7 +187,7 @@ expr expr::operator^(expr const & rhs) const
 	if (rhs.is_zero())
 		return expr{complex{1, 0}};
 
-	int degree = rhs.term_map.at(0).coef.real;
+	int degree = rhs.term_map.at(0).coef.real();
 
 	if (degree == 1)
 		return *this;

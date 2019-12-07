@@ -189,9 +189,9 @@ void evaluator::solve_polynomial(expr const & equation) const
 {
 	// TODO handle when b or c isn't in the map
 	// TODO handle complex
-	auto a = equation.term_map.find(2) != equation.term_map.cend() ? equation.term_map.at(2).coef.real : 0;
-	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef.real : 0;
-	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef.real : 0;
+	auto a = equation.term_map.find(2) != equation.term_map.cend() ? equation.term_map.at(2).coef.real() : 0;
+	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef.real() : 0;
+	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef.real() : 0;
 
 	// TODO handle negative b^2 - 4ac
 

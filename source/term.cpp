@@ -59,8 +59,8 @@ bool term::is_valid_degree() const
     if (is_matrix()
         || is_variable()
         || coef.is_complex() 
-        || fmod(coef.real, 1) != 0.0
-        || coef.real < 0.0)
+        || fmod(coef.real(), 1) != 0.0
+        || coef.real() < 0.0)
     {
         return false;
     }
