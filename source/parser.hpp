@@ -66,7 +66,7 @@ namespace grammar
 
 	auto const command_def = string("list variables") | string("exit");
 
-	auto const input_def = command | variable_assignation | function_assignation | value_resolution | polynomial_resolution;
+	auto const input_def = command | polynomial_resolution | variable_assignation | function_assignation | value_resolution;
 
 	BOOST_SPIRIT_DEFINE(rational);
 	BOOST_SPIRIT_DEFINE(imaginary);

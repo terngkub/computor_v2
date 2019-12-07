@@ -27,6 +27,9 @@ struct expr
 	bool is_valid_degree() const;
 	bool is_zero() const;
 
+	// Getters
+	std::string get_variable() const;
+
 	// Operations
 	expr operator+(expr const & rhs) const;
 	expr operator-(expr const & rhs) const;

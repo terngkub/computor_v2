@@ -33,6 +33,10 @@ struct complex
 	complex operator/(complex const & rhs) const;
 	complex operator%(complex const & rhs) const;
 	complex operator-() const;
+	bool operator==(complex const & rhs) const;
+	bool operator==(double rhs) const;
+
+	static complex sqrt(complex const & nb);
 };
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs);
