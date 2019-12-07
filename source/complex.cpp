@@ -1,7 +1,7 @@
 #include "complex.hpp"
-#include "math.hpp"
 #include <cmath>
 #include <sstream>
+#include <iostream>
 
 namespace computorv2
 {
@@ -153,13 +153,62 @@ std::ostream & operator<<(std::ostream & os, complex const & rhs)
 	os << rhs.str();
 }
 
-complex sqrt(complex const & nb)
+static double power(double base, int degree)
 {
-	// TODO check if this work with only real number
+    if (degree == 0)
+        return 1;
+
+    bool neg = false;
+    if (degree < 0)
+    {
+        degree *= -1;
+        neg = true;
+    }
+
+    double ret = base;
+    while (--degree)
+        ret *= base;
+    
+    return (neg ? 1 / ret : ret);
+}
+
+static double sqrt(double nb)
+{
+    if (nb == 0)
+        return 0;
+
+    double x = 0;
+    while (x * x <= nb)
+        x += 0.1;
+
+    double prev_x = x + 1;
+    while (prev_x - x >= 0.000001)
+    {
+        prev_x = x;
+        x = (x + nb / x) / 2;
+    }
+
+    return x;
+}
+
+complex complex_sqrt(complex const & nb)
+{
+	if (nb.is_zero())
+		return complex{};
+
 	auto a = nb.real();
 	auto b = nb.imag();
-    auto x = (math::sqrt(math::power(a, 2) + math::power(b, 2)) + a ) / 2;
-    auto y = b / (2 * x);
+
+	if (b == 0)
+	{
+		if (a > 0)
+			return complex{sqrt(a), 0};
+		return complex{0, sqrt(-a)};
+	}
+
+	auto x = sqrt((sqrt(power(a, 2) + power(b, 2)) + a ) / 2);
+	auto y = b / (2 * x);
+
 	return complex{x, y};
 }
 

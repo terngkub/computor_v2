@@ -31,7 +31,6 @@ public:
 	// Checkers
 	bool is_zero() const;
 	bool is_complex() const;
-
 };
 
 // Opeartor Overloads
@@ -44,6 +43,6 @@ complex operator-(complex const & rhs);
 bool operator==(complex const & lhs, complex const & rhs);
 std::ostream & operator<<(std::ostream & os, complex const & rhs);
 
-complex sqrt(complex const & nb);
+complex complex_sqrt(complex const & nb);
 
 }

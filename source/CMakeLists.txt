@@ -10,8 +10,6 @@ add_library(computor
   evaluator.hpp
   expr.cpp
   expr.hpp
-  math.cpp
-  math.hpp
   matrix.cpp
   matrix.hpp
   parser.hpp
