@@ -1,5 +1,5 @@
 #include "complex.hpp"
-#include <cmath>
+#include "math.hpp"
 #include <sstream>
 #include <iostream>
 
@@ -82,7 +82,7 @@ bool complex::is_complex() const
 }
 
 
-// Operations
+// Operator Overloads
 
 complex operator+(complex const & lhs, complex const & rhs)
 {
@@ -128,11 +128,11 @@ complex operator%(complex const & lhs, complex const & rhs)
 	if (lhs.is_zero())
 		return complex{};
 
+	// TODO handle complex number modulo
 	if (lhs.is_complex() || rhs.is_complex())	
 		throw std::runtime_error("modulo with complex number isn't handled yet");
 
-	// TODO check if I have to implement this myself
-	auto real = fmod(lhs.real(), rhs.real());
+	auto real = math::fmod(lhs.real(), rhs.real());
 	return complex{real, 0};
 }
 
@@ -153,43 +153,8 @@ std::ostream & operator<<(std::ostream & os, complex const & rhs)
 	os << rhs.str();
 }
 
-static double power(double base, int degree)
-{
-    if (degree == 0)
-        return 1;
 
-    bool neg = false;
-    if (degree < 0)
-    {
-        degree *= -1;
-        neg = true;
-    }
-
-    double ret = base;
-    while (--degree)
-        ret *= base;
-    
-    return (neg ? 1 / ret : ret);
-}
-
-static double sqrt(double nb)
-{
-    if (nb == 0)
-        return 0;
-
-    double x = 0;
-    while (x * x <= nb)
-        x += 0.1;
-
-    double prev_x = x + 1;
-    while (prev_x - x >= 0.000001)
-    {
-        prev_x = x;
-        x = (x + nb / x) / 2;
-    }
-
-    return x;
-}
+// Operation
 
 complex complex_sqrt(complex const & nb)
 {
@@ -202,11 +167,11 @@ complex complex_sqrt(complex const & nb)
 	if (b == 0)
 	{
 		if (a > 0)
-			return complex{sqrt(a), 0};
-		return complex{0, sqrt(-a)};
+			return complex{math::sqrt(a), 0};
+		return complex{0, math::sqrt(-a)};
 	}
 
-	auto x = sqrt((sqrt(power(a, 2) + power(b, 2)) + a ) / 2);
+	auto x = math::sqrt((math::sqrt(math::power(a, 2) + math::power(b, 2)) + a ) / 2);
 	auto y = b / (2 * x);
 
 	return complex{x, y};
