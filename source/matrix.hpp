@@ -6,11 +6,13 @@
 namespace computorv2
 {
 
-struct matrix
+class matrix
 {
-	size_t row_nb;
-	size_t col_nb;
-	std::vector<std::vector<complex>> values;
+	size_t _row_nb;
+	size_t _col_nb;
+	std::vector<std::vector<complex>> _values;
+
+public:
 
 	// Constructors
 	matrix();
@@ -18,8 +20,14 @@ struct matrix
 	matrix(size_t row_nb, size_t col_nb);
 	~matrix() = default;
 
+	// Getters
+	size_t row_nb() const;
+	size_t col_nb() const;
+	std::vector<std::vector<complex>> const & values() const;
+	std::string str() const;
+
 	// Checker
-	bool empty() const;
+	bool is_empty() const;
 
 	// Matrix operation
 	matrix matrix_add(matrix const & rhs) const;
@@ -30,6 +38,20 @@ struct matrix
 	matrix scalar_mul(complex nb) const;
 	matrix scalar_div(complex nb) const;
 };
+
+/*
+m + m
+m - m
+m * m
+m ** m
+m / m
+m % m
+
+m * c
+c * m
+m / c
+
+*/
 
 // Printing
 std::ostream & operator<<(std::ostream & os, matrix const & rhs);

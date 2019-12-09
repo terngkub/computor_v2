@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include <sstream>
 
 namespace computorv2
 {
@@ -6,23 +7,23 @@ namespace computorv2
 // Constructors
 
 matrix::matrix()
-	: row_nb{0}
-	, col_nb{0}
-	, values{}
+	: _row_nb{0}
+	, _col_nb{0}
+	, _values{}
 {}
 
 matrix::matrix(std::vector<std::vector<double>> const & double_matrix)
-	: row_nb{double_matrix.size()}
-	, col_nb{row_nb > 0 ? double_matrix[0].size() : 0}
-	, values{}
+	: _row_nb{double_matrix.size()}
+	, _col_nb{_row_nb > 0 ? double_matrix[0].size() : 0}
+	, _values{}
 {
 	for (auto const & row : double_matrix)
 	{
-		if (row.size() != col_nb)
+		if (row.size() != _col_nb)
 			throw std::runtime_error("matrix doesn't contain the same column numbers for each rows");
 
-		values.push_back(std::vector<complex>{});
-		auto current_row = values.end() - 1;
+		_values.push_back(std::vector<complex>{});
+		auto current_row = _values.end() - 1;
 		for (auto const & col : row)
 		{
 			current_row->emplace_back(col, 0);
@@ -31,15 +32,62 @@ matrix::matrix(std::vector<std::vector<double>> const & double_matrix)
 }
 
 matrix::matrix(size_t row_nb, size_t col_nb)
-	: row_nb{row_nb}
-	, col_nb{col_nb}
-	, values(row_nb, std::vector<complex>(col_nb, complex{}))
+	: _row_nb{row_nb}
+	, _col_nb{col_nb}
+	, _values(row_nb, std::vector<complex>(col_nb, complex{}))
 {}
+
+
+// Getters
+
+size_t matrix::row_nb() const
+{
+	return _row_nb;
+}
+
+size_t matrix::col_nb() const
+{
+	return _col_nb;
+}
+
+std::vector<std::vector<complex>> const & matrix::values() const
+{
+	return _values;
+}
+
+std::string matrix::str() const
+{
+	std::stringstream ss;
+
+	ss << '[';
+
+	for (auto rit = _values.cbegin(); rit < _values.cend(); ++rit)
+	{
+		ss << '[';
+
+		for (auto cit = rit->cbegin(); cit < rit->cend(); ++cit)
+		{
+			ss << *cit;
+
+			if (cit != rit->cend() - 1)
+				ss << ", ";
+		}
+
+		ss << ']';
+
+		if (rit != _values.cend() - 1)
+			ss << "; ";
+	}
+
+	ss << ']';
+
+	return ss.str();
+}
 
 
 // Checker
 
-bool matrix::empty() const
+bool matrix::is_empty() const
 {
 	return (row_nb == 0 || col_nb == 0);
 }
@@ -148,21 +196,7 @@ matrix matrix::scalar_div(complex nb) const
 
 std::ostream & operator<<(std::ostream & os, matrix const & rhs)
 {
-	for (auto rit = rhs.values.cbegin(); rit != rhs.values.cend(); ++rit)
-	{
-		os << "| ";
-
-		auto last = rit->cend() - 1;
-
-		for (auto cit = rit->cbegin(); cit != rit->cend(); ++cit)
-		{
-			os << *cit;
-			if (cit != last)
-				os << ", ";
-		}
-		os << " |\n";
-	}
-
+	os << rhs.str();
 	return os;
 }
 

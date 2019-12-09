@@ -7,6 +7,7 @@ add_executable(computorv2_test
     complex_test.cpp
     main.cpp
     math_test.cpp
+    matrix_test.cpp
 )
 
 target_link_libraries(computorv2_test
