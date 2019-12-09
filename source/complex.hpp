@@ -43,7 +43,8 @@ complex operator-(complex const & rhs);
 bool operator==(complex const & lhs, complex const & rhs);
 std::ostream & operator<<(std::ostream & os, complex const & rhs);
 
-// Operation
+// Other Operations
+complex complex_round(complex const & nb);
 complex complex_sqrt(complex const & nb);
 
 }

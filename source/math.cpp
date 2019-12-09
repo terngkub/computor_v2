@@ -1,23 +1,55 @@
 #include "math.hpp"
 #include <stdexcept>
+#include <limits>
 
 namespace computorv2
 {
 namespace math
 {
 
+static inline double remove_decimal(double x)
+{
+    return static_cast<double>(static_cast<long long>(x));
+}
+
+double fabs(double x)
+{
+    return x > 0 ? x : -x;
+}
+
+bool fequal(double x, double y)
+{
+    return fabs(x - y) <= 0.000000001;
+}
+
 double floor(double x)
 {
 	if (x >= 0)
-		return static_cast<int>(x);
-	return static_cast<int>(x - 1);
+		return remove_decimal(x);
+	return remove_decimal(x - 1);
 }
 
 double ceil(double x)
 {
 	if (x > 0)
-		return static_cast<int>(x + 1);
-	return static_cast<int>(x);
+		return remove_decimal(x + 1);
+	return remove_decimal(x);
+}
+
+double round(double x)
+{
+    double no_decimal = remove_decimal(x);
+
+    if (x < 0)
+    {
+        if (no_decimal - x >= 0.5)
+            return no_decimal - 1;
+        return no_decimal;
+    }
+
+    if (x - no_decimal >= 0.5)
+        return no_decimal + 1;
+    return no_decimal;
 }
 
 double fmod(double a, double b)

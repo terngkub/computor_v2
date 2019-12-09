@@ -128,9 +128,8 @@ complex operator%(complex const & lhs, complex const & rhs)
 	if (lhs.is_zero())
 		return complex{};
 
-	// TODO handle complex number modulo
 	if (lhs.is_complex() || rhs.is_complex())	
-		throw std::runtime_error("modulo with complex number isn't handled yet");
+		return (lhs - (rhs * complex_round(lhs / rhs)));
 
 	auto real = math::fmod(lhs.real(), rhs.real());
 	return complex{real, 0};
@@ -145,7 +144,7 @@ complex operator-(complex const & rhs)
 
 bool operator==(complex const & lhs, complex const & rhs)
 {
-	return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
+	return math::fequal(lhs.real(), rhs.real()) && math::fequal(lhs.imag(), rhs.imag());
 }
 
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
@@ -154,7 +153,14 @@ std::ostream & operator<<(std::ostream & os, complex const & rhs)
 }
 
 
-// Operation
+// Other Operations
+
+complex complex_round(complex const & nb)
+{
+	auto real = math::round(nb.real());
+	auto imag = math::round(nb.imag());
+	return complex{real, imag};
+}
 
 complex complex_sqrt(complex const & nb)
 {
