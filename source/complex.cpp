@@ -150,6 +150,7 @@ bool operator==(complex const & lhs, complex const & rhs)
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
 	os << rhs.str();
+	return os;
 }
 
 
