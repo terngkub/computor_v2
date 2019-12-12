@@ -16,8 +16,9 @@ public:
 
 	// Constructors
 	matrix();
-	matrix(std::vector<std::vector<double>> const & values);
 	matrix(size_t row_nb, size_t col_nb);
+	matrix(std::vector<std::vector<double>> const & values);
+	matrix(std::vector<std::vector<complex>> && mt);
 	~matrix() = default;
 
 	// Getters
@@ -26,34 +27,19 @@ public:
 	std::vector<std::vector<complex>> const & values() const;
 	std::string str() const;
 
-	// Checker
+	// Checkers
 	bool is_empty() const;
-
-	// Matrix operation
-	matrix matrix_add(matrix const & rhs) const;
-	matrix matrix_sub(matrix const & rhs) const;
-	matrix matrix_mul(matrix const & rhs) const;
-
-	// Scalar operation
-	matrix scalar_mul(complex nb) const;
-	matrix scalar_div(complex nb) const;
+	bool is_same_dimension(matrix const & rhs) const;
 };
 
-/*
-m + m
-m - m
-m * m
-m ** m
-m / m
-m % m
-
-m * c
-c * m
-m / c
-
-*/
-
-// Printing
+// Operation Overloads
+matrix operator+(matrix const & lhs, matrix const & rhs);
+matrix operator-(matrix const & lhs, matrix const & rhs);
+matrix operator*(matrix const & lhs, matrix const & rhs);
+matrix operator/(matrix const & lhs, matrix const & rhs);
 std::ostream & operator<<(std::ostream & os, matrix const & rhs);
+
+// Other Operations
+matrix mt_mul(matrix const & lhs, matrix const & rhs);
 
 }

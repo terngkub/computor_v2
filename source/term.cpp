@@ -41,7 +41,7 @@ term::term(complex const & nb, ast::variable const & variable, matrix const & mt
 
 bool term::is_matrix() const
 {
-    return !mt.empty();
+    return !mt.is_empty();
 }
 
 bool term::is_variable() const
@@ -51,7 +51,7 @@ bool term::is_variable() const
 
 bool term::is_zero() const
 {
-    return (coef.is_zero() && variable == "" && mt.empty());
+    return (coef.is_zero() && variable == "" && mt.is_empty());
 }
 
 bool term::is_valid_degree() const
@@ -72,11 +72,11 @@ bool term::is_valid_degree() const
 term term::operator+(term const & rhs) const
 {
     // both matrix
-    if (!mt.empty() && !rhs.mt.empty())
-        return term{mt.matrix_add(rhs.mt)};
+    if (!mt.is_empty() && !rhs.mt.is_empty())
+        return term{mt + rhs.mt};
 
     // one matrix, on scalar
-    if (!mt.empty() || !rhs.mt.empty())
+    if (!mt.is_empty() || !rhs.mt.is_empty())
         throw std::runtime_error("invalid operation between scalar and matrix");
 
     // both scalar
@@ -87,11 +87,11 @@ term term::operator+(term const & rhs) const
 term term::operator-(term const & rhs) const
 {
     // both matrix
-    if (!mt.empty() && !rhs.mt.empty())
-        return term{mt.matrix_sub(rhs.mt)};
+    if (!mt.is_empty() && !rhs.mt.is_empty())
+        return term{mt - rhs.mt};
 
     // one matrix, on scalar
-    if (!mt.empty() || !rhs.mt.empty())
+    if (!mt.is_empty() || !rhs.mt.is_empty())
         throw std::runtime_error("invalid operation between scalar and matrix");
 
     // both scalar
@@ -102,16 +102,16 @@ term term::operator-(term const & rhs) const
 term term::operator*(term const & rhs) const
 {
     // both matrix
-    if (!mt.empty() && !rhs.mt.empty())
+    if (!mt.is_empty() && !rhs.mt.is_empty())
         throw std::runtime_error("term multiplication: both sides are matrix");
 
     // left = matrix, right = scalar
-    if (!mt.empty() && rhs.mt.empty())
-        return term{mt.scalar_mul(rhs.coef)};
+    // if (!mt.is_empty() && rhs.mt.is_empty())
+    //     return term{mt.scalar_mul(rhs.coef)};
 
-    // left = scalar, right = matrix
-    if (!mt.empty() && rhs.mt.empty())
-        return term{rhs.mt.scalar_mul(coef)};
+    // // left = scalar, right = matrix
+    // if (!mt.is_empty() && rhs.mt.is_empty())
+    //     return term{rhs.mt.scalar_mul(coef)};
 
     // both scalar
     auto new_coef = coef * rhs.coef;
@@ -121,12 +121,12 @@ term term::operator*(term const & rhs) const
 term term::operator/(term const & rhs) const
 {
     // right = matrix
-    if (!rhs.mt.empty())
+    if (!rhs.mt.is_empty())
         throw std::runtime_error("matrix can't be denominator");
 
     // left = matrix, right = scalar
-    if (!mt.empty())
-        return term{mt.scalar_div(rhs.coef)};
+    // if (!mt.is_empty())
+    //     return term{mt.scalar_div(rhs.coef)};
 
     // both scalar
     auto new_coef = coef / rhs.coef;
@@ -145,17 +145,17 @@ term term::operator-() const
 {
     // TODOo
     // matrix
-    if (!mt.empty())
-        return term{mt.scalar_mul(complex{-1, 0})};
+    // if (!mt.is_empty())
+    //     return term{mt.scalar_mul(complex{-1, 0})};
 
     return term{-coef};
 }
 
 term term::matrix_mul(term const & rhs) const
 {
-	if (mt.empty() || rhs.mt.empty())
+	if (mt.is_empty() || rhs.mt.is_empty())
 		throw std::runtime_error("matrix multiplication: both side isn't matrix");
-	return term{mt.matrix_mul(rhs.mt)};
+	return term{mt_mul(mt, rhs.mt)};
 }
 
 
@@ -170,12 +170,12 @@ std::ostream &operator<<(std::ostream & os, term const & rhs)
         return os;
     }
 
-    if (rhs.coef.is_complex() && (!rhs.mt.empty() || !rhs.variable.empty()))
+    if (rhs.coef.is_complex() && (!rhs.mt.is_empty() || !rhs.variable.empty()))
         os << '(' << rhs.coef << ')';
     else
 	    os << rhs.coef;
 
-    if (!rhs.mt.empty())
+    if (!rhs.mt.is_empty())
         os << " * " << rhs.mt;
 
     if (!rhs.variable.empty())

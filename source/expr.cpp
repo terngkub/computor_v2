@@ -154,7 +154,7 @@ expr expr::operator/(expr const & rhs) const
 
 	for (auto const & right : rhs.term_map)
 	{
-		if (!right.second.mt.empty())
+		if (!right.second.mt.is_empty())
 			throw std::runtime_error("matrix can't be denominator");
 	}
 	
