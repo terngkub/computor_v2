@@ -66,15 +66,15 @@ std::string expr::get_variable() const
 	std::string variable{};
 	for (auto const & term : term_map)
 	{
-		if (term.second.variable != "")
+		if (term.second.variable() != "")
 		{
 			if (variable != "")
 			{
-				if (term.second.variable != variable)
+				if (term.second.variable() != variable)
 					throw std::runtime_error("get_variable: multiple variables in one expression");
 			}
 			else
-				variable = term.second.variable;
+				variable = term.second.variable();
 		}
 	}
 
@@ -136,7 +136,7 @@ expr expr::operator*(expr const & rhs) const
 			auto new_degree = left.first + right.first;
 			auto new_value = left.second * right.second;
 			
-			if (new_expr.term_map.find(new_degree) == new_expr.term_map.end() || (new_degree == 0 && new_expr.term_map[new_degree].coef.is_zero()))
+			if (new_expr.term_map.find(new_degree) == new_expr.term_map.end() || (new_degree == 0 && new_expr.term_map[new_degree].is_zero()))
 				new_expr.term_map[new_degree] = new_value;
 			else
 				new_expr.term_map[new_degree] = new_expr.term_map[new_degree] + new_value;
@@ -154,7 +154,7 @@ expr expr::operator/(expr const & rhs) const
 
 	for (auto const & right : rhs.term_map)
 	{
-		if (!right.second.mt.is_empty())
+		if (!std::get<matrix>(right.second.value()).is_empty())
 			throw std::runtime_error("matrix can't be denominator");
 	}
 	
@@ -187,7 +187,7 @@ expr expr::operator^(expr const & rhs) const
 	if (rhs.is_zero())
 		return expr{complex{1, 0}};
 
-	int degree = rhs.term_map.at(0).coef.real();
+	int degree = std::get<complex>(rhs.term_map.at(0).value()).real();
 
 	if (degree == 1)
 		return *this;
@@ -221,7 +221,7 @@ expr expr::matrix_mul(expr const & rhs) const
 		throw std::runtime_error("expr matrix multiplication: both side isn't matrix");
 
 	expr new_expr{};
-	new_expr.term_map[0] = term_map.at(0).matrix_mul(rhs.term_map.at(0));
+	new_expr.term_map[0] = term_matrix_mul(term_map.at(0), rhs.term_map.at(0));
 	return new_expr;
 }
 

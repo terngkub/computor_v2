@@ -3,41 +3,49 @@
 #include "complex.hpp"
 #include "matrix.hpp"
 #include <iostream>
+#include <variant>
 
 namespace computorv2
 {
 
-struct term
+class term
 {
+	std::variant<complex, matrix> _value;
+	std::string _variable;
+
 public:
-	complex coef;
-	std::string variable;
-	matrix mt;
 
 	// Constructor, Destructor
 	term();
-	term(complex nb);
-	term(matrix mt);
-	term(ast::variable variable);
-	term(complex const & nb, ast::variable const & variable, matrix const & mt);
+	term(std::variant<complex, matrix> const & val);
+	term(std::string var);
+	term(std::variant<complex, matrix> const & val, std::string var);
 	~term() = default;
 
-	// Checker
+	// Getters
+	std::variant<complex, matrix> value() const;
+	std::string variable() const;
+	std::string str() const;
+
+	// Checkers
+	bool is_complex() const;
 	bool is_matrix() const;
-	bool is_variable() const;
+	bool has_variable() const;
 	bool is_zero() const;
 	bool is_valid_degree() const;
-
-	// Operations
-	term operator+(term const & rhs) const;
-	term operator-(term const & rhs) const;
-	term operator*(term const & rhs) const;
-	term operator/(term const & rhs) const;
-	// term operator%(term const &rhs) const;
-	term operator-() const;
-	term matrix_mul(term const & rhs) const;
 };
 
+// Operation Overloads
+term operator+(term const & lhs, term const & rhs);
+term operator-(term const & lhs, term const & rhs);
+term operator*(term const & lhs, term const & rhs);
+term operator/(term const & lhs, term const & rhs);
+term operator%(term const & lhs, term const & rhs);
+term operator-(term const & rhs);
 std::ostream & operator<<(std::ostream & os, term const & rhs);
+
+// Other Operations
+term term_matrix_mul(term const & lhs, term const & rhs);
+
 
 }

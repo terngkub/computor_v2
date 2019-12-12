@@ -17,6 +17,7 @@ public:
 	// Constructors
 	matrix();
 	matrix(size_t row_nb, size_t col_nb);
+	matrix(size_t row_nb, size_t col_nb, complex const & value);
 	matrix(std::vector<std::vector<double>> const & values);
 	matrix(std::vector<std::vector<complex>> && mt);
 	~matrix() = default;
@@ -32,14 +33,31 @@ public:
 	bool is_same_dimension(matrix const & rhs) const;
 };
 
-// Operation Overloads
+// Term-to-term Operations
 matrix operator+(matrix const & lhs, matrix const & rhs);
 matrix operator-(matrix const & lhs, matrix const & rhs);
 matrix operator*(matrix const & lhs, matrix const & rhs);
 matrix operator/(matrix const & lhs, matrix const & rhs);
-std::ostream & operator<<(std::ostream & os, matrix const & rhs);
+matrix operator%(matrix const & lhs, matrix const & rhs);
 
-// Other Operations
+// Scalar Operations
+matrix operator+(matrix const & lhs, complex const & rhs);
+matrix operator-(matrix const & lhs, complex const & rhs);
+matrix operator*(matrix const & lhs, complex const & rhs);
+matrix operator/(matrix const & lhs, complex const & rhs);
+matrix operator%(matrix const & lhs, complex const & rhs);
+matrix operator-(matrix const & rhs);
+
+matrix operator+(complex const & lhs, matrix const & rhs);
+matrix operator-(complex const & lhs, matrix const & rhs);
+matrix operator*(complex const & lhs, matrix const & rhs);
+matrix operator/(complex const & lhs, matrix const & rhs);
+matrix operator%(complex const & lhs, matrix const & rhs);
+
+// Matrix Multiplication
 matrix mt_mul(matrix const & lhs, matrix const & rhs);
+
+// Printing 
+std::ostream & operator<<(std::ostream & os, matrix const & rhs);
 
 }

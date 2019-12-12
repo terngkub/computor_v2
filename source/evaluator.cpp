@@ -90,10 +90,10 @@ expr evaluator::create_expr(ast::operand const & operand)
 			for (auto const & elem : it->second.second.term_map)
 			{
 				// if the term contain variable
-				if (elem.second.is_variable())
+				if (elem.second.has_variable())
 				{
 					// remove variable
-					term new_term{elem.second.coef, "", elem.second.mt};
+					term new_term{elem.second.value(), ""};
 
 					// power used_function's expression
 					expr new_expr{input_expr};
@@ -171,8 +171,8 @@ void evaluator::polynomial_resolution(expr const & equation) const
 
 void evaluator::solve_equation(expr const & equation) const
 {
-	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef : complex{};
-	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef : complex{};
+	auto b = equation.term_map.find(1) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(1).value()) : complex{};
+	auto c = equation.term_map.find(0) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(0).value()) : complex{};
 
 	if (c == 0)
 	{
@@ -189,9 +189,9 @@ void evaluator::solve_polynomial(expr const & equation) const
 {
 	// TODO handle when b or c isn't in the map
 	// TODO handle complex
-	auto a = equation.term_map.find(2) != equation.term_map.cend() ? equation.term_map.at(2).coef.real() : 0;
-	auto b = equation.term_map.find(1) != equation.term_map.cend() ? equation.term_map.at(1).coef.real() : 0;
-	auto c = equation.term_map.find(0) != equation.term_map.cend() ? equation.term_map.at(0).coef.real() : 0;
+	auto a = equation.term_map.find(2) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(2).value()).real() : 0;
+	auto b = equation.term_map.find(1) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(1).value()).real() : 0;
+	auto c = equation.term_map.find(0) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(0).value()).real() : 0;
 
 	// TODO handle negative b^2 - 4ac
 

@@ -19,6 +19,12 @@ matrix::matrix(size_t row_nb, size_t col_nb)
 	, _values(row_nb, std::vector<complex>(col_nb, complex{}))
 {}
 
+matrix::matrix(size_t row_nb, size_t col_nb, complex const & value)
+	: _row_nb{row_nb}
+	, _col_nb{col_nb}
+	, _values(row_nb, std::vector<complex>(col_nb, complex{value}))
+{}
+
 matrix::matrix(std::vector<std::vector<double>> const & double_matrix)
 	: _row_nb{double_matrix.size()}
 	, _col_nb{_row_nb > 0 ? double_matrix[0].size() : 0}
@@ -151,14 +157,85 @@ matrix operator/(matrix const & lhs, matrix const & rhs)
 	return term_to_term_operation(lhs, rhs, [](complex const & lhs, complex const & rhs){ return lhs / rhs; });
 }
 
-std::ostream & operator<<(std::ostream & os, matrix const & rhs)
+matrix operator%(matrix const & lhs, matrix const & rhs)
 {
-	os << rhs.str();
-	return os;
+	return term_to_term_operation(lhs, rhs, [](complex const & lhs, complex const & rhs){ return lhs % rhs; });
+}
+
+// Scalar Operations
+
+static matrix scalar_operation(matrix const & lhs, complex const & rhs, std::function<complex (complex const &, complex const &)> op_func)
+{
+	std::vector<std::vector<complex>> ret(lhs.row_nb(), std::vector<complex>(lhs.col_nb()));
+
+	for (auto i = 0; i < lhs.row_nb(); ++i)
+	{
+		for (auto j = 0; j < lhs.col_nb(); ++j)
+		{
+			ret[i][j] = op_func(lhs.values()[i][j], rhs);
+		}
+	}
+
+	return matrix{std::move(ret)};
+}
+
+matrix operator+(matrix const & lhs, complex const & rhs)
+{
+	return scalar_operation(lhs, rhs, [](complex const & a, complex const & b){ return a + b; });
+}
+
+matrix operator-(matrix const & lhs, complex const & rhs)
+{
+	return scalar_operation(lhs, rhs, [](complex const & a, complex const & b){ return a - b; });
+}
+
+matrix operator*(matrix const & lhs, complex const & rhs)
+{
+	return scalar_operation(lhs, rhs, [](complex const & a, complex const & b){ return a * b; });
+}
+
+matrix operator/(matrix const & lhs, complex const & rhs)
+{
+	return scalar_operation(lhs, rhs, [](complex const & a, complex const & b){ return a / b; });
+}
+
+matrix operator%(matrix const & lhs, complex const & rhs)
+{
+	return scalar_operation(lhs, rhs, [](complex const & a, complex const & b){ return a % b; });
+}
+
+matrix operator-(matrix const & rhs)
+{
+	return rhs * -1;
+}
+
+matrix operator+(complex const & lhs, matrix const & rhs)
+{
+	return rhs + lhs;
+}
+
+matrix operator-(complex const & lhs, matrix const & rhs)
+{
+	return rhs - lhs;
+}
+
+matrix operator*(complex const & lhs, matrix const & rhs)
+{
+	return rhs * lhs;
+}
+
+matrix operator/(complex const & lhs, matrix const & rhs)
+{
+	return rhs / lhs;
+}
+
+matrix operator%(complex const & lhs, matrix const & rhs)
+{
+	return rhs % lhs;
 }
 
 
-// Other Operations
+// Matrix Multiplication
 
 matrix mt_mul(matrix const & lhs, matrix const & rhs)
 {
@@ -181,4 +258,13 @@ matrix mt_mul(matrix const & lhs, matrix const & rhs)
 	return matrix{std::move(ret)};
 }
 
+
+// Printing
+
+std::ostream & operator<<(std::ostream & os, matrix const & rhs)
+{
+	os << rhs.str();
+	return os;
 }
+
+} // namespace computorv2

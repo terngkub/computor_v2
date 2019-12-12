@@ -1,5 +1,4 @@
 #include "term.hpp"
-#include <cmath>
 
 namespace computorv2
 {
@@ -7,181 +6,167 @@ namespace computorv2
 // Constructors
 
 term::term()
-	: coef{complex{0, 0}}
-    , variable{""}
-    , mt{}
+	: _value{complex{}}
+    , _variable{""}
 {}
 
-term::term(complex nb)
-	: coef{nb}
-    , variable{""}
-    , mt{}
+term::term(std::variant<complex, matrix> const & val)
+    : _value{val}
+    , _variable{""}
 {}
 
-term::term(ast::variable variable)
-	: coef{complex{1, 0}}
-    , variable{variable}
-    , mt{}
+term::term(std::string var)
+    : _value{complex{}}
+    , _variable{var}
 {}
 
-term::term(matrix mt)
-	: coef{complex{1, 0}}
-    , variable{""}
-    , mt{mt}
-{}
-
-term::term(complex const & nb, ast::variable const & variable, matrix const & mt)
-	: coef{nb}
-    , variable{variable}
-    , mt{mt}
+term::term(std::variant<complex, matrix> const & val, std::string var)
+    : _value{val}
+    , _variable{var}
 {}
 
 
-// Checker
+// Getters
+
+std::variant<complex, matrix> term::value() const
+{
+    return _value;
+}
+
+std::string term::variable() const
+{
+    return _variable;
+}
+
+std::string term::str() const
+{
+    std::stringstream ss;
+
+    std::visit([&ss](auto const & val){ ss << val; }, _value);
+    
+    if (has_variable())
+        ss << " * " << _variable;
+
+	return ss.str();
+}
+
+
+// Checkers
+
+bool term::is_complex() const
+{
+    return std::holds_alternative<complex>(_value);
+}
 
 bool term::is_matrix() const
 {
-    return !mt.is_empty();
+    return std::holds_alternative<matrix>(_value);
 }
 
-bool term::is_variable() const
+bool term::has_variable() const
 {
-    return !variable.empty();
+    return !_variable.empty();
 }
 
 bool term::is_zero() const
 {
-    return (coef.is_zero() && variable == "" && mt.is_empty());
+    return is_complex() && std::get<complex>(_value) == 0;
 }
 
 bool term::is_valid_degree() const
 {
-    if (is_matrix()
-        || is_variable()
-        || coef.is_complex() 
-        || fmod(coef.real(), 1) != 0.0
-        || coef.real() < 0.0)
-    {
-        return false;
-    }
-    return true;
+    return !has_variable() && is_complex() && std::get<complex>(_value) % 1 == 0.0;
+    // TODO check if more than zero
 }
+
 
 // Operations
 
-term term::operator+(term const & rhs) const
+term operator+(term const & lhs, term const & rhs)
 {
-    // both matrix
-    if (!mt.is_empty() && !rhs.mt.is_empty())
-        return term{mt + rhs.mt};
+    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
+        throw std::runtime_error("more than one unassigned variables");
 
-    // one matrix, on scalar
-    if (!mt.is_empty() || !rhs.mt.is_empty())
-        throw std::runtime_error("invalid operation between scalar and matrix");
+    std::variant<complex, matrix> new_value = std::visit(
+        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a + b; }, lhs.value(), rhs.value());
 
-    // both scalar
-    auto new_coef = coef + rhs.coef;
-    return term{new_coef, variable, mt};
+    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
+
+    return term{new_value, new_variable};
 }
 
-term term::operator-(term const & rhs) const
+term operator-(term const & lhs, term const & rhs)
 {
-    // both matrix
-    if (!mt.is_empty() && !rhs.mt.is_empty())
-        return term{mt - rhs.mt};
+    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
+        throw std::runtime_error("more than one unassigned variables");
 
-    // one matrix, on scalar
-    if (!mt.is_empty() || !rhs.mt.is_empty())
-        throw std::runtime_error("invalid operation between scalar and matrix");
+    std::variant<complex, matrix> new_value = std::visit(
+        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a - b; }, lhs.value(), rhs.value());
 
-    // both scalar
-    auto new_coef = coef - rhs.coef;
-    return term{new_coef, variable, mt};
+    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
+
+    return term{new_value, new_variable};
 }
 
-term term::operator*(term const & rhs) const
+term operator*(term const & lhs, term const & rhs)
 {
-    // both matrix
-    if (!mt.is_empty() && !rhs.mt.is_empty())
-        throw std::runtime_error("term multiplication: both sides are matrix");
+    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
+        throw std::runtime_error("more than one unassigned variables");
 
-    // left = matrix, right = scalar
-    // if (!mt.is_empty() && rhs.mt.is_empty())
-    //     return term{mt.scalar_mul(rhs.coef)};
+    std::variant<complex, matrix> new_value = std::visit(
+        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a * b; }, lhs.value(), rhs.value());
 
-    // // left = scalar, right = matrix
-    // if (!mt.is_empty() && rhs.mt.is_empty())
-    //     return term{rhs.mt.scalar_mul(coef)};
+    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
 
-    // both scalar
-    auto new_coef = coef * rhs.coef;
-    return term{new_coef, variable, mt};
+    return term{new_value, new_variable};
 }
 
-term term::operator/(term const & rhs) const
+term operator/(term const & lhs, term const & rhs)
 {
-    // right = matrix
-    if (!rhs.mt.is_empty())
-        throw std::runtime_error("matrix can't be denominator");
+    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
+        throw std::runtime_error("more than one unassigned variables");
 
-    // left = matrix, right = scalar
-    // if (!mt.is_empty())
-    //     return term{mt.scalar_div(rhs.coef)};
+    std::variant<complex, matrix> new_value = std::visit(
+        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a / b; }, lhs.value(), rhs.value());
 
-    // both scalar
-    auto new_coef = coef / rhs.coef;
-    return term{new_coef, variable, mt};
+    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
+
+    return term{new_value, new_variable};
 }
 
-/*
-term term::operator%(term const & rhs) const
+term operator%(term const & lhs, term const & rhs)
 {
-    // TODO
-    return term{};
-}
-*/
+    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
+        throw std::runtime_error("more than one unassigned variables");
 
-term term::operator-() const
-{
-    // TODOo
-    // matrix
-    // if (!mt.is_empty())
-    //     return term{mt.scalar_mul(complex{-1, 0})};
+    std::variant<complex, matrix> new_value = std::visit(
+        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a % b; }, lhs.value(), rhs.value());
 
-    return term{-coef};
+    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
+
+    return term{new_value, new_variable};
 }
 
-term term::matrix_mul(term const & rhs) const
+term operator-(term const & rhs)
 {
-	if (mt.is_empty() || rhs.mt.is_empty())
-		throw std::runtime_error("matrix multiplication: both side isn't matrix");
-	return term{mt_mul(mt, rhs.mt)};
+    std::variant<complex, matrix> new_value = std::visit([](auto const & a)->std::variant<complex, matrix>{ return -a; }, rhs.value());
+    return term{new_value, rhs.variable()};
 }
-
-
-
-// Printing
 
 std::ostream &operator<<(std::ostream & os, term const & rhs)
 {
-    if (rhs.coef.is_zero())
-    {
-        os << '0';
-        return os;
-    }
+    os << rhs.str();
+    return os;
+}
 
-    if (rhs.coef.is_complex() && (!rhs.mt.is_empty() || !rhs.variable.empty()))
-        os << '(' << rhs.coef << ')';
-    else
-	    os << rhs.coef;
 
-    if (!rhs.mt.is_empty())
-        os << " * " << rhs.mt;
+// Other Operations
 
-    if (!rhs.variable.empty())
-        os << " * " << rhs.variable;
-
-	return os;
+term term_matrix_mul(term const & lhs, term const & rhs)
+{
+	if (lhs.is_matrix() || rhs.is_matrix())
+		throw std::runtime_error("matrix multiplication: both side isn't matrix");
+	return term{mt_mul(std::get<matrix>(lhs.value()), std::get<matrix>(rhs.value()))};
 }
 
 }
