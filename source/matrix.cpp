@@ -216,7 +216,7 @@ matrix operator+(complex const & lhs, matrix const & rhs)
 
 matrix operator-(complex const & lhs, matrix const & rhs)
 {
-	return rhs - lhs;
+	return -rhs + lhs;
 }
 
 matrix operator*(complex const & lhs, matrix const & rhs)

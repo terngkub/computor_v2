@@ -82,69 +82,44 @@ bool term::is_valid_degree() const
 
 // Operations
 
-term operator+(term const & lhs, term const & rhs)
+static term term_operation(term const & lhs, term const & rhs, std::variant<complex, matrix> && new_value)
 {
     if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
         throw std::runtime_error("more than one unassigned variables");
 
-    std::variant<complex, matrix> new_value = std::visit(
-        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a + b; }, lhs.value(), rhs.value());
-
     auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
 
     return term{new_value, new_variable};
+}
+
+term operator+(term const & lhs, term const & rhs)
+{
+    auto new_value = std::visit( [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a + b; }, lhs.value(), rhs.value());
+    return term_operation(lhs, rhs, std::move(new_value));
 }
 
 term operator-(term const & lhs, term const & rhs)
 {
-    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
-        throw std::runtime_error("more than one unassigned variables");
-
-    std::variant<complex, matrix> new_value = std::visit(
-        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a - b; }, lhs.value(), rhs.value());
-
-    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
-
-    return term{new_value, new_variable};
+    auto new_value = std::visit( [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a - b; }, lhs.value(), rhs.value());
+    return term_operation(lhs, rhs, std::move(new_value));
 }
 
 term operator*(term const & lhs, term const & rhs)
 {
-    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
-        throw std::runtime_error("more than one unassigned variables");
-
-    std::variant<complex, matrix> new_value = std::visit(
-        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a * b; }, lhs.value(), rhs.value());
-
-    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
-
-    return term{new_value, new_variable};
+    auto new_value = std::visit( [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a * b; }, lhs.value(), rhs.value());
+    return term_operation(lhs, rhs, std::move(new_value));
 }
 
 term operator/(term const & lhs, term const & rhs)
 {
-    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
-        throw std::runtime_error("more than one unassigned variables");
-
-    std::variant<complex, matrix> new_value = std::visit(
-        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a / b; }, lhs.value(), rhs.value());
-
-    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
-
-    return term{new_value, new_variable};
+    auto new_value = std::visit( [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a / b; }, lhs.value(), rhs.value());
+    return term_operation(lhs, rhs, std::move(new_value));
 }
 
 term operator%(term const & lhs, term const & rhs)
 {
-    if (lhs.has_variable() && rhs.has_variable() && lhs.variable() != rhs.variable())
-        throw std::runtime_error("more than one unassigned variables");
-
-    std::variant<complex, matrix> new_value = std::visit(
-        [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a % b; }, lhs.value(), rhs.value());
-
-    auto new_variable = lhs.has_variable() ? lhs.variable() : (rhs.has_variable() ? rhs.variable() : "");
-
-    return term{new_value, new_variable};
+    auto new_value = std::visit( [](auto const & a, auto const & b)->std::variant<complex, matrix>{ return a % b; }, lhs.value(), rhs.value());
+    return term_operation(lhs, rhs, std::move(new_value));
 }
 
 term operator-(term const & rhs)
