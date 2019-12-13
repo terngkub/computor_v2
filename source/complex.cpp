@@ -147,6 +147,11 @@ bool operator==(complex const & lhs, complex const & rhs)
 	return math::fequal(lhs.real(), rhs.real()) && math::fequal(lhs.imag(), rhs.imag());
 }
 
+bool operator!=(complex const & lhs, complex const & rhs)
+{
+	return !(lhs == rhs);
+}
+
 std::ostream & operator<<(std::ostream & os, complex const & rhs)
 {
 	os << rhs.str();

@@ -57,7 +57,9 @@ matrix operator%(complex const & lhs, matrix const & rhs);
 // Matrix Multiplication
 matrix mt_mul(matrix const & lhs, matrix const & rhs);
 
-// Printing 
+// Other Operations 
+bool operator==(matrix const & lhs, matrix const & rhs);
+bool operator!=(matrix const & lhs, matrix const & rhs);
 std::ostream & operator<<(std::ostream & os, matrix const & rhs);
 
 }

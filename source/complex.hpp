@@ -41,6 +41,7 @@ complex operator/(complex const & lhs, complex const & rhs);
 complex operator%(complex const & lhs, complex const & rhs);
 complex operator-(complex const & rhs);
 bool operator==(complex const & lhs, complex const & rhs);
+bool operator!=(complex const & lhs, complex const & rhs);
 std::ostream & operator<<(std::ostream & os, complex const & rhs);
 
 // Other Operations

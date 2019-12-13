@@ -117,7 +117,7 @@ bool matrix::is_same_dimension(matrix const & rhs) const
 }
 
 
-// Operation Overloads
+// Term-to-term Operations
 
 static matrix term_to_term_operation(matrix const & lhs, matrix const & rhs, std::function<complex (complex const &, complex const &)> op_func)
 {
@@ -216,7 +216,7 @@ matrix operator+(complex const & lhs, matrix const & rhs)
 
 matrix operator-(complex const & lhs, matrix const & rhs)
 {
-	return -rhs + lhs;
+	return matrix(rhs.row_nb(), rhs.col_nb(), lhs) - rhs;
 }
 
 matrix operator*(complex const & lhs, matrix const & rhs)
@@ -226,12 +226,12 @@ matrix operator*(complex const & lhs, matrix const & rhs)
 
 matrix operator/(complex const & lhs, matrix const & rhs)
 {
-	return rhs / lhs;
+	return matrix(rhs.row_nb(), rhs.col_nb(), lhs) / rhs;
 }
 
 matrix operator%(complex const & lhs, matrix const & rhs)
 {
-	return rhs % lhs;
+	return matrix(rhs.row_nb(), rhs.col_nb(), lhs) % rhs;
 }
 
 
@@ -259,7 +259,30 @@ matrix mt_mul(matrix const & lhs, matrix const & rhs)
 }
 
 
-// Printing
+// Other Operations
+
+bool operator==(matrix const & lhs, matrix const & rhs)
+{
+	if (lhs.row_nb() != rhs.row_nb() || lhs.col_nb() != rhs.col_nb())
+		return false;
+
+	for (auto r = 0; r < lhs.row_nb(); ++r)
+	{
+		for (auto c = 0; c < lhs.col_nb(); ++c)
+		{
+			if (lhs.values()[r][c] != rhs.values()[r][c])
+				return false;
+		}
+	}
+
+	return true;
+}
+
+bool operator!=(matrix const & lhs, matrix const & rhs)
+{
+	return !(lhs == rhs);
+}
+
 
 std::ostream & operator<<(std::ostream & os, matrix const & rhs)
 {
