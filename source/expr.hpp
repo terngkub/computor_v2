@@ -9,40 +9,41 @@
 namespace computorv2
 {
 
-struct expr
+class expr
 {
-	std::map<int, term> term_map;
+	std::map<int, term> _term_map;
 
-	// Constructor and Destructor
+public:
+
+	// Constructors and Destructor
 	expr();
 	expr(complex nb);
 	expr(ast::matrix matrix);
 	expr(ast::variable variable);
 	expr(term t);
+	expr(std::map<int, term> && tm);
 	~expr() = default;
 
-	// Checker
+	// Getters
+	std::map<int, term> const & term_map() const;
+	std::string variable() const;
+	std::string str() const;
+
+	// Checkers
 	bool is_value() const;
 	bool is_matrix() const;
 	bool is_valid_degree() const;
 	bool is_zero() const;
-
-	// Getters
-	std::string get_variable() const;
-
-	// Operations
-	expr operator+(expr const & rhs) const;
-	expr operator-(expr const & rhs) const;
-	expr operator*(expr const & rhs) const;
-	expr operator/(expr const & rhs) const;
-	expr operator^(expr const & rhs) const;
-	// expr & operator%(expr const & rhs) const;
-	expr matrix_mul(expr const & rhs) const;
-	
-private:
-	std::set<int> get_all_degrees(expr const & rhs) const;
 };
 
+// Operations
+expr operator+(expr const & lhs, expr const & rhs);
+expr operator-(expr const & lhs, expr const & rhs);
+expr operator*(expr const & lhs, expr const & rhs);
+expr operator/(expr const & lhs, expr const & rhs);
+expr operator%(expr const & lhs, expr const & rhs);
+expr operator^(expr const & lhs, expr const & rhs);
+expr expr_matrix_mul(expr const & lhs, expr const & rhs);
 std::ostream & operator<<(std::ostream & os, expr const & rhs);
 
 } // namespace computorv2

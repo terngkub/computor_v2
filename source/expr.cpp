@@ -6,179 +6,202 @@ namespace computorv2
 // Constructors
 
 expr::expr()
-: term_map{}
+: _term_map{}
 {
-	term_map[0] = term{};
+	_term_map[0] = term{};
 }
 
 expr::expr(complex nb)
-: term_map{}
+: _term_map{}
 {
-	term_map[0] = term{nb};
+	_term_map[0] = term{nb};
 }
 
 expr::expr(ast::matrix matrix)
-: term_map{}
+: _term_map{}
 {
-	term_map[0] = term{matrix};
+	_term_map[0] = term{matrix};
 }
 
 expr::expr(ast::variable variable)
-: term_map{}
+: _term_map{}
 {
-	term_map[1] = term{variable};
+	_term_map[1] = term{variable};
 }
 
 expr::expr(term t)
-: term_map{}
+: _term_map{}
 {
-	term_map[0] = term{t};
+	_term_map[0] = term{t};
 }
 
-
-// Checker
-
-bool expr::is_value() const
-{
-	return term_map.size() == 1 && term_map.find(0) != term_map.end();
-}
-
-bool expr::is_matrix() const
-{
-	return is_value() && term_map.at(0).is_matrix();
-}
-
-bool expr::is_valid_degree() const
-{
-	return is_value() && term_map.at(0).is_valid_degree();
-}
-
-bool expr::is_zero() const
-{
-	return is_value() && term_map.at(0).is_zero();
-}
+expr::expr(std::map<int, term> && tm)
+: _term_map{tm}
+{}
 
 
 // Getters
 
-std::string expr::get_variable() const
+std::map<int, term> const & expr::term_map() const
 {
-	std::string variable{};
-	for (auto const & term : term_map)
+	return _term_map;
+}
+
+// TODO double check
+std::string expr::variable() const
+{
+	std::string var{};
+	for (auto const & term : _term_map)
 	{
 		if (term.second.variable() != "")
 		{
-			if (variable != "")
+			if (var != "")
 			{
-				if (term.second.variable() != variable)
+				if (term.second.variable() != var)
 					throw std::runtime_error("get_variable: multiple variables in one expression");
 			}
 			else
-				variable = term.second.variable();
+				var = term.second.variable();
 		}
 	}
 
-	if (variable == "")
+	if (var == "")
 		throw std::runtime_error("get_variable: no variable in the expression");
 
-	return variable;
+	return var;
+}
+
+std::string expr::str() const
+{
+	std::stringstream ss;
+
+	for (auto const &t : _term_map)
+	{
+		ss << t.second << ' ';
+	}
+	return ss.str();
+}
+
+
+// Checkers
+
+bool expr::is_value() const
+{
+	return _term_map.size() == 1 && _term_map.find(0) != _term_map.end();
+}
+
+bool expr::is_matrix() const
+{
+	return is_value() && _term_map.at(0).is_matrix();
+}
+
+bool expr::is_valid_degree() const
+{
+	return is_value() && _term_map.at(0).is_valid_degree();
+}
+
+bool expr::is_zero() const
+{
+	return is_value() && _term_map.at(0).is_zero();
 }
 
 
 // Operations
 
-expr expr::operator+(expr const & rhs) const
+expr operation_add_sub(expr const & lhs, expr const & rhs, std::function<term (term const &, term const &)> add_or_sub)
 {
-	auto degree_set = get_all_degrees(rhs);
+	auto const & lhs_term_map = lhs.term_map();
+	auto const & rhs_term_map = rhs.term_map();
 
-	expr new_expr{};
+	std::set<int> degree_set{};
+
+	for (auto const & elem : lhs_term_map)
+		degree_set.insert(elem.first);
+	for (auto const & elem : rhs_term_map)
+		degree_set.insert(elem.first);
+
+	std::map<int, term> new_term_map{};
 
 	for (auto const degree : degree_set)
 	{
-		if (term_map.find(degree) == term_map.end())
-			new_expr.term_map[degree] = rhs.term_map.at(degree);
-		else if (rhs.term_map.find(degree) == rhs.term_map.end())
-			new_expr.term_map[degree] = term_map.at(degree);
+		if (lhs_term_map.find(degree) == lhs_term_map.end())
+			new_term_map[degree] = add_or_sub(term{}, rhs_term_map.at(degree));
+		else if (rhs_term_map.find(degree) == rhs_term_map.end())
+			new_term_map[degree] = lhs_term_map.at(degree);
 		else
-			new_expr.term_map[degree] = term_map.at(degree) + rhs.term_map.at(degree);
+			new_term_map[degree] = add_or_sub(lhs_term_map.at(degree), rhs_term_map.at(degree));
 	}
 
-	return new_expr;
+	return expr{std::move(new_term_map)};
 }
 
-expr expr::operator-(expr const & rhs) const
+expr operator+(expr const & lhs, expr const & rhs)
 {
-	auto degree_set = get_all_degrees(rhs);
-
-	expr new_expr{};
-
-	for (auto const degree : degree_set)
-	{
-		if (term_map.find(degree) == term_map.end())
-			new_expr.term_map[degree] = -rhs.term_map.at(degree);
-		else if (rhs.term_map.find(degree) == rhs.term_map.end())
-			new_expr.term_map[degree] = term_map.at(degree);
-		else
-			new_expr.term_map[degree] = term_map.at(degree) - rhs.term_map.at(degree);
-	}
-
-	return new_expr;
+	return operation_add_sub(lhs, rhs, [](term const & a, term const & b){ return a + b; });
 }
 
-expr expr::operator*(expr const & rhs) const
+expr operator+(expr const & lhs, expr const & rhs)
 {
-	expr new_expr{};
+	return operation_add_sub(lhs, rhs, [](term const & a, term const & b){ return a - b; });
+}
 
-	for (auto const & left : term_map)
+expr operator*(expr const & lhs, expr const & rhs)
+{
+	std::map<int, term> new_term_map;
+
+	for (auto const & left : lhs.term_map())
 	{
-		for (auto const & right : rhs.term_map)
+		for (auto const & right : rhs.term_map())
 		{
 			auto new_degree = left.first + right.first;
 			auto new_value = left.second * right.second;
 			
-			if (new_expr.term_map.find(new_degree) == new_expr.term_map.end() || (new_degree == 0 && new_expr.term_map[new_degree].is_zero()))
-				new_expr.term_map[new_degree] = new_value;
+			if (new_term_map.find(new_degree) == new_term_map.end() || (new_degree == 0 && new_term_map[new_degree].is_zero()))
+				new_term_map[new_degree] = new_value;
 			else
-				new_expr.term_map[new_degree] = new_expr.term_map[new_degree] + new_value;
+				new_term_map[new_degree] = new_term_map[new_degree] + new_value;
 		}
 	}
 
-	return new_expr;
+	return expr{std::move(new_term_map)};
 }
 
-expr expr::operator/(expr const & rhs) const
+expr operator/(expr const & lhs, expr const & rhs)
 {
+	auto rhs_term_map = rhs.term_map();
 
-	if (rhs.term_map.size() > 1)
+	if (rhs_term_map.size() > 1)
 		throw std::runtime_error("expression can't be denominator");
 
-	for (auto const & right : rhs.term_map)
-	{
-		if (!std::get<matrix>(right.second.value()).is_empty())
-			throw std::runtime_error("matrix can't be denominator");
-	}
-	
-	expr new_expr{};
+	auto lhs_term_map = lhs.term_map();
+	std::map<int, term> new_term_map{};
+	auto const & denom = *rhs_term_map.begin();
 
-	if (rhs.term_map.find(0) != rhs.term_map.end())
-	{
-		for (auto const & left : term_map)
-		{
-			new_expr.term_map[left.first] = left.second / rhs.term_map.at(0);
-		}
-	}
-	else
-	{
-		auto const & denom = *rhs.term_map.begin();
-		for (auto const & left : term_map)
-		{
-			new_expr.term_map[left.first - denom.first] = left.second / denom.second;
-		}
-	}
-	
-	return new_expr;
+	for (auto const & left : lhs_term_map)
+		new_term_map[left.first - denom.first] = left.second / denom.second;
+
+	return expr{std::move(new_term_map)};
 }
 
+// TODO
+expr operator%(expr const & lhs, expr const & rhs)
+{
+	auto rhs_term_map = rhs.term_map();
+
+	if (rhs_term_map.size() > 1)
+		throw std::runtime_error("expression can't be denominator");
+
+	auto lhs_term_map = lhs.term_map();
+	std::map<int, term> new_term_map{};
+	auto const & denom = *rhs_term_map.begin();
+
+	for (auto const & left : lhs_term_map)
+		new_term_map[left.first - denom.first] = left.second / denom.second;
+
+	return expr{std::move(new_term_map)};
+}
+
+// TODO
 expr expr::operator^(expr const & rhs) const
 {
 	if (!rhs.is_valid_degree())
@@ -215,6 +238,7 @@ expr expr::operator^(expr const & rhs) const
 	return ret_expr;
 }
 
+// TODO
 expr expr::matrix_mul(expr const & rhs) const
 {
 	if (!is_matrix() || !rhs.is_matrix())
@@ -225,31 +249,9 @@ expr expr::matrix_mul(expr const & rhs) const
 	return new_expr;
 }
 
-
-// Private Methods
-
-std::set<int> expr::get_all_degrees(expr const & rhs) const
-{
-	std::set<int> degree_set{};
-
-	for (auto const & elem : term_map)
-		degree_set.insert(elem.first);
-
-	for (auto const & elem : rhs.term_map)
-		degree_set.insert(elem.first);
-
-	return degree_set;
-}
-
-
-// Printing
-
 std::ostream & operator<<(std::ostream &os, expr const &rhs)
 {
-	for (auto const &t : rhs.term_map)
-	{
-		os << t.second << ' ';
-	}
+	os << rhs.str();
 	return os;
 }
 

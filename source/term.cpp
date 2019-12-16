@@ -1,4 +1,5 @@
 #include "term.hpp"
+#include <sstream>
 
 namespace computorv2
 {
