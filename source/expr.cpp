@@ -85,24 +85,24 @@ std::string expr::str() const
 
 // Checkers
 
-bool expr::is_value() const
+bool expr::is_coef() const
 {
 	return _term_map.size() == 1 && _term_map.find(0) != _term_map.end();
 }
 
 bool expr::is_matrix() const
 {
-	return is_value() && _term_map.at(0).is_matrix();
+	return is_coef() && _term_map.at(0).is_matrix();
 }
 
 bool expr::is_valid_degree() const
 {
-	return is_value() && _term_map.at(0).is_valid_degree();
+	return is_coef() && _term_map.at(0).is_valid_degree();
 }
 
 bool expr::is_zero() const
 {
-	return is_value() && _term_map.at(0).is_zero();
+	return is_coef() && _term_map.at(0).is_zero();
 }
 
 
@@ -140,7 +140,7 @@ expr operator+(expr const & lhs, expr const & rhs)
 	return operation_add_sub(lhs, rhs, [](term const & a, term const & b){ return a + b; });
 }
 
-expr operator+(expr const & lhs, expr const & rhs)
+expr operator-(expr const & lhs, expr const & rhs)
 {
 	return operation_add_sub(lhs, rhs, [](term const & a, term const & b){ return a - b; });
 }
@@ -183,7 +183,6 @@ expr operator/(expr const & lhs, expr const & rhs)
 	return expr{std::move(new_term_map)};
 }
 
-// TODO
 expr operator%(expr const & lhs, expr const & rhs)
 {
 	auto rhs_term_map = rhs.term_map();
@@ -196,12 +195,13 @@ expr operator%(expr const & lhs, expr const & rhs)
 	auto const & denom = *rhs_term_map.begin();
 
 	for (auto const & left : lhs_term_map)
-		new_term_map[left.first - denom.first] = left.second / denom.second;
+		new_term_map[left.first - denom.first] = left.second % denom.second;
 
 	return expr{std::move(new_term_map)};
 }
 
 // TODO
+/*
 expr expr::operator^(expr const & rhs) const
 {
 	if (!rhs.is_valid_degree())
@@ -210,7 +210,7 @@ expr expr::operator^(expr const & rhs) const
 	if (rhs.is_zero())
 		return expr{complex{1, 0}};
 
-	int degree = std::get<complex>(rhs.term_map.at(0).value()).real();
+	int degree = std::get<complex>(rhs.term_map.at(0).coef()).real();
 
 	if (degree == 1)
 		return *this;
@@ -248,6 +248,7 @@ expr expr::matrix_mul(expr const & rhs) const
 	new_expr.term_map[0] = term_matrix_mul(term_map.at(0), rhs.term_map.at(0));
 	return new_expr;
 }
+*/
 
 std::ostream & operator<<(std::ostream &os, expr const &rhs)
 {

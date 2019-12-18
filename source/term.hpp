@@ -10,7 +10,7 @@ namespace computorv2
 
 class term
 {
-	std::variant<complex, matrix> _value;
+	std::variant<complex, matrix> _coef;
 	std::string _variable;
 
 public:
@@ -23,7 +23,7 @@ public:
 	~term() = default;
 
 	// Getters
-	std::variant<complex, matrix> value() const;
+	std::variant<complex, matrix> coef() const;
 	std::string variable() const;
 	std::string str() const;
 

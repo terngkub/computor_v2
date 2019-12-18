@@ -87,13 +87,13 @@ expr evaluator::create_expr(ast::operand const & operand)
 			expr input_expr = evaluate(function.expression_);
 
 			// for each elem in assigned function expression
-			for (auto const & elem : it->second.second.term_map)
+			for (auto const & elem : it->second.second.term_map())
 			{
 				// if the term contain variable
 				if (elem.second.has_variable())
 				{
 					// remove variable
-					term new_term{elem.second.value(), ""};
+					term new_term{elem.second.coef(), ""};
 
 					// power used_function's expression
 					expr new_expr{input_expr};
@@ -133,9 +133,9 @@ expr evaluator::evaluate(ast::expression expression)
 			{"-", [](expr const & ret, expr const & rhs){ return ret - rhs; }},
 			{"*", [](expr const & ret, expr const & rhs){ return ret * rhs; }},
 			{"/", [](expr const & ret, expr const & rhs){ return ret / rhs; }},
-			// {"%", [](expr const & ret, expr const & rhs){ return ret % rhs; }},
-			{"^", [](expr const & ret, expr const & rhs){ return ret ^ rhs; }},
-			{"**", [](expr const & ret, expr const & rhs){ return ret.matrix_mul(rhs); }}
+			{"%", [](expr const & ret, expr const & rhs){ return ret % rhs; }},
+			// {"^", [](expr const & ret, expr const & rhs){ return ret ^ rhs; }},
+			// {"**", [](expr const & ret, expr const & rhs){ return ret.matrix_mul(rhs); }}
 		};
 		if (operation_map.find(operation.operator_) == operation_map.end())
 			throw std::runtime_error("invalid operator " + operation.operator_);
@@ -157,7 +157,7 @@ void evaluator::print_variables() const
 
 void evaluator::polynomial_resolution(expr const & equation) const
 {
-	auto max_degree = equation.term_map.crbegin()->first;
+	auto max_degree = equation.term_map().crbegin()->first;
 	if (max_degree == 1)
 		solve_equation(equation);
 	else if (max_degree == 2)
@@ -172,27 +172,27 @@ void evaluator::polynomial_resolution(expr const & equation) const
 
 void evaluator::solve_equation(expr const & equation) const
 {
-	auto b = equation.term_map.find(1) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(1).value()) : complex{};
-	auto c = equation.term_map.find(0) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(0).value()) : complex{};
+	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()) : complex{};
+	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()) : complex{};
 
 	if (c == 0)
 	{
-		std::cout << equation.get_variable() << " = 0\n";
+		std::cout << equation.variable() << " = 0\n";
 		return ;
 	}
 
 	auto result = b / -c;
 
-	std::cout << equation.get_variable() << " = " << result << '\n';
+	std::cout << equation.variable() << " = " << result << '\n';
 }
 
 void evaluator::solve_polynomial(expr const & equation) const
 {
 	// TODO handle when b or c isn't in the map
 	// TODO handle complex
-	auto a = equation.term_map.find(2) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(2).value()).real() : 0;
-	auto b = equation.term_map.find(1) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(1).value()).real() : 0;
-	auto c = equation.term_map.find(0) != equation.term_map.cend() ? std::get<complex>(equation.term_map.at(0).value()).real() : 0;
+	auto a = equation.term_map().find(2) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(2).coef()).real() : 0;
+	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()).real() : 0;
+	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()).real() : 0;
 
 	// TODO handle negative b^2 - 4ac
 
@@ -200,7 +200,7 @@ void evaluator::solve_polynomial(expr const & equation) const
 	auto result_one = (-b + pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
 	auto result_two = (-b - pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
 
-	std::cout << equation.get_variable() << " = ";
+	std::cout << equation.variable() << " = ";
 	if (result_one == result_two)
 		std::cout << result_one << '\n';
 	else
