@@ -27,12 +27,12 @@ public:
 	// Getters
 	std::map<int, term> const & term_map() const;
 	std::string variable() const;
+	int degree() const;
 	std::string str() const;
 
 	// Checkers
 	bool is_coef() const;
 	bool is_matrix() const;
-	bool is_valid_degree() const;
 	bool is_zero() const;
 };
 
@@ -42,10 +42,8 @@ expr operator-(expr const & lhs, expr const & rhs);
 expr operator*(expr const & lhs, expr const & rhs);
 expr operator/(expr const & lhs, expr const & rhs);
 expr operator%(expr const & lhs, expr const & rhs);
-/*
 expr operator^(expr const & lhs, expr const & rhs);
-expr expr_matrix_mul(expr const & lhs, expr const & rhs);
-*/
+// expr expr_matrix_mul(expr const & lhs, expr const & rhs);
 std::ostream & operator<<(std::ostream & os, expr const & rhs);
 
 } // namespace computorv2

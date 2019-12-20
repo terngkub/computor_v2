@@ -134,7 +134,7 @@ expr evaluator::evaluate(ast::expression expression)
 			{"*", [](expr const & ret, expr const & rhs){ return ret * rhs; }},
 			{"/", [](expr const & ret, expr const & rhs){ return ret / rhs; }},
 			{"%", [](expr const & ret, expr const & rhs){ return ret % rhs; }},
-			// {"^", [](expr const & ret, expr const & rhs){ return ret ^ rhs; }},
+			{"^", [](expr const & ret, expr const & rhs){ return ret ^ rhs; }},
 			// {"**", [](expr const & ret, expr const & rhs){ return ret.matrix_mul(rhs); }}
 		};
 		if (operation_map.find(operation.operator_) == operation_map.end())

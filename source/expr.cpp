@@ -1,4 +1,5 @@
 #include "expr.hpp"
+#include <iostream>
 
 namespace computorv2
 {
@@ -71,13 +72,43 @@ std::string expr::variable() const
 	return var;
 }
 
+int expr::degree() const
+{
+	if (_term_map.size() != 1 || _term_map.find(0) == _term_map.end())
+		throw std::runtime_error("degree can't contain unassigned variable");
+
+	return _term_map.at(0).degree();
+}
+
 std::string expr::str() const
 {
 	std::stringstream ss;
 
-	for (auto const &t : _term_map)
+	bool not_first = false;
+
+	for (auto it = _term_map.crbegin(); it != _term_map.crend(); ++it)
 	{
-		ss << t.second << ' ';
+		if (not_first)
+		{
+			if (it->second.is_complex() && std::get<complex>(it->second.coef()).real() < 0)
+			{
+				ss << " - ";
+				ss << -it->second;
+			}
+			else
+			{
+				ss << " + ";
+				ss << it->second;
+			}
+		}
+		else
+		{
+			not_first = true;
+			ss << it->second;
+		}
+		
+		if (it->first != 0 && it->first != 1)
+			ss << "^" << it->first;
 	}
 	return ss.str();
 }
@@ -93,11 +124,6 @@ bool expr::is_coef() const
 bool expr::is_matrix() const
 {
 	return is_coef() && _term_map.at(0).is_matrix();
-}
-
-bool expr::is_valid_degree() const
-{
-	return is_coef() && _term_map.at(0).is_valid_degree();
 }
 
 bool expr::is_zero() const
@@ -200,45 +226,43 @@ expr operator%(expr const & lhs, expr const & rhs)
 	return expr{std::move(new_term_map)};
 }
 
-// TODO
-/*
-expr expr::operator^(expr const & rhs) const
+expr operator^(expr const & lhs, expr const & rhs)
 {
-	if (!rhs.is_valid_degree())
-		throw std::runtime_error("degree isn't positive number");
+	int deg = rhs.degree();
+	
+	if (deg == 1)
+		return lhs;
 
-	if (rhs.is_zero())
-		return expr{complex{1, 0}};
-
-	int degree = std::get<complex>(rhs.term_map.at(0).coef()).real();
-
-	if (degree == 1)
-		return *this;
-
-	expr ret_expr{*this};
-	expr tmp_expr{};
-
-	for (int i = 1; i < degree; ++i)
+	if (deg == 0)
 	{
-		for (auto const & left : ret_expr.term_map)
-		{
-			for (auto const & right : term_map)
-			{
-				auto degree = left.first + right.first;
-				if (tmp_expr.term_map.find(degree) == tmp_expr.term_map.end())
-					tmp_expr.term_map[degree] = left.second * right.second;
-				else
-					tmp_expr.term_map[degree] = tmp_expr.term_map[degree] + (left.second * right.second);
-			}
-		}
-		ret_expr = tmp_expr;
-		tmp_expr = expr{};
+		// TODO handle matrix
+		return expr{complex{1, 0}};
 	}
 
-	return ret_expr;
+	std::map<int, term> new_term_map{};
+
+	for (int i = 1; i < deg; ++i)
+	{
+		for (auto const & left : lhs.term_map())
+		{
+			for (auto const & right : lhs.term_map())
+			{
+				auto new_degree = left.first + right.first;
+				auto mul_result = left.second * right.second;
+
+				if (new_term_map.find(new_degree) == new_term_map.end())
+					new_term_map[new_degree] = mul_result;
+				else
+					new_term_map[new_degree] = new_term_map[new_degree] + mul_result;
+			}
+		}
+	}
+
+	return expr{std::move(new_term_map)};
 }
 
 // TODO
+/*
 expr expr::matrix_mul(expr const & rhs) const
 {
 	if (!is_matrix() || !rhs.is_matrix())

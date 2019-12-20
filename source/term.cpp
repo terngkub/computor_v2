@@ -1,3 +1,4 @@
+#include "math.hpp"
 #include "term.hpp"
 #include <sstream>
 
@@ -17,7 +18,7 @@ term::term(std::variant<complex, matrix> const & val)
 {}
 
 term::term(std::string var)
-    : _coef{complex{}}
+    : _coef{complex{1, 0}}
     , _variable{var}
 {}
 
@@ -43,12 +44,52 @@ std::string term::str() const
 {
     std::stringstream ss;
 
-    std::visit([&ss](auto const & val){ ss << val; }, _coef);
-    
-    if (has_variable())
-        ss << " * " << _variable;
+    if (is_complex())
+    {
+        complex c_coef = std::get<complex>(_coef);
+        if (has_variable())
+        {
+            if (std::get<complex>(_coef) != 1)
+                ss << c_coef;
+            ss << _variable;
+        }
+        else
+        {
+            ss << c_coef;
+        }
+    }
+    else
+    {
+        ss << std::get<matrix>(_coef);
+        if (has_variable())
+            ss << " * " << _variable;
+    }
 
 	return ss.str();
+}
+
+int term::degree() const
+{
+    if (is_matrix())
+        throw std::runtime_error("degree can't be matrix");
+
+    if (has_variable())
+        throw std::runtime_error("degree can't be variable");
+    
+    auto complex_deg = std::get<complex>(_coef);
+
+    if (complex_deg.is_complex())
+        throw std::runtime_error("degree can't be complex number");
+        
+    auto deg = complex_deg.real();
+    
+    if (math::fmod(deg, 1.0) != 0.0)
+        throw std::runtime_error("degree isn't an integer");
+
+    if (deg < 0)
+        throw std::runtime_error("degree is negative");
+
+    return deg;
 }
 
 
@@ -72,12 +113,6 @@ bool term::has_variable() const
 bool term::is_zero() const
 {
     return is_complex() && std::get<complex>(_coef) == 0;
-}
-
-bool term::is_valid_degree() const
-{
-    return !has_variable() && is_complex() && std::get<complex>(_coef) % 1 == 0.0;
-    // TODO check if more than zero
 }
 
 

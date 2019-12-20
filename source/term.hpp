@@ -26,13 +26,13 @@ public:
 	std::variant<complex, matrix> coef() const;
 	std::string variable() const;
 	std::string str() const;
+	int degree() const;
 
 	// Checkers
 	bool is_complex() const;
 	bool is_matrix() const;
 	bool has_variable() const;
 	bool is_zero() const;
-	bool is_valid_degree() const;
 };
 
 // Operation Overloads
