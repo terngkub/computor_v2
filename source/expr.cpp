@@ -1,5 +1,7 @@
 #include "expr.hpp"
+#include <functional>
 #include <iostream>
+#include <sstream>
 
 namespace computorv2
 {
