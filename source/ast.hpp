@@ -52,6 +52,8 @@ namespace ast
 
 	struct expression
 	{
+		expression() = default;
+		expression(expression const &) = default;
 		operand first;
 		std::list<operation> rest;
 	};

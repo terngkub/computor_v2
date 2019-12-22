@@ -41,8 +41,7 @@ void evaluator::operator()(ast::function_assignation input)
 {
 	// TODO check if function have extra unkown variable
 	std::cout << "function_assignation\n";
-	auto rhs = evaluate(input.expression_);
-	function_map[input.function_.function_] = std::pair<ast::variable, expr>{input.function_.variable_, rhs};
+	function_map[input.function_.function_] = std::pair<ast::variable, ast::expression>{input.function_.variable_, input.expression_};
 }
 
 void evaluator::operator()(ast::value_resolution x)
@@ -75,43 +74,15 @@ expr evaluator::create_expr(ast::operand const & operand)
 		[this](ast::variable const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
 		[this](ast::used_function const & function)
 		{
-			// used_function contain name and expression
-			// assigned function contain name and pair(variable, expression)
-
-			// error if function isn't assigned
 			auto it = function_map.find(function.function_);
 			if (it == function_map.end())
 				throw std::runtime_error("unknown function");
 
-			expr ret_expr{};
 			expr input_expr = evaluate(function.expression_);
 
-			// for each elem in assigned function expression
-			for (auto const & elem : it->second.second.term_map())
-			{
-				// if the term contain variable
-				if (elem.second.has_variable())
-				{
-					// remove variable
-					term new_term{elem.second.coef(), ""};
-
-					// power used_function's expression
-					expr new_expr{input_expr};
-
-					for (auto i = 1; i < elem.first; ++i)
-						new_expr = new_expr * input_expr;
-
-					// time it with the assigned_function's expression
-					new_expr = new_expr * expr{new_term};
-
-					// add the result to ret_expr;
-					ret_expr = ret_expr + new_expr;
-				}
-				else
-				{
-					ret_expr = ret_expr + expr{elem.second};
-				}
-			}
+			variable_map[it->second.first] = input_expr;
+			expr ret_expr = evaluate(it->second.second);
+			variable_map.erase(it->first);
 
 			return ret_expr;
 		},

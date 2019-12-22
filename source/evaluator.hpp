@@ -21,7 +21,7 @@ public:
 private:
 	// Private attributes
 	std::unordered_map<ast::variable, expr> variable_map;
-	std::unordered_map<ast::name, std::pair<ast::variable, expr>> function_map;
+	std::unordered_map<ast::name, std::pair<ast::variable, ast::expression>> function_map;
 
 	// Private Methods
 	expr create_expr(ast::operand const & operand);
