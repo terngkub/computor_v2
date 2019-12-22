@@ -20,13 +20,13 @@ expr::expr(complex nb)
 	_term_map[0] = term{nb};
 }
 
-expr::expr(ast::matrix matrix)
+expr::expr(std::vector<std::vector<double>> matrix)
 : _term_map{}
 {
 	_term_map[0] = term{matrix};
 }
 
-expr::expr(ast::variable variable)
+expr::expr(std::string variable)
 : _term_map{}
 {
 	_term_map[1] = term{variable};

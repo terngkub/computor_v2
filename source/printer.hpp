@@ -6,10 +6,10 @@ namespace computorv2
 
 struct printer
 {
-	void operator()(ast::rational const &rational_) const;
-	void operator()(ast::imaginary const &imaginary_) const;
-	void operator()(ast::matrix const &matrix_) const;
-	void operator()(ast::variable const &variable_) const;
+	void operator()(double const &rational_) const;
+	void operator()(char const &imaginary_) const;
+	void operator()(std::vector<std::vector<double>> const &matrix_) const;
+	void operator()(std::string const &variable_) const;
 	void operator()(ast::coef_variable const &coef_variable_) const;
 	void operator()(ast::assigned_function const &function_) const;
 	void operator()(ast::used_function const &function_) const;

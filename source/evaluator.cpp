@@ -14,20 +14,18 @@ void evaluator::operator()(ast::input x)
 	boost::apply_visitor(*this, x);
 }
 
-void evaluator::operator()(ast::command x)
+void evaluator::operator()(std::string x)
 {
-	if (x == "list variables")
-	{
+	if (x == "list_variables")
 		print_variables();
-	}
+	/*
+	else if (x == "list_functions")
+		print_functions();
+	*/
 	else if (x == "exit")
-	{
 		exit(EXIT_SUCCESS);
-	}
 	else
-	{
 		std::cout << "unknown command\n";
-	}
 }
 
 void evaluator::operator()(ast::variable_assignation input)
@@ -41,7 +39,7 @@ void evaluator::operator()(ast::function_assignation input)
 {
 	// TODO check if function have extra unkown variable
 	std::cout << "function_assignation\n";
-	function_map[input.function_.function_] = std::pair<ast::variable, ast::expression>{input.function_.variable_, input.expression_};
+	function_map[input.function_.function_] = std::pair<std::string, ast::expression>{input.function_.variable_, input.expression_};
 }
 
 void evaluator::operator()(ast::value_resolution x)
@@ -68,10 +66,10 @@ expr evaluator::create_expr(ast::operand const & operand)
 {
 	return boost::apply_visitor(overloaded
 	{
-		[this](ast::rational const & rational)	{ return expr{complex{rational, 0}}; },
-		[this](ast::imaginary const & imaginary)	{ return expr{complex{0, 1}}; },
-		[this](ast::matrix const & matrix)		{ return expr{matrix}; },
-		[this](ast::variable const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
+		[this](double const & rational)	{ return expr{complex{rational, 0}}; },
+		[this](char const & imaginary)	{ return expr{complex{0, 1}}; },
+		[this](std::vector<std::vector<double>> const & matrix)		{ return expr{matrix}; },
+		[this](std::string const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
 		[this](ast::used_function const & function)
 		{
 			auto it = function_map.find(function.function_);
@@ -122,6 +120,16 @@ void evaluator::print_variables() const
 		std::cout << elem.first << " = " << elem.second << '\n';
 	}
 }
+
+/*
+void evaluator::print_functions() const
+{
+	for (auto const & elem :function_map)
+	{
+		std::cout << elem.first << "(" << elem.second.first << ") = " << elem.second.second << '\n';
+	}
+}
+*/
 
 
 // Polynomial resolution

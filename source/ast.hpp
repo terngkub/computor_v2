@@ -8,35 +8,27 @@ namespace ast
 {
     namespace x3 = boost::spirit::x3;
 
-	using command = std::string;
-	using rational = double;
-	using imaginary = char;
-	using matrix_row = std::vector<double>;
-	using matrix = std::vector<matrix_row>;
-	using name = std::string;
-	using variable = name;
-
 	struct expression;
 	struct used_function;
 
 	struct coef_variable
 	{
 		double coef;
-		variable variable_;
+		std::string variable_;
 	};
 
 	struct assigned_function
 	{
-		name function_;
-		variable variable_;
+		std::string function_;
+		std::string variable_;
 	};
 
 	struct operand : x3::variant<
-		rational
-		, imaginary
+		double
+		, char
 		, x3::forward_ast<used_function>
-		, variable
-		, matrix
+		, std::string
+		, std::vector<std::vector<double>>
 		, x3::forward_ast<expression>
 	>
 	{
@@ -60,13 +52,13 @@ namespace ast
 
 	struct used_function
 	{
-		name function_;
+		std::string function_;
 		expression expression_;
 	};
 
 	struct variable_assignation
 	{
-		variable variable_;
+		std::string variable_;
 		expression expression_;
 	};
 
@@ -88,7 +80,7 @@ namespace ast
 	};
 
 	struct input : x3::variant<
-		command
+		std::string
 		, variable_assignation
 		, function_assignation
 		, value_resolution

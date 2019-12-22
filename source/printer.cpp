@@ -4,17 +4,17 @@
 namespace computorv2
 {
 
-void printer::operator()(ast::rational const &rational_) const
+void printer::operator()(double const &rational_) const
 {
 	std::cout << rational_;
 }
 
-void printer::operator()(ast::imaginary const &imaginary_) const
+void printer::operator()(char const &imaginary_) const
 {
 	std::cout << imaginary_;
 }
 
-void printer::operator()(ast::matrix const &matrix_) const
+void printer::operator()(std::vector<std::vector<double>> const &matrix_) const
 {
 	for (auto itr = matrix_.begin(); itr < matrix_.end(); ++itr)
 	{
@@ -31,7 +31,7 @@ void printer::operator()(ast::matrix const &matrix_) const
 	}
 }
 
-void printer::operator()(ast::variable const &variable_) const
+void printer::operator()(std::string const &variable_) const
 {
 	std::cout << variable_;
 }

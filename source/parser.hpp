@@ -14,14 +14,14 @@ namespace grammar
 	using x3::ascii::alnum;
 	using x3::ascii::space;
 
-	x3::rule<class rational, ast::rational> const rational("rational");
-	x3::rule<class imaginary, ast::imaginary> const imaginary("imaginary");
+	x3::rule<class rational, double> const rational("rational");
+	x3::rule<class imaginary, char> const imaginary("imaginary");
 
-	x3::rule<class matrix, ast::matrix> const matrix("matrix");
-	x3::rule<class matrix_row, ast::matrix_row> const matrix_row("matrix_row");
+	x3::rule<class matrix, std::vector<std::vector<double>>> const matrix("matrix");
+	x3::rule<class matrix_row, std::vector<double>> const matrix_row("matrix_row");
 
-	x3::rule<class name, ast::name> const name("name");
-	x3::rule<class variable, ast::variable> const variable("variable");
+	x3::rule<class name, std::string> const name("name");
+	x3::rule<class variable, std::string> const variable("variable");
 	x3::rule<class coef_variable, ast::coef_variable> const coef_variable("coef_variable");
 	x3::rule<class assigned_function, ast::assigned_function> const assigned_function("assigned function");
 	x3::rule<class used_function, ast::used_function> const used_function("used function");
@@ -37,7 +37,7 @@ namespace grammar
 	x3::rule<class value_resolution, ast::value_resolution> const value_resolution("value_resolution");
 	x3::rule<class polynomial_resolution, ast::polynomial_resolution> const polynomial_resolution("polynomial_resolution");
 
-	x3::rule<class command, ast::command> const command("command");
+	x3::rule<class command, std::string> const command("command");
 	x3::rule<class input, ast::input> const input("input");
 
 
