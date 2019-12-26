@@ -43,7 +43,7 @@ expr operator*(expr const & lhs, expr const & rhs);
 expr operator/(expr const & lhs, expr const & rhs);
 expr operator%(expr const & lhs, expr const & rhs);
 expr operator^(expr const & lhs, expr const & rhs);
-// expr expr_matrix_mul(expr const & lhs, expr const & rhs);
+expr expr_matrix_mul(expr const & lhs, expr const & rhs);
 std::ostream & operator<<(std::ostream & os, expr const & rhs);
 
 } // namespace computorv2

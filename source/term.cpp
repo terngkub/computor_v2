@@ -175,7 +175,7 @@ std::ostream &operator<<(std::ostream & os, term const & rhs)
 
 term term_matrix_mul(term const & lhs, term const & rhs)
 {
-	if (lhs.is_matrix() || rhs.is_matrix())
+	if (!lhs.is_matrix() || !rhs.is_matrix())
 		throw std::runtime_error("matrix multiplication: both side isn't matrix");
 	return term{mt_mul(std::get<matrix>(lhs.coef()), std::get<matrix>(rhs.coef()))};
 }

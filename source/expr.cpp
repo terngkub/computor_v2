@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <variant>
 
 namespace computorv2
 {
@@ -263,18 +264,17 @@ expr operator^(expr const & lhs, expr const & rhs)
 	return expr{std::move(new_term_map)};
 }
 
-// TODO
-/*
-expr expr::matrix_mul(expr const & rhs) const
+expr expr_matrix_mul(expr const & lhs, expr const & rhs)
 {
-	if (!is_matrix() || !rhs.is_matrix())
+	if (!lhs.is_matrix() || !rhs.is_matrix())
 		throw std::runtime_error("expr matrix multiplication: both side isn't matrix");
 
-	expr new_expr{};
-	new_expr.term_map[0] = term_matrix_mul(term_map.at(0), rhs.term_map.at(0));
-	return new_expr;
+	std::map<int, term> new_term_map{};
+
+	new_term_map[0] = term_matrix_mul(lhs.term_map().at(0), rhs.term_map().at(0));
+
+	return expr{std::move(new_term_map)};
 }
-*/
 
 std::ostream & operator<<(std::ostream &os, expr const &rhs)
 {
