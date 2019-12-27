@@ -14,7 +14,6 @@ public:
 	void operator()();
 
 private:
-	printer print;
 	evaluator evaluate;
 };
 

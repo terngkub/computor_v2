@@ -18,41 +18,38 @@ void evaluator::operator()(std::string x)
 {
 	if (x == "list_variables")
 		print_variables();
-	/*
 	else if (x == "list_functions")
 		print_functions();
-	*/
 	else if (x == "exit")
 		exit(EXIT_SUCCESS);
 	else
-		std::cout << "unknown command\n";
+		throw std::runtime_error("unknown command");
 }
 
 void evaluator::operator()(ast::variable_assignation input)
 {
-	std::cout << "variable_assignation\n";
 	auto rhs = evaluate(input.expression_);
 	variable_map[input.variable_] = rhs;
+	std::cout << "  " << rhs << '\n';
 }
 
 void evaluator::operator()(ast::function_assignation input)
 {
 	// TODO check if function have extra unkown variable
-	std::cout << "function_assignation\n";
 	function_map[input.function_.function_] = std::pair<std::string, ast::expression>{input.function_.variable_, input.expression_};
+	std::cout << "  ";
+	print(input.expression_);
+	std::cout << '\n';
 }
 
 void evaluator::operator()(ast::value_resolution x)
 {
-	std::cout << "value_resolution\n";
 	auto ret = evaluate(x.expression_);
-	std::cout << ret << '\n';
+	std::cout << "  " << ret << '\n';
 }
 
 void evaluator::operator()(ast::polynomial_resolution x)
 {
-	std::cout << "polynomial_resolution\n";
-
 	auto left = evaluate(x.left_expression);
 	auto right = evaluate(x.right_expression);
 	auto equation = left - right;
@@ -84,6 +81,7 @@ expr evaluator::create_expr(ast::operand const & operand)
 
 			return ret_expr;
 		},
+		[this](ast::parenthesis const & parenthesis) { return evaluate(parenthesis.expression_); },
 		[this](ast::expression const & expression)	{ return evaluate(expression); }
 	}
 	, operand);
@@ -117,19 +115,20 @@ void evaluator::print_variables() const
 {
 	for (auto const & elem : variable_map)
 	{
-		std::cout << elem.first << " = " << elem.second << '\n';
+		std::cout << "  " << elem.first << " = " << elem.second << '\n';
 	}
 }
 
-/*
 void evaluator::print_functions() const
 {
+	std::cout << "  under construction\n";
 	for (auto const & elem :function_map)
 	{
-		std::cout << elem.first << "(" << elem.second.first << ") = " << elem.second.second << '\n';
+		std::cout << elem.first << "(" << elem.second.first << ") = ";
+		print(elem.second.second);
+		std::cout << '\n';
 	}
 }
-*/
 
 
 // Polynomial resolution

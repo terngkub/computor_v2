@@ -55,8 +55,15 @@ void printer::operator()(ast::used_function const &function_) const
 
 void printer::operator()(ast::operation const &x) const
 {
+	std::cout << x.operator_ << ' ';
 	boost::apply_visitor(*this, x.operand_);
-	std::cout << ' ' << x.operator_;
+}
+
+void printer::operator()(ast::parenthesis const &x) const
+{
+	std::cout << '(';
+	(*this)(x.expression_);
+	std::cout << ')';
 }
 
 void printer::operator()(ast::expression const &x) const

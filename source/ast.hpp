@@ -9,6 +9,7 @@ namespace ast
     namespace x3 = boost::spirit::x3;
 
 	struct expression;
+	struct parenthesis;
 	struct used_function;
 
 	struct coef_variable
@@ -26,10 +27,11 @@ namespace ast
 	struct operand : x3::variant<
 		double
 		, char
-		, x3::forward_ast<used_function>
 		, std::string
 		, std::vector<std::vector<double>>
 		, x3::forward_ast<expression>
+		, x3::forward_ast<parenthesis>
+		, x3::forward_ast<used_function>
 	>
 	{
 		using base_type::base_type;
@@ -48,6 +50,11 @@ namespace ast
 		expression(expression const &) = default;
 		operand first;
 		std::list<operation> rest;
+	};
+
+	struct parenthesis
+	{
+		expression expression_;
 	};
 
 	struct used_function
@@ -96,6 +103,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::coef_variable, coef, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::used_function, function_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::assigned_function, function_, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::operation, operator_, operand_)
+BOOST_FUSION_ADAPT_STRUCT(ast::parenthesis, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::expression, first, rest)
 BOOST_FUSION_ADAPT_STRUCT(ast::variable_assignation, variable_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::function_assignation, function_, expression_)

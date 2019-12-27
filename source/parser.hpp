@@ -26,6 +26,7 @@ namespace grammar
 	x3::rule<class assigned_function, ast::assigned_function> const assigned_function("assigned function");
 	x3::rule<class used_function, ast::used_function> const used_function("used function");
 
+	x3::rule<class parenthesis, ast::parenthesis> const parenthesis("parenthesis");
 	x3::rule<class expression, ast::expression> const expression("expression");
 	x3::rule<class term, ast::expression> const term("term");
 	x3::rule<class power, ast::expression> const power("power");
@@ -53,10 +54,11 @@ namespace grammar
 	auto const assigned_function_def = name >> '(' >> variable >> ')';
 	auto const used_function_def = name >> '(' >> expression >> ')';
 
+	auto const parenthesis_def = '(' >> expression >> ')';
 	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
 	auto const term_def = power >> *(((string("**") >> power) | string("*") >> power) | (string("/") >> power) | (string("%") >> power));
 	auto const power_def = factor >> *(string("^") >> factor);
-	auto const factor_def = rational | ('(' >> expression >> ')') | used_function | imaginary | variable | matrix | ('-' >> factor);
+	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix | ('-' >> factor);
 
 	auto const variable_assignation_def = variable >> '=' >> expression;
 	auto const function_assignation_def = assigned_function >> '=' >> expression;
@@ -64,7 +66,7 @@ namespace grammar
 	auto const value_resolution_def = expression >> '=' >> '?';
 	auto const polynomial_resolution_def = expression >> '=' >> expression >> '?';
 
-	auto const command_def = string("list variables") | string("exit");
+	auto const command_def = string("list_variables") | string("list_functions") | string("exit");
 
 	auto const input_def = command | polynomial_resolution | variable_assignation | function_assignation | value_resolution;
 
@@ -77,6 +79,7 @@ namespace grammar
 	BOOST_SPIRIT_DEFINE(coef_variable);
 	BOOST_SPIRIT_DEFINE(assigned_function);
 	BOOST_SPIRIT_DEFINE(used_function);
+	BOOST_SPIRIT_DEFINE(parenthesis);
 	BOOST_SPIRIT_DEFINE(expression);
 	BOOST_SPIRIT_DEFINE(term);
 	BOOST_SPIRIT_DEFINE(power);

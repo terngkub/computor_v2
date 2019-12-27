@@ -13,7 +13,7 @@ void computor::operator()()
     constexpr auto & grammar = grammar::input;
     std::string str;
 
-    while (std::getline(std::cin, str))
+    while (std::cout << "> " && std::getline(std::cin, str))
     {
         auto iter = str.cbegin();
         auto const end = str.cend();
@@ -23,13 +23,19 @@ void computor::operator()()
 
         if (r && iter == end)
         {
-            evaluate(res);
-            // print(res);
+            try
+            {
+                evaluate(res);
+            }
+            catch(const std::exception & e)
+            {
+                std::cout << "  error: " << e.what() << '\n';
+            }
         }
         else
         {
             std::string rest(iter, end);
-            std::cout << "Failed at " << rest << "\n";
+            std::cout << "  error: invalid syntax\n";
         }
     }
 }
