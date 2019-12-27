@@ -164,6 +164,11 @@ term operator-(term const & rhs)
     return term{new_coef, rhs.variable()};
 }
 
+bool operator==(term const & lhs, term const & rhs)
+{
+    return lhs.coef() == rhs.coef() && lhs.variable() == rhs.variable();
+}
+
 std::ostream &operator<<(std::ostream & os, term const & rhs)
 {
     os << rhs.str();
@@ -175,8 +180,10 @@ std::ostream &operator<<(std::ostream & os, term const & rhs)
 
 term term_matrix_mul(term const & lhs, term const & rhs)
 {
+    if (lhs.has_variable() || rhs.has_variable())
+        throw std::runtime_error("unknown variable in matrix multiplication");
 	if (!lhs.is_matrix() || !rhs.is_matrix())
-		throw std::runtime_error("matrix multiplication: both side isn't matrix");
+		throw std::runtime_error("at least one side of matrix multiplication isn't a matrix");
 	return term{mt_mul(std::get<matrix>(lhs.coef()), std::get<matrix>(rhs.coef()))};
 }
 

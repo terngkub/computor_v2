@@ -42,6 +42,7 @@ term operator*(term const & lhs, term const & rhs);
 term operator/(term const & lhs, term const & rhs);
 term operator%(term const & lhs, term const & rhs);
 term operator-(term const & rhs);
+bool operator==(term const & lhs, term const & rhs);
 std::ostream & operator<<(std::ostream & os, term const & rhs);
 
 // Other Operations
