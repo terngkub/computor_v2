@@ -141,7 +141,7 @@ void evaluator::polynomial_resolution(expr const & equation) const
 	else if (max_degree == 2)
 		solve_polynomial(equation);
 	else if (max_degree == 0)
-		std::cout << "x can be any numbers\n";
+		std::cout << "  x can be any numbers\n";
 	else if (max_degree < 0)
 		throw std::runtime_error("polynomial with negative degree");
 	else
@@ -155,13 +155,13 @@ void evaluator::solve_equation(expr const & equation) const
 
 	if (c == 0)
 	{
-		std::cout << equation.variable() << " = 0\n";
+		std::cout << "  " << equation.variable() << " = 0\n";
 		return ;
 	}
 
-	auto result = b / -c;
+	auto result = -c / b;
 
-	std::cout << equation.variable() << " = " << result << '\n';
+	std::cout << "  " << equation.variable() << " = " << result << '\n';
 }
 
 void evaluator::solve_polynomial(expr const & equation) const
