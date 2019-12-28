@@ -22,7 +22,7 @@ namespace grammar
 
 	x3::rule<class name, std::string> const name("name");
 	x3::rule<class variable, std::string> const variable("variable");
-	x3::rule<class coef_variable, ast::coef_variable> const coef_variable("coef_variable");
+
 	x3::rule<class assigned_function, ast::assigned_function> const assigned_function("assigned function");
 	x3::rule<class used_function, ast::used_function> const used_function("used function");
 
@@ -30,6 +30,7 @@ namespace grammar
 	x3::rule<class expression, ast::expression> const expression("expression");
 	x3::rule<class term, ast::expression> const term("term");
 	x3::rule<class power, ast::expression> const power("power");
+	x3::rule<class coef, ast::expression> const coef("coef");
 	x3::rule<class factor, ast::operand> const factor("factor");
 
 	x3::rule<class variable_assignation, ast::variable_assignation> const variable_assignation("variable_assignation");
@@ -50,15 +51,16 @@ namespace grammar
 
 	auto const name_def = alpha >> *(alnum);
 	auto const variable_def = name;
-	auto const coef_variable_def = double_ >> variable;
+
 	auto const assigned_function_def = name >> '(' >> variable >> ')';
 	auto const used_function_def = name >> '(' >> expression >> ')';
 
 	auto const parenthesis_def = '(' >> expression >> ')';
 	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
 	auto const term_def = power >> *(((string("**") >> power) | string("*") >> power) | (string("/") >> power) | (string("%") >> power));
-	auto const power_def = factor >> *(string("^") >> factor);
-	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix | ('-' >> factor);
+	auto const power_def = coef >> *(string("^") >> coef);
+	auto const coef_def = (factor | ('-' >> factor)) >> *(string("") >> factor);
+	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix;
 
 	auto const variable_assignation_def = variable >> '=' >> expression;
 	auto const function_assignation_def = assigned_function >> '=' >> expression;
@@ -76,13 +78,13 @@ namespace grammar
 	BOOST_SPIRIT_DEFINE(matrix_row);
 	BOOST_SPIRIT_DEFINE(name);
 	BOOST_SPIRIT_DEFINE(variable);
-	BOOST_SPIRIT_DEFINE(coef_variable);
 	BOOST_SPIRIT_DEFINE(assigned_function);
 	BOOST_SPIRIT_DEFINE(used_function);
 	BOOST_SPIRIT_DEFINE(parenthesis);
 	BOOST_SPIRIT_DEFINE(expression);
 	BOOST_SPIRIT_DEFINE(term);
 	BOOST_SPIRIT_DEFINE(power);
+	BOOST_SPIRIT_DEFINE(coef);
 	BOOST_SPIRIT_DEFINE(factor);
 	BOOST_SPIRIT_DEFINE(variable_assignation);
 	BOOST_SPIRIT_DEFINE(function_assignation);

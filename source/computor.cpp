@@ -21,21 +21,16 @@ void computor::operator()()
 
         bool r = phrase_parse(iter, end, grammar, space, res);
 
-        if (r && iter == end)
+        try
         {
-            try
-            {
+            if (r && iter == end)
                 evaluate(res);
-            }
-            catch(const std::exception & e)
-            {
-                std::cout << "  error: " << e.what() << '\n';
-            }
+            else
+                throw std::runtime_error("invalid syntax");
         }
-        else
+        catch(const std::exception& e)
         {
-            std::string rest(iter, end);
-            std::cout << "  error: invalid syntax\n";
+            std::cout << "  error: " << e.what() << '\n';
         }
     }
 }

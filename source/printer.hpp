@@ -10,7 +10,6 @@ struct printer
 	void operator()(char const &imaginary_) const;
 	void operator()(std::vector<std::vector<double>> const &matrix_) const;
 	void operator()(std::string const &variable_) const;
-	void operator()(ast::coef_variable const &coef_variable_) const;
 	void operator()(ast::assigned_function const &function_) const;
 	void operator()(ast::used_function const &function_) const;
 	void operator()(ast::operation const &x) const;

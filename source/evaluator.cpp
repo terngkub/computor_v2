@@ -96,6 +96,7 @@ expr evaluator::evaluate(ast::expression expression)
 
 		static std::map<std::string, std::function<expr(expr const &, expr const &)>> operation_map
 		{
+			{"", [](expr const & ret, expr const & rhs){ return ret * rhs; }},
 			{"+", [](expr const & ret, expr const & rhs){ return ret + rhs; }},
 			{"-", [](expr const & ret, expr const & rhs){ return ret - rhs; }},
 			{"*", [](expr const & ret, expr const & rhs){ return ret * rhs; }},

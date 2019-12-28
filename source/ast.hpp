@@ -12,12 +12,6 @@ namespace ast
 	struct parenthesis;
 	struct used_function;
 
-	struct coef_variable
-	{
-		double coef;
-		std::string variable_;
-	};
-
 	struct assigned_function
 	{
 		std::string function_;
@@ -99,7 +93,6 @@ namespace ast
 	};
 }
 
-BOOST_FUSION_ADAPT_STRUCT(ast::coef_variable, coef, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::used_function, function_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::assigned_function, function_, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::operation, operator_, operand_)

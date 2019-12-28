@@ -36,11 +36,6 @@ void printer::operator()(std::string const &variable_) const
 	std::cout << variable_;
 }
 
-void printer::operator()(ast::coef_variable const &coef_variable_) const
-{
-	std::cout << coef_variable_.coef << " * " << coef_variable_.variable_;
-}
-
 void printer::operator()(ast::assigned_function const &function_) const
 {
 	std::cout << function_.function_ << '(' << function_.variable_ << ')';
@@ -55,7 +50,7 @@ void printer::operator()(ast::used_function const &function_) const
 
 void printer::operator()(ast::operation const &x) const
 {
-	std::cout << x.operator_ << ' ';
+	std::cout << (x.operator_ == "" ? "*" : x.operator_) << ' ';
 	boost::apply_visitor(*this, x.operand_);
 }
 
