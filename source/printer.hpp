@@ -14,6 +14,7 @@ struct printer
 	void operator()(ast::used_function const &function_) const;
 	void operator()(ast::operation const &x) const;
 	void operator()(ast::parenthesis const &x) const;
+	void operator()(ast::negate const & x) const;
 	void operator()(ast::expression const &x) const;
 	void operator()(ast::variable_assignation const &x) const;
 	void operator()(ast::function_assignation const &x) const;

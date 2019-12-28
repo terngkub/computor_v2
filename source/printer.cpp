@@ -61,6 +61,12 @@ void printer::operator()(ast::parenthesis const &x) const
 	std::cout << ')';
 }
 
+void printer::operator()(ast::negate const & x) const
+{
+	std::cout << '-';
+	boost::apply_visitor(*this, x.operand_);
+}
+
 void printer::operator()(ast::expression const &x) const
 {
 	boost::apply_visitor(*this, x.first);

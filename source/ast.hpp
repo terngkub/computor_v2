@@ -11,6 +11,7 @@ namespace ast
 	struct expression;
 	struct parenthesis;
 	struct used_function;
+	struct negate;
 
 	struct assigned_function
 	{
@@ -26,6 +27,7 @@ namespace ast
 		, x3::forward_ast<expression>
 		, x3::forward_ast<parenthesis>
 		, x3::forward_ast<used_function>
+		, x3::forward_ast<negate>
 	>
 	{
 		using base_type::base_type;
@@ -55,6 +57,11 @@ namespace ast
 	{
 		std::string function_;
 		expression expression_;
+	};
+
+	struct negate
+	{
+		operand operand_;
 	};
 
 	struct variable_assignation
@@ -93,11 +100,13 @@ namespace ast
 	};
 }
 
-BOOST_FUSION_ADAPT_STRUCT(ast::used_function, function_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::assigned_function, function_, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::operation, operator_, operand_)
 BOOST_FUSION_ADAPT_STRUCT(ast::parenthesis, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::expression, first, rest)
+BOOST_FUSION_ADAPT_STRUCT(ast::used_function, function_, expression_)
+BOOST_FUSION_ADAPT_STRUCT(ast::negate, operand_)
+
 BOOST_FUSION_ADAPT_STRUCT(ast::variable_assignation, variable_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::function_assignation, function_, expression_)
 BOOST_FUSION_ADAPT_STRUCT(ast::value_resolution, expression_)

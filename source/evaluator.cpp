@@ -89,6 +89,7 @@ expr evaluator::create_expr(ast::operand const & operand)
 			return ret_expr;
 		},
 		[this](ast::parenthesis const & parenthesis) { return evaluate(parenthesis.expression_); },
+		[this](ast::negate const & negate) { return create_expr(negate.operand_) * expr{complex{-1}}; },
 		[this](ast::expression const & expression)	{ return evaluate(expression); }
 	}
 	, operand);
