@@ -49,8 +49,13 @@ std::string term::str() const
         complex c_coef = std::get<complex>(_coef);
         if (has_variable())
         {
-            if (std::get<complex>(_coef) != 1)
-                ss << c_coef;
+            if (c_coef != 1)
+            {
+                if (c_coef.real() != 0 && c_coef.imag() != 0)
+                    ss << '(' << c_coef << ')';
+                else
+                    ss << c_coef;
+            }
             ss << _variable;
         }
         else

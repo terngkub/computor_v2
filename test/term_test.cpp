@@ -18,9 +18,10 @@ BOOST_AUTO_TEST_CASE(tc_str)
     BOOST_TEST((term{matrix{}}.str() == "[]"));
     BOOST_TEST((term{matrix{2, 3, complex{3.14}}}.str() == "[[3.14, 3.14, 3.14]; [3.14, 3.14, 3.14]]"));
 
-    BOOST_TEST((term{"var"}.str() == "var"));
-    BOOST_TEST((term{complex{-1.23}, "var"}.str() == "-1.23var"));
-    BOOST_TEST((term{matrix{1, 2, complex{3.14}}, "var"}.str() == "[[3.14, 3.14]] * var"));
+    BOOST_TEST((term{"var"}.str()) == "var");
+    BOOST_TEST((term{complex{-1.23}, "var"}.str()) == "-1.23var");
+    BOOST_TEST((term{complex{-2, 3}, "var"}.str()) == "(-2 + 3i)var");
+    BOOST_TEST((term{matrix{1, 2, complex{3.14}}, "var"}.str()) == "[[3.14, 3.14]] * var");
 }
 
 complex c0{};
