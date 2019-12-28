@@ -69,9 +69,6 @@ std::string expr::variable() const
 		}
 	}
 
-	if (var == "")
-		throw std::runtime_error("get_variable: no variable in the expression");
-
 	return var;
 }
 

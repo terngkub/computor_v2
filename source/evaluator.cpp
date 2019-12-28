@@ -28,7 +28,14 @@ void evaluator::operator()(std::string x)
 
 void evaluator::operator()(ast::variable_assignation input)
 {
+	if (input.variable_ == "i")
+		throw std::runtime_error("can't use i as a variable name");
+
 	auto rhs = evaluate(input.expression_);
+
+	if (rhs.variable() != "")
+		throw std::runtime_error("assigned value contain unassigned variable(s)");
+
 	variable_map[input.variable_] = rhs;
 	std::cout << "  " << rhs << '\n';
 }

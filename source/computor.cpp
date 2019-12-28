@@ -1,7 +1,9 @@
 #include "ast.hpp"
 #include "computor.hpp"
 #include "parser.hpp"
+#include <algorithm>
 #include <iostream>
+#include <string>
 
 namespace computorv2
 {
@@ -15,6 +17,8 @@ void computor::operator()()
 
     while (std::cout << "> " && std::getline(std::cin, str))
     {
+        std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::tolower(c); });
+
         auto iter = str.cbegin();
         auto const end = str.cend();
         ast::input res;
