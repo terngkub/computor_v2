@@ -10,6 +10,7 @@ namespace grammar
 	using x3::double_;
 	using x3::string;
 	using x3::lexeme;
+	using x3::lit;
 	using x3::ascii::alpha;
 	using x3::ascii::alnum;
 	using x3::ascii::space;
@@ -58,7 +59,7 @@ namespace grammar
 	auto const power_def = coef >> *(string("^") >> coef);
 	auto const coef_def = all_factor >> *(string("") >> pos_factor);
 	auto const all_factor_def = factor | negate;
-	auto const pos_factor_def = factor;
+	auto const pos_factor_def = !lit('-') >> factor;
 	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix;
 	auto const negate_def = '-' >> all_factor;
 
