@@ -1,8 +1,8 @@
 #include "evaluator.hpp"
+#include "math.hpp"
 #include <iostream>
 #include <map>
 #include <functional>
-#include <cmath>
 
 namespace computorv2
 {
@@ -150,7 +150,7 @@ void evaluator::polynomial_resolution(expr const & equation) const
 	else if (max_degree == 2)
 		solve_polynomial(equation);
 	else if (max_degree == 0)
-		std::cout << "  x can be any numbers\n";
+		throw std::runtime_error("no variable in the equation");
 	else if (max_degree < 0)
 		throw std::runtime_error("polynomial with negative degree");
 	else
@@ -162,12 +162,6 @@ void evaluator::solve_equation(expr const & equation) const
 	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()) : complex{};
 	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()) : complex{};
 
-	if (c == 0)
-	{
-		std::cout << "  " << equation.variable() << " = 0\n";
-		return ;
-	}
-
 	auto result = -c / b;
 
 	std::cout << "  " << equation.variable() << " = " << result << '\n';
@@ -175,19 +169,18 @@ void evaluator::solve_equation(expr const & equation) const
 
 void evaluator::solve_polynomial(expr const & equation) const
 {
-	// TODO handle when b or c isn't in the map
-	// TODO handle complex
-	auto a = equation.term_map().find(2) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(2).coef()).real() : 0;
-	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()).real() : 0;
-	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()).real() : 0;
+	if (equation.term_map().find(2) == equation.term_map().cend())
+		throw std::runtime_error("can't find term with degree two");
 
-	// TODO handle negative b^2 - 4ac
+	auto a = std::get<complex>(equation.term_map().at(2).coef());
+	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()) : complex{};
+	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()) : complex{};
 
-	// TODO implement pow
-	auto result_one = (-b + pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
-	auto result_two = (-b - pow(pow(b, 2) - 4 * a * c, 0.5)) / (2 * a);
+	auto sqrt_part = complex_sqrt(b * b - 4 * a * c);
+	auto result_one = (-b + sqrt_part) / (2 * a);
+	auto result_two = (-b - sqrt_part) / (2 * a);
 
-	std::cout << equation.variable() << " = ";
+	std::cout << "  " << equation.variable() << " = ";
 	if (result_one == result_two)
 		std::cout << result_one << '\n';
 	else
