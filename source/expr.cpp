@@ -235,7 +235,13 @@ expr operator^(expr const & lhs, expr const & rhs)
 
 	if (deg == 0)
 	{
-		// TODO handle matrix
+		if (lhs.is_matrix())
+		{
+			auto m = std::get<matrix>(lhs.term_map().at(0).coef());
+			auto row_nb = m.row_nb();
+			auto col_nb = m.col_nb();
+			return expr{std::vector<std::vector<double>>(row_nb, std::vector<double>(col_nb, 1))};
+		}
 		return expr{complex{1, 0}};
 	}
 
