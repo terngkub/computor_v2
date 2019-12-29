@@ -28,7 +28,10 @@ void computor::operator()()
         try
         {
             if (r && iter == end)
-                evaluate(res);
+            {
+                auto str = evaluate(res);
+                std::cout << "  " << str << '\n';
+            }
             else
                 throw std::runtime_error("invalid syntax");
         }

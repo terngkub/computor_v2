@@ -8,16 +8,16 @@
 namespace computorv2
 {
 
-class evaluator : public boost::static_visitor<>
+class evaluator : public boost::static_visitor<std::string>
 {
 public:
 	// Function Object 
-	void operator()(ast::input x);
-	void operator()(std::string x);
-	void operator()(ast::variable_assignation x);
-	void operator()(ast::function_assignation x);
-	void operator()(ast::value_resolution x);
-	void operator()(ast::polynomial_resolution x);
+	std::string operator()(ast::input x);
+	std::string operator()(std::string x);
+	std::string operator()(ast::variable_assignation x);
+	std::string operator()(ast::function_assignation x);
+	std::string operator()(ast::value_resolution x);
+	std::string operator()(ast::polynomial_resolution x);
 
 private:
 	printer print;
@@ -32,9 +32,9 @@ private:
 	void print_variables() const;
 	void print_functions() const;
 
-	void polynomial_resolution(expr const & equation) const;
-	void solve_equation(expr const & equation) const;
-	void solve_polynomial(expr const & equation) const;
+	std::string polynomial_resolution(expr const & equation) const;
+	std::string solve_equation(expr const & equation) const;
+	std::string solve_polynomial(expr const & equation) const;
 };
 
 }

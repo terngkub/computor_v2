@@ -1,20 +1,21 @@
 #include "evaluator.hpp"
 #include "math.hpp"
+#include <functional>
 #include <iostream>
 #include <map>
-#include <functional>
+#include <sstream>
 
 namespace computorv2
 {
 
 // Function Object
 
-void evaluator::operator()(ast::input x)
+std::string evaluator::operator()(ast::input x)
 {
-	boost::apply_visitor(*this, x);
+	return boost::apply_visitor(*this, x);
 }
 
-void evaluator::operator()(std::string x)
+std::string evaluator::operator()(std::string x)
 {
 	if (x == "list_variables")
 		print_variables();
@@ -24,9 +25,10 @@ void evaluator::operator()(std::string x)
 		exit(EXIT_SUCCESS);
 	else
 		throw std::runtime_error("unknown command");
+	return "";
 }
 
-void evaluator::operator()(ast::variable_assignation input)
+std::string evaluator::operator()(ast::variable_assignation input)
 {
 	if (input.variable_ == "i")
 		throw std::runtime_error("can't use i as a variable name");
@@ -37,30 +39,33 @@ void evaluator::operator()(ast::variable_assignation input)
 		throw std::runtime_error("assigned value contain unassigned variable(s)");
 
 	variable_map[input.variable_] = rhs;
-	std::cout << "  " << rhs << '\n';
+
+	std::stringstream ss;
+	ss << rhs;
+	return ss.str();
 }
 
-void evaluator::operator()(ast::function_assignation input)
+std::string evaluator::operator()(ast::function_assignation input)
 {
 	// TODO check if function have extra unkown variable
 	function_map[input.function_.function_] = std::pair<std::string, ast::expression>{input.function_.variable_, input.expression_};
-	std::cout << "  ";
-	print(input.expression_);
-	std::cout << '\n';
+	return print(input.expression_);
 }
 
-void evaluator::operator()(ast::value_resolution x)
+std::string evaluator::operator()(ast::value_resolution x)
 {
 	auto ret = evaluate(x.expression_);
-	std::cout << "  " << ret << '\n';
+	std::stringstream ss;
+	ss << ret;
+	return ss.str();
 }
 
-void evaluator::operator()(ast::polynomial_resolution x)
+std::string evaluator::operator()(ast::polynomial_resolution x)
 {
 	auto left = evaluate(x.left_expression);
 	auto right = evaluate(x.right_expression);
 	auto equation = left - right;
-	polynomial_resolution(equation);
+	return polynomial_resolution(equation);
 }
 
 
@@ -142,32 +147,35 @@ void evaluator::print_functions() const
 
 // Polynomial resolution
 
-void evaluator::polynomial_resolution(expr const & equation) const
+std::string evaluator::polynomial_resolution(expr const & equation) const
 {
 	auto max_degree = equation.term_map().crbegin()->first;
 	if (max_degree == 1)
-		solve_equation(equation);
+		return solve_equation(equation);
 	else if (max_degree == 2)
-		solve_polynomial(equation);
+		return solve_polynomial(equation);
 	else if (max_degree == 0)
 		throw std::runtime_error("no variable in the equation");
 	else if (max_degree < 0)
 		throw std::runtime_error("polynomial with negative degree");
 	else
 		throw std::runtime_error("polynomial with degree more than two");
+	return "";
 }
 
-void evaluator::solve_equation(expr const & equation) const
+std::string evaluator::solve_equation(expr const & equation) const
 {
 	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()) : complex{};
 	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()) : complex{};
 
 	auto result = -c / b;
 
-	std::cout << "  " << equation.variable() << " = " << result << '\n';
+	std::stringstream ss;
+	ss << equation.variable() << " = " << result;
+	return ss.str();
 }
 
-void evaluator::solve_polynomial(expr const & equation) const
+std::string evaluator::solve_polynomial(expr const & equation) const
 {
 	if (equation.term_map().find(2) == equation.term_map().cend())
 		throw std::runtime_error("can't find term with degree two");
@@ -180,11 +188,13 @@ void evaluator::solve_polynomial(expr const & equation) const
 	auto result_one = (-b + sqrt_part) / (2 * a);
 	auto result_two = (-b - sqrt_part) / (2 * a);
 
-	std::cout << "  " << equation.variable() << " = ";
+	std::stringstream ss;
+	ss << equation.variable() << " = ";
 	if (result_one == result_two)
-		std::cout << result_one << '\n';
+		ss << result_one << '\n';
 	else
-		std::cout << result_one << ", " << result_two << '\n';
+		ss << result_one << ", " << result_two << '\n';
+	return ss.str();
 }
 
 }

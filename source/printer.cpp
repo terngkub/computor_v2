@@ -1,114 +1,128 @@
 #include "printer.hpp"
 #include <iostream>
+#include <sstream>
 
 namespace computorv2
 {
 
-void printer::operator()(double const &rational_) const
+std::string printer::operator()(double const & rational_) const
 {
-	std::cout << rational_;
+	std::stringstream ss;
+	ss << rational_;
+	return ss.str();
 }
 
-void printer::operator()(char const &imaginary_) const
+std::string printer::operator()(char const & imaginary_) const
 {
-	std::cout << imaginary_;
+	std::stringstream ss;
+	ss << imaginary_;
+	return ss.str();
 }
 
-void printer::operator()(std::vector<std::vector<double>> const &matrix_) const
+std::string printer::operator()(std::vector<std::vector<double>> const & matrix_) const
 {
+	std::stringstream ss;
 	for (auto itr = matrix_.begin(); itr < matrix_.end(); ++itr)
 	{
-		std::cout << '|';
+		ss << '|';
 		for (auto itc = itr->begin(); itc < itr->end(); ++itc)
 		{
-			std::cout << *itc;
+			ss << *itc;
 			if (itc != itr->end() - 1)
-				std::cout << ' ';
+				ss << ' ';
 		}
-		std::cout << '|';
+		ss << '|';
 		if (itr != matrix_.end() - 1)
-			std::cout << '\n';
+			ss << '\n';
 	}
+	return ss.str();
 }
 
-void printer::operator()(std::string const &variable_) const
+std::string printer::operator()(std::string const & variable_) const
 {
-	std::cout << variable_;
+	std::stringstream ss;
+	ss << variable_;
+	return ss.str();
 }
 
-void printer::operator()(ast::assigned_function const &function_) const
+std::string printer::operator()(ast::assigned_function const & function_) const
 {
-	std::cout << function_.function_ << '(' << function_.variable_ << ')';
+	std::stringstream ss;
+	ss << function_.function_ << '(' << function_.variable_ << ')';
+	return ss.str();
 }
 
-void printer::operator()(ast::used_function const &function_) const
+std::string printer::operator()(ast::used_function const & function_) const
 {
-	std::cout << function_.function_ << '(';
-	(*this)(function_.expression_);
-	 std::cout << ')';
+	std::stringstream ss;
+	ss << function_.function_ << '(' << (*this)(function_.expression_) << ')';
+	return ss.str();
 }
 
-void printer::operator()(ast::operation const &x) const
+std::string printer::operator()(ast::operation const & x) const
 {
-	std::cout << (x.operator_ == "" ? "*" : x.operator_) << ' ';
-	boost::apply_visitor(*this, x.operand_);
+	std::stringstream ss;
+	ss << (x.operator_ == "" ? "*" : x.operator_) << ' ';
+	ss << boost::apply_visitor(*this, x.operand_);
+	return ss.str();
 }
 
-void printer::operator()(ast::parenthesis const &x) const
+std::string printer::operator()(ast::parenthesis const & x) const
 {
-	std::cout << '(';
-	(*this)(x.expression_);
-	std::cout << ')';
+	std::stringstream ss;
+	ss << '(' << (*this)(x.expression_) << ')';
+	return ss.str();
 }
 
-void printer::operator()(ast::negate const & x) const
+std::string printer::operator()(ast::negate const & x) const
 {
-	std::cout << '-';
-	boost::apply_visitor(*this, x.operand_);
+	std::stringstream ss;
+	ss << '-' << boost::apply_visitor(*this, x.operand_);
+	return ss.str();
 }
 
-void printer::operator()(ast::expression const &x) const
+std::string printer::operator()(ast::expression const & x) const
 {
-	boost::apply_visitor(*this, x.first);
+	std::stringstream ss;
+	ss << boost::apply_visitor(*this, x.first);
 	for (auto const &oper : x.rest)
-	{
-		std::cout << ' ';
-		(*this)(oper);
-	}
+		ss << ' ' << (*this)(oper);
+	return ss.str();
 }
 
-void printer::operator()(ast::variable_assignation const &x) const
+std::string printer::operator()(ast::variable_assignation const &x) const
 {
-	(*this)(x.variable_);
-	std::cout << " = ";
-	(*this)(x.expression_);
+	std::stringstream ss;
+	ss << (*this)(x.variable_) << " = " << (*this)(x.expression_);
+	return ss.str();
 }
 
-void printer::operator()(ast::function_assignation const &x) const
+std::string printer::operator()(ast::function_assignation const & x) const
 {
-	(*this)(x.function_);
-	std::cout << " = ";
-	(*this)(x.expression_);
+	std::stringstream ss;
+	ss << (*this)(x.function_) << " = " << (*this)(x.expression_);
+	return ss.str();
 }
 
-void printer::operator()(ast::value_resolution const &x) const
+std::string printer::operator()(ast::value_resolution const & x) const
 {
-	(*this)(x.expression_);
-	std::cout << " = ?";
+	std::stringstream ss;
+	ss << (*this)(x.expression_) << " = ?";
+	return ss.str();
 }
 
-void printer::operator()(ast::polynomial_resolution const &x) const
+std::string printer::operator()(ast::polynomial_resolution const & x) const
 {
-	(*this)(x.left_expression);
-	std::cout << " = ";
-	(*this)(x.right_expression);
-	std::cout << " ?";
+	std::stringstream ss;
+	ss << (*this)(x.left_expression) << " = " << (*this)(x.right_expression) << " ?";
+	return ss.str();
 }
 
-void printer::operator()(ast::input const &input_) const
+std::string printer::operator()(ast::input const & input_) const
 {
-	boost::apply_visitor(*this, input_);
-	std::cout << std::endl;
+	std::stringstream ss;
+	ss << boost::apply_visitor(*this, input_) << std::endl;
+	return ss.str();
 }
 
 } // namespace computor
