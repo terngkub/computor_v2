@@ -3,7 +3,7 @@
 #include "expr.hpp"
 #include "printer.hpp"
 #include "utils.hpp"
-#include <unordered_map>
+#include <map>
 
 namespace computorv2
 {
@@ -23,14 +23,14 @@ private:
 	printer print;
 
 	// Private attributes
-	std::unordered_map<std::string, expr> variable_map;
-	std::unordered_map<std::string, std::pair<std::string, ast::expression>> function_map;
+	std::map<std::string, expr> variable_map;
+	std::map<std::string, std::pair<std::string, ast::expression>> function_map;
 
 	// Private Methods
 	expr create_expr(ast::operand const & operand);
 	expr evaluate(ast::expression expression);
-	void print_variables() const;
-	void print_functions() const;
+	std::string print_variables() const;
+	std::string print_functions() const;
 
 	std::string polynomial_resolution(expr const & equation) const;
 	std::string solve_equation(expr const & equation) const;

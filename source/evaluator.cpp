@@ -2,7 +2,6 @@
 #include "math.hpp"
 #include <functional>
 #include <iostream>
-#include <map>
 #include <sstream>
 
 namespace computorv2
@@ -18,14 +17,12 @@ std::string evaluator::operator()(ast::input x)
 std::string evaluator::operator()(std::string x)
 {
 	if (x == "list_variables")
-		print_variables();
+		return print_variables();
 	else if (x == "list_functions")
-		print_functions();
+		return print_functions();
 	else if (x == "exit")
 		exit(EXIT_SUCCESS);
-	else
-		throw std::runtime_error("unknown command");
-	return "";
+	throw std::runtime_error("unknown command");
 }
 
 std::string evaluator::operator()(ast::variable_assignation input)
@@ -125,23 +122,38 @@ expr evaluator::evaluate(ast::expression expression)
 	return ret;
 }
 
-void evaluator::print_variables() const
+std::string evaluator::print_variables() const
 {
-	for (auto const & elem : variable_map)
+	if (variable_map.size() == 0)
+		return "no assigned variable";
+
+	std::stringstream ss;
+	for (auto it = variable_map.cbegin(); it != variable_map.cend(); ++it)
 	{
-		std::cout << "  " << elem.first << " = " << elem.second << '\n';
+		if (it != variable_map.cbegin())
+			ss << "  ";
+		ss << it->first << " = " << it->second;
+		if (it != --variable_map.cend())
+			ss << '\n';
 	}
+	return ss.str();
 }
 
-void evaluator::print_functions() const
+std::string evaluator::print_functions() const
 {
-	std::cout << "  under construction\n";
-	for (auto const & elem :function_map)
+	if (function_map.size() == 0)
+		return "no assigned function";
+
+	std::stringstream ss;
+	for (auto it = function_map.cbegin(); it != function_map.cend(); ++it)
 	{
-		std::cout << elem.first << "(" << elem.second.first << ") = ";
-		print(elem.second.second);
-		std::cout << '\n';
+		if (it != function_map.cbegin())
+			ss << "  ";
+		ss << it->first << "(" << it->second.first << ") = " << print(it->second.second);
+		if (it != --function_map.cend())
+			ss << '\n';
 	}
+	return ss.str();
 }
 
 
@@ -191,9 +203,9 @@ std::string evaluator::solve_polynomial(expr const & equation) const
 	std::stringstream ss;
 	ss << equation.variable() << " = ";
 	if (result_one == result_two)
-		ss << result_one << '\n';
+		ss << result_one;
 	else
-		ss << result_one << ", " << result_two << '\n';
+		ss << result_one << ", " << result_two;
 	return ss.str();
 }
 

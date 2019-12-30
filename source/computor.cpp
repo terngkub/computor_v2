@@ -30,7 +30,7 @@ void computor::operator()()
             if (r && iter == end)
             {
                 auto str = evaluate(res);
-                std::cout << "  " << str << '\n';
+                std::cout << "  " << str << "\n\n";
             }
             else
                 throw std::runtime_error("invalid syntax");

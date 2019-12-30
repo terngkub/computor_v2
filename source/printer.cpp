@@ -22,19 +22,29 @@ std::string printer::operator()(char const & imaginary_) const
 std::string printer::operator()(std::vector<std::vector<double>> const & matrix_) const
 {
 	std::stringstream ss;
-	for (auto itr = matrix_.begin(); itr < matrix_.end(); ++itr)
+
+	ss << '[';
+
+	for (auto rit = matrix_.cbegin(); rit < matrix_.cend(); ++rit)
 	{
-		ss << '|';
-		for (auto itc = itr->begin(); itc < itr->end(); ++itc)
+		ss << '[';
+
+		for (auto cit = rit->cbegin(); cit < rit->cend(); ++cit)
 		{
-			ss << *itc;
-			if (itc != itr->end() - 1)
-				ss << ' ';
+			ss << *cit;
+
+			if (cit != rit->cend() - 1)
+				ss << ", ";
 		}
-		ss << '|';
-		if (itr != matrix_.end() - 1)
-			ss << '\n';
+
+		ss << ']';
+
+		if (rit != matrix_.cend() - 1)
+			ss << "; ";
 	}
+
+	ss << ']';
+
 	return ss.str();
 }
 
