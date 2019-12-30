@@ -9,9 +9,14 @@ namespace computorv2
 
 // Function Object
 
-std::string evaluator::operator()(ast::input x)
+std::string evaluator::operator()(ast::input inp, std::string str)
 {
-	return boost::apply_visitor(*this, x);
+	auto ret = boost::apply_visitor(*this, inp);
+	if (boost::get<std::string>(&inp) == nullptr)
+	{
+		history_list.push_back("> " + str + "\n    " + ret);
+	}
+	return ret; 
 }
 
 std::string evaluator::operator()(std::string x)
@@ -20,6 +25,8 @@ std::string evaluator::operator()(std::string x)
 		return print_variables();
 	else if (x == "list_functions")
 		return print_functions();
+	else if (x == "history")
+		return print_history();
 	else if (x == "exit")
 		exit(EXIT_SUCCESS);
 	throw std::runtime_error("unknown command");
@@ -139,8 +146,7 @@ std::string evaluator::print_variables() const
 	return ss.str();
 }
 
-std::string evaluator::print_functions() const
-{
+std::string evaluator::print_functions() const {
 	if (function_map.size() == 0)
 		return "no assigned function";
 
@@ -151,6 +157,23 @@ std::string evaluator::print_functions() const
 			ss << "  ";
 		ss << it->first << "(" << it->second.first << ") = " << print(it->second.second);
 		if (it != --function_map.cend())
+			ss << '\n';
+	}
+	return ss.str();
+}
+
+std::string evaluator::print_history() const
+{
+	if (history_list.size() == 0)
+		return "no history";
+
+	std::stringstream ss;
+	for (auto it = history_list.cbegin(); it != history_list.cend(); ++it)
+	{
+		if (it != history_list.cbegin())
+			ss << "  ";
+		ss << *it;
+		if (it != --history_list.cend())
 			ss << '\n';
 	}
 	return ss.str();

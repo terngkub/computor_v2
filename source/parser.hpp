@@ -67,7 +67,7 @@ namespace grammar
 	auto const function_assignation_def = assigned_function >> '=' >> expression;
 	auto const value_resolution_def = expression >> '=' >> '?';
 	auto const polynomial_resolution_def = expression >> '=' >> expression >> '?';
-	auto const command_def = string("list_variables") | string("list_functions") | string("exit");
+	auto const command_def = string("list_variables") | string("list_functions") | string("history") | string("exit");
 	auto const input_def = command | polynomial_resolution | variable_assignation | function_assignation | value_resolution;
 
 	BOOST_SPIRIT_DEFINE(rational);
