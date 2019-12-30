@@ -20,12 +20,10 @@ std::string get_result(std::vector<std::string> v)
     return result_str;
 }
 
-BOOST_AUTO_TEST_SUITE(ts_value_resolution)
+BOOST_AUTO_TEST_SUITE(ts_correction)
 
-BOOST_AUTO_TEST_CASE(tc_correction)
+BOOST_AUTO_TEST_CASE(tc_assignation)
 {
-    // Partie assignation
-
     // Test erreur élémentaire
     BOOST_CHECK_THROW(get_result({"x == 2"}), std::runtime_error);
     BOOST_CHECK_THROW(get_result({"x = 23edd23-+-+"}), std::runtime_error);
@@ -55,9 +53,10 @@ BOOST_AUTO_TEST_CASE(tc_correction)
     // Test valide avancé
     BOOST_TEST(get_result({"x = 2", "y = x * [[4,2]]", "f(z) = z * y", "f(z) = ?"}) == "[[8, 4]] * z");
     BOOST_TEST(get_result({"x = 2", "f(x) = x * 5", "f(x) = ?"}) == "10");
+}
 
-    // Partie calculatoire
-
+BOOST_AUTO_TEST_CASE(tc_calculatoire)
+{
     // Test valide élémentaire
     BOOST_TEST(get_result({"2 + 2 = ?"}) == "4");
     BOOST_TEST(get_result({"3 * 4 = ?"}) == "12");
@@ -76,6 +75,27 @@ BOOST_AUTO_TEST_CASE(tc_correction)
     BOOST_TEST(get_result({"f(x) = 2*x*i", "f(2) = ?"}) == "4i");
 }
 
+BOOST_AUTO_TEST_SUITE_END() // ts_correction
+
+
+BOOST_AUTO_TEST_SUITE(ts_value_resolution)
+
+BOOST_AUTO_TEST_CASE(tc_basic)
+{
+    BOOST_TEST(true);
+}
+
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
+
+
+BOOST_AUTO_TEST_SUITE(ts_polynomial_resolution)
+
+BOOST_AUTO_TEST_CASE(tc_basic)
+{
+    BOOST_TEST(true);
+}
+
+BOOST_AUTO_TEST_SUITE_END() // ts_polynomial_resolution
+
 
 BOOST_AUTO_TEST_SUITE_END() // ts_evaluator
