@@ -37,7 +37,7 @@ void computor::operator()()
         }
         catch(const std::exception& e)
         {
-            std::cout << "  error: " << e.what() << '\n';
+            std::cout << "  error: " << e.what() << "\n\n";
         }
     }
 }
