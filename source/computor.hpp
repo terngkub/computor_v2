@@ -1,5 +1,4 @@
 #pragma once
-#include <unordered_map>
 #include "ast.hpp"
 #include "evaluator.hpp"
 #include "printer.hpp"
