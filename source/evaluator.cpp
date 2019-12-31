@@ -40,7 +40,7 @@ std::string evaluator::operator()(ast::variable_assignation input)
 	auto rhs = evaluate(input.expression_);
 
 	if (rhs.variable() != "")
-		throw std::runtime_error("assigned value contain unassigned variable(s)");
+		throw std::runtime_error("the expression contains unassigned variable");
 
 	variable_map[input.variable_] = rhs;
 
@@ -51,8 +51,9 @@ std::string evaluator::operator()(ast::variable_assignation input)
 
 std::string evaluator::operator()(ast::function_assignation input)
 {
-	// TODO check if function have extra unkown variable
-	function_map[input.function_.function_] = std::pair<std::string, ast::expression>{input.function_.variable_, input.expression_};
+	evaluator::function_checker{input.function_.function_, input.function_.variable_, variable_map, function_map}(input.expression_);
+
+	function_map[input.function_.function_] = {input.function_.variable_, input.expression_, variable_map, function_map};
 	return print(input.expression_);
 }
 
@@ -83,17 +84,29 @@ expr evaluator::create_expr(ast::operand const & operand)
 		[this](char const & imaginary)	{ return expr{complex{0, 1}}; },
 		[this](std::vector<std::vector<double>> const & matrix)		{ return expr{matrix}; },
 		[this](std::string const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
-		[this](ast::used_function const & function)
+		[this](ast::used_function const & input_function)
 		{
-			auto it = function_map.find(function.function_);
+			auto it = function_map.find(input_function.function_);
 			if (it == function_map.end())
-				throw std::runtime_error("unknown function");
+				throw std::runtime_error("the expression contains undefined function");
 
-			expr input_expr = evaluate(function.expression_);
+			function stored_function = it->second;
 
-			variable_map[it->second.first] = input_expr;
-			expr ret_expr = evaluate(it->second.second);
-			variable_map.erase(it->first);
+			expr input_expr = evaluate(input_function.expression_);
+
+			// swap maps
+			auto tmp_variable_map = variable_map;
+			auto tmp_function_map = function_map;
+			variable_map = stored_function.variable_map;
+			function_map = stored_function.function_map;
+
+			variable_map[stored_function.param] = input_expr;
+			expr ret_expr = evaluate(stored_function.tree);
+			variable_map.erase(input_function.function_);
+
+			// swap maps back
+			variable_map = tmp_variable_map;
+			function_map = tmp_function_map;
 
 			return ret_expr;
 		},
@@ -129,6 +142,71 @@ expr evaluator::evaluate(ast::expression expression)
 	return ret;
 }
 
+
+// function_checker
+
+void evaluator::function_checker::operator()(ast::expression const & x)
+{
+	(*this)(x.first);
+	for (auto op : x.rest)
+		(*this)(op.operand_);
+}
+
+void evaluator::function_checker::operator()(ast::operand const & x)
+{
+	boost::apply_visitor(*this, x);
+}
+
+void evaluator::function_checker::operator()(double x)
+{
+	// do nothing
+}
+
+void evaluator::function_checker::operator()(char x)
+{
+	// do nothing
+}
+
+void evaluator::function_checker::operator()(std::string const & x)
+{
+	if (x == _parameter)
+		return ;
+	
+	auto var = variable_map.find(x);
+
+	if (var == variable_map.end())
+		throw std::runtime_error("the expression contain unassigned variable");
+}
+
+void evaluator::function_checker::operator()(std::vector<std::vector<double>> const & x)
+{
+	// do nothing
+}
+
+void evaluator::function_checker::operator()(ast::parenthesis const & x)
+{
+	(*this)(x.expression_);
+}
+
+void evaluator::function_checker::operator()(ast::used_function const & x)
+{
+	if (x.function_ == _function_name)
+		throw std::runtime_error("the expression contains defining function");
+
+	if (function_map.find(x.function_) == function_map.end())
+		throw std::runtime_error("the expression contains undefined function");
+
+	(*this)(x.expression_);
+}
+
+void evaluator::function_checker::operator()(ast::negate const & x)
+{
+	(*this)(x.operand_);
+}
+
+
+// Commands
+
 std::string evaluator::print_variables() const
 {
 	if (variable_map.size() == 0)
@@ -155,7 +233,7 @@ std::string evaluator::print_functions() const {
 	{
 		if (it != function_map.cbegin())
 			ss << "  ";
-		ss << it->first << "(" << it->second.first << ") = " << print(it->second.second);
+		ss << it->first << "(" << it->second.param << ") = " << print(it->second.tree);
 		if (it != --function_map.cend())
 			ss << '\n';
 	}

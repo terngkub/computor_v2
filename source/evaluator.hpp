@@ -21,11 +21,39 @@ public:
 	std::string operator()(ast::polynomial_resolution x);
 
 private:
+
+	struct function
+	{
+		std::string param;
+		ast::expression tree;
+		std::map<std::string, expr> variable_map;
+		std::map<std::string, function> function_map;
+	};
+
+	struct function_checker
+	{
+		std::string const & _function_name;
+		std::string const & _parameter;
+		std::map<std::string, expr> const & variable_map;
+		std::map<std::string, function> const & function_map;
+
+		void operator()(ast::expression const &);
+		void operator()(ast::operation const &);
+		void operator()(ast::operand const &);
+		void operator()(double);
+		void operator()(char);
+		void operator()(std::string const &);
+		void operator()(std::vector<std::vector<double>> const &);
+		void operator()(ast::parenthesis const &);
+		void operator()(ast::used_function const &);
+		void operator()(ast::negate const &);
+	};
+	
 	printer print;
 
 	// Private attributes
 	std::map<std::string, expr> variable_map;
-	std::map<std::string, std::pair<std::string, ast::expression>> function_map;
+	std::map<std::string, function> function_map;
 	std::vector<std::string> history_list;
 
 	// Private Methods
