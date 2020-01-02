@@ -54,7 +54,7 @@ std::string evaluator::operator()(ast::function_assignation input)
 	evaluator::function_checker{input.function_.function_, input.function_.variable_, variable_map, function_map}(input.expression_);
 
 	function_map[input.function_.function_] = {input.function_.variable_, input.expression_, variable_map, function_map};
-	return print(input.expression_);
+	return printer{function_map}(input.expression_);
 }
 
 std::string evaluator::operator()(ast::value_resolution x)
@@ -233,7 +233,7 @@ std::string evaluator::print_functions() const {
 	{
 		if (it != function_map.cbegin())
 			ss << "  ";
-		ss << it->first << "(" << it->second.param << ") = " << print(it->second.tree);
+		ss << it->first << "(" << it->second.param << ") = " << printer{it->second.function_map}(it->second.tree);
 		if (it != --function_map.cend())
 			ss << '\n';
 	}

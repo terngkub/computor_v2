@@ -5,6 +5,10 @@
 namespace computorv2
 {
 
+printer::printer(std::map<std::string, function> const & function_map)
+	: _function_map(function_map)
+{}
+
 std::string printer::operator()(double const & rational_) const
 {
 	std::stringstream ss;
@@ -64,8 +68,12 @@ std::string printer::operator()(ast::assigned_function const & function_) const
 
 std::string printer::operator()(ast::used_function const & function_) const
 {
+	auto it = _function_map.find(function_.function_);
+	if (it == _function_map.end())
+		throw std::runtime_error("call to undefined function");
+
 	std::stringstream ss;
-	ss << function_.function_ << '(' << (*this)(function_.expression_) << ')';
+	ss << '(' << printer{it->second.function_map}(it->second.tree) << ')';
 	return ss.str();
 }
 

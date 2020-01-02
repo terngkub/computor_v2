@@ -1,11 +1,18 @@
 #pragma once
 #include "ast.hpp"
+#include "function.hpp"
+#include <map>
 
 namespace computorv2
 {
 
-struct printer : public boost::static_visitor<std::string>
+class printer : public boost::static_visitor<std::string>
 {
+	std::map<std::string, function> const & _function_map;
+
+public:
+	printer(std::map<std::string, function> const & function_map);
+
 	std::string operator()(double const &rational_) const;
 	std::string operator()(char const &imaginary_) const;
 	std::string operator()(std::vector<std::vector<double>> const &matrix_) const;

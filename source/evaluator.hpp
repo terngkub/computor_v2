@@ -1,6 +1,7 @@
 #pragma once
 #include "ast.hpp"
 #include "expr.hpp"
+#include "function.hpp"
 #include "printer.hpp"
 #include "utils.hpp"
 #include <map>
@@ -22,13 +23,6 @@ public:
 
 private:
 
-	struct function
-	{
-		std::string param;
-		ast::expression tree;
-		std::map<std::string, expr> variable_map;
-		std::map<std::string, function> function_map;
-	};
 
 	struct function_checker
 	{
@@ -49,7 +43,6 @@ private:
 		void operator()(ast::negate const &);
 	};
 	
-	printer print;
 
 	// Private attributes
 	std::map<std::string, expr> variable_map;
