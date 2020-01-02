@@ -18,7 +18,7 @@ public:
 	// Constructors and Destructor
 	expr();
 	expr(complex nb);
-	expr(std::vector<std::vector<double>> matrix);
+	expr(std::vector<std::vector<complex>> matrix);
 	expr(std::string variable);
 	expr(term t);
 	expr(std::map<int, term> && tm);

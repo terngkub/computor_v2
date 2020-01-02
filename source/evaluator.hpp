@@ -30,6 +30,7 @@ private:
 		std::string const & _parameter;
 		std::map<std::string, expr> const & variable_map;
 		std::map<std::string, function> const & function_map;
+		bool _checking_matrix;
 
 		void operator()(ast::expression const &);
 		void operator()(ast::operation const &);
@@ -37,7 +38,7 @@ private:
 		void operator()(double);
 		void operator()(char);
 		void operator()(std::string const &);
-		void operator()(std::vector<std::vector<double>> const &);
+		void operator()(std::vector<std::vector<ast::expression>> const &);
 		void operator()(ast::parenthesis const &);
 		void operator()(ast::used_function const &);
 		void operator()(ast::negate const &);

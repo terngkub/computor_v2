@@ -25,22 +25,16 @@ matrix::matrix(size_t row_nb, size_t col_nb, complex const & value)
 	, _values(row_nb, std::vector<complex>(col_nb, complex{value}))
 {}
 
-matrix::matrix(std::vector<std::vector<double>> const & double_matrix)
-	: _row_nb{double_matrix.size()}
-	, _col_nb{_row_nb > 0 ? double_matrix[0].size() : 0}
-	, _values{}
+// MATRIX fix this
+matrix::matrix(std::vector<std::vector<complex>> const & complex_matrix)
+	: _row_nb{complex_matrix.size()}
+	, _col_nb{_row_nb > 0 ? complex_matrix[0].size() : 0}
+	, _values{complex_matrix}
 {
-	for (auto const & row : double_matrix)
+	for (auto const & row : complex_matrix)
 	{
 		if (row.size() != _col_nb)
 			throw std::runtime_error("matrix doesn't contain the same column numbers for each rows");
-
-		_values.push_back(std::vector<complex>{});
-		auto current_row = _values.end() - 1;
-		for (auto const & col : row)
-		{
-			current_row->emplace_back(col, 0);
-		}
 	}
 }
 

@@ -21,7 +21,7 @@ expr::expr(complex nb)
 	_term_map[0] = term{nb};
 }
 
-expr::expr(std::vector<std::vector<double>> matrix)
+expr::expr(std::vector<std::vector<complex>> matrix)
 : _term_map{}
 {
 	_term_map[0] = term{matrix};
@@ -240,7 +240,7 @@ expr operator^(expr const & lhs, expr const & rhs)
 			auto m = std::get<matrix>(lhs.term_map().at(0).coef());
 			auto row_nb = m.row_nb();
 			auto col_nb = m.col_nb();
-			return expr{std::vector<std::vector<double>>(row_nb, std::vector<double>(col_nb, 1))};
+			return expr{std::vector<std::vector<complex>>(row_nb, std::vector<complex>(col_nb, 1))};
 		}
 		return expr{complex{1, 0}};
 	}

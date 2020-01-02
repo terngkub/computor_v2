@@ -82,7 +82,38 @@ expr evaluator::create_expr(ast::operand const & operand)
 	{
 		[this](double const & rational)	{ return expr{complex{rational, 0}}; },
 		[this](char const & imaginary)	{ return expr{complex{0, 1}}; },
-		[this](std::vector<std::vector<double>> const & matrix)		{ return expr{matrix}; },
+		[this](std::vector<std::vector<ast::expression>> const & input_matrix)
+		{
+			auto row_nb = input_matrix.size();
+			if (row_nb <= 0)
+				throw std::runtime_error("matrix row is zero");
+
+			auto col_nb = input_matrix[0].size();
+			if (col_nb <= 0)
+				throw std::runtime_error("matrix col is zero");
+
+			std::vector<std::vector<complex>> complex_matrix(row_nb, std::vector<complex>(col_nb, complex{}));
+
+			for (auto ri = 0; ri < row_nb; ++ri)
+			{
+				if (input_matrix[ri].size() != col_nb)
+					throw std::runtime_error("matrix don't have consistent column number");
+
+				for (auto ci = 0; ci < col_nb; ++ci)
+				{
+					auto elem_expr = evaluate(input_matrix[ri][ci]);
+
+					if (elem_expr.variable() != "")
+						throw std::runtime_error("unassigned variable in matrix");
+
+					if (elem_expr.is_matrix())
+						throw std::runtime_error("matrix inside matrix");
+
+					complex_matrix[ri][ci] = std::get<complex>(elem_expr.term_map().at(0).coef());
+				}
+			}
+			return expr{complex_matrix};
+		},
 		[this](std::string const & variable)	{ return variable_map.find(variable) != variable_map.end() ? variable_map[variable] : expr{variable}; },
 		[this](ast::used_function const & input_function)
 		{
@@ -178,9 +209,20 @@ void evaluator::function_checker::operator()(std::string const & x)
 		throw std::runtime_error("the expression contain unassigned variable");
 }
 
-void evaluator::function_checker::operator()(std::vector<std::vector<double>> const & x)
+void evaluator::function_checker::operator()(std::vector<std::vector<ast::expression>> const & x)
 {
-	// do nothing
+	if (_checking_matrix)
+		throw std::runtime_error("matrix inside matrix");
+
+	_checking_matrix = true;
+	for (auto const & row : x)
+	{
+		for (auto const & elem : row)
+		{
+			(*this)(elem);
+		}
+	}
+	_checking_matrix = false;
 }
 
 void evaluator::function_checker::operator()(ast::parenthesis const & x)

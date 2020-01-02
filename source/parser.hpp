@@ -17,8 +17,8 @@ namespace grammar
 
 	x3::rule<class rational, double> const rational("rational");
 	x3::rule<class imaginary, char> const imaginary("imaginary");
-	x3::rule<class matrix, std::vector<std::vector<double>>> const matrix("matrix");
-	x3::rule<class matrix_row, std::vector<double>> const matrix_row("matrix_row");
+	x3::rule<class matrix, std::vector<std::vector<ast::expression>>> const matrix("matrix");
+	x3::rule<class matrix_row, std::vector<ast::expression>> const matrix_row("matrix_row");
 
 	x3::rule<class name, std::string> const name("name");
 	x3::rule<class variable, std::string> const variable("variable");
@@ -45,8 +45,9 @@ namespace grammar
 
 	auto const rational_def = double_;
 	auto const imaginary_def = char_('i') | char_('I');
+
 	auto const matrix_def = '[' >> matrix_row % ';' >> ']';
-	auto const matrix_row_def = '[' >> double_ % ',' >> ']';
+	auto const matrix_row_def = '[' >> expression % ',' >> ']';
 
 	auto const name_def = alpha >> *(alnum);
 	auto const variable_def = name;

@@ -15,7 +15,7 @@ public:
 
 	std::string operator()(double const &rational_) const;
 	std::string operator()(char const &imaginary_) const;
-	std::string operator()(std::vector<std::vector<double>> const &matrix_) const;
+	std::string operator()(std::vector<std::vector<ast::expression>> const &matrix_) const;
 	std::string operator()(std::string const &variable_) const;
 	std::string operator()(ast::assigned_function const &function_) const;
 	std::string operator()(ast::used_function const &function_) const;

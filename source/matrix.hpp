@@ -18,7 +18,7 @@ public:
 	matrix();
 	matrix(size_t row_nb, size_t col_nb);
 	matrix(size_t row_nb, size_t col_nb, complex const & value);
-	matrix(std::vector<std::vector<double>> const & values);
+	matrix(std::vector<std::vector<complex>> const & values);
 	matrix(std::vector<std::vector<complex>> && mt);
 	~matrix() = default;
 

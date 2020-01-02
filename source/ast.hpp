@@ -24,7 +24,7 @@ namespace ast
 		double
 		, char
 		, std::string
-		, std::vector<std::vector<double>>
+		, x3::forward_ast<std::vector<std::vector<expression>>>
 		, x3::forward_ast<expression>
 		, x3::forward_ast<parenthesis>
 		, x3::forward_ast<used_function>

@@ -30,9 +30,10 @@ cd ..
 ./bin/computorv2
 ```
 
-## Features
+## Inputs
 * Commands
-    * list variables - list all the assigned variables
+    * list_variables - list all the assigned variables
+    * list_functions - list all the assigned variables
     * exit - exit the program
 * Expression evaluation
     ```
@@ -56,5 +57,13 @@ cd ..
     * If the variable is already assigned, this command will reassign it with the new value;
 * Function assignation
     ```
-    function = expression
+    function_name(parameter) = expression
     ```
+
+
+## Bonuses
+* list_variables and list_functions
+* history
+* function composition
+* parenthesis multiplication
+* matrix can contain expression

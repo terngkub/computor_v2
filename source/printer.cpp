@@ -23,7 +23,7 @@ std::string printer::operator()(char const & imaginary_) const
 	return ss.str();
 }
 
-std::string printer::operator()(std::vector<std::vector<double>> const & matrix_) const
+std::string printer::operator()(std::vector<std::vector<ast::expression>> const & matrix_) const
 {
 	std::stringstream ss;
 
@@ -35,7 +35,7 @@ std::string printer::operator()(std::vector<std::vector<double>> const & matrix_
 
 		for (auto cit = rit->cbegin(); cit < rit->cend(); ++cit)
 		{
-			ss << *cit;
+			ss << (*this)(*cit);
 
 			if (cit != rit->cend() - 1)
 				ss << ", ";
