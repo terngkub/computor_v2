@@ -44,7 +44,7 @@ namespace grammar
 
 
 	auto const rational_def = double_;
-	auto const imaginary_def = char_('i') | char_('I');
+	auto const imaginary_def = !lit("ii") >> (char_('i') | char_('I'));
 
 	auto const matrix_def = '[' >> matrix_row % ';' >> ']';
 	auto const matrix_row_def = '[' >> expression % ',' >> ']';

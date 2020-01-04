@@ -80,9 +80,29 @@ BOOST_AUTO_TEST_SUITE_END() // ts_correction
 
 BOOST_AUTO_TEST_SUITE(ts_value_resolution)
 
-BOOST_AUTO_TEST_CASE(tc_basic)
+BOOST_AUTO_TEST_CASE(tc_complex)
 {
-    BOOST_TEST(true);
+    BOOST_TEST(get_result({"3 + 4i = ?"}) == "3 + 4i");
+    BOOST_TEST(get_result({"(3 + 4i) * (5 + 6i) = ?"}) == "-9 + 38i");
+
+
+}
+
+BOOST_AUTO_TEST_CASE(tc_variable)
+{
+    BOOST_TEST(get_result({"2I = ?"}) == "2i");
+
+    BOOST_TEST(get_result({"ii = 3", "ii = ?"}) == "3");
+    BOOST_TEST(get_result({"iI = 3", "ii = ?"}) == "3");
+
+    BOOST_TEST(get_result({"ii = ?"}) == "ii");
+    BOOST_TEST(get_result({"iI = ?"}) == "ii");
+
+    BOOST_TEST(get_result({"varA = 3", "varA = ?"}) == "3");
+    BOOST_TEST(get_result({"varA = 3", "vara = ?"}) == "3");
+
+    BOOST_TEST(get_result({"xx = 3", "xx = ?"}) == "3");
+    BOOST_TEST(get_result({"xx = ?"}) == "xx");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
