@@ -3,7 +3,7 @@
 
 using matrix = computorv2::matrix;
 using complex = computorv2::complex;
-using vvd = std::vector<std::vector<double>>;
+using vvd = std::vector<std::vector<complex>>;
 
 BOOST_AUTO_TEST_SUITE(ts_matrix)
 
