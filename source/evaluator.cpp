@@ -21,6 +21,8 @@ std::string evaluator::operator()(ast::input inp, std::string str)
 
 std::string evaluator::operator()(std::string x)
 {
+	if (x == "help")
+		return print_help();
 	if (x == "list_variables")
 		return print_variables();
 	else if (x == "list_functions")
@@ -29,6 +31,7 @@ std::string evaluator::operator()(std::string x)
 		return print_history();
 	else if (x == "exit")
 		exit(EXIT_SUCCESS);
+
 	throw std::runtime_error("unknown command");
 }
 
@@ -248,6 +251,32 @@ void evaluator::function_checker::operator()(ast::negate const & x)
 
 
 // Commands
+
+std::string evaluator::print_help() const
+{
+	std::string message{
+		"Valid Inputs:\n\n"
+
+		"  Value Resolution\n"
+		"    expression = ?\n\n"
+
+		"  Polynomial Resolution\n"
+		"    expression = expression ?\n\n"
+
+		"  Variable Assignation\n"
+		"    variable = expression\n\n"
+
+		"  Function Definition\n"
+		"    function(variable) = expression\n\n"
+
+		"  Commands\n"
+		"    list_variables - list assigned variables\n"
+		"    list_functions - list defined functions\n"
+		"    history        - show history of inputs and results\n"
+		"    exit           - exit the program"
+	};
+	return message;
+}
 
 std::string evaluator::print_variables() const
 {

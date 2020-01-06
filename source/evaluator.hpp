@@ -53,6 +53,7 @@ private:
 	// Private Methods
 	expr create_expr(ast::operand const & operand);
 	expr evaluate(ast::expression expression);
+	std::string print_help() const;
 	std::string print_variables() const;
 	std::string print_functions() const;
 	std::string print_history() const;
