@@ -320,6 +320,9 @@ std::string evaluator::polynomial_resolution(expr const & equation) const
 
 std::string evaluator::solve_equation(expr const & equation) const
 {
+	if (equation.term_map().find(1) == equation.term_map().cend())
+		throw std::runtime_error("can't find term with degree one");
+
 	auto b = equation.term_map().find(1) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(1).coef()) : complex{};
 	auto c = equation.term_map().find(0) != equation.term_map().cend() ? std::get<complex>(equation.term_map().at(0).coef()) : complex{};
 

@@ -56,13 +56,16 @@ namespace grammar
 
 	auto const parenthesis_def = '(' >> expression >> ')';
 	auto const expression_def = term >> *((string("+") >> term | string("-") >> term));
-	auto const term_def = power >> *(((string("**") >> power) | string("*") >> power) | (string("/") >> power) | (string("%") >> power));
-	auto const power_def = coef >> *(string("^") >> coef);
+	auto const term_def = coef >> *(((string("**") >> coef) | string("*") >> coef) | (string("/") >> coef) | (string("%") >> coef));
 	auto const coef_def = all_factor >> *(string("") >> pos_factor);
-	auto const all_factor_def = factor | negate;
-	auto const pos_factor_def = !lit('-') >> factor;
-	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix;
+
+	auto const all_factor_def = power | negate;
+	auto const pos_factor_def = !lit('-') >> power;
+
 	auto const negate_def = '-' >> all_factor;
+
+	auto const power_def = factor >> *(string("^") >> factor);
+	auto const factor_def = rational | parenthesis | used_function | imaginary | variable | matrix;
 
 	auto const variable_assignation_def = variable >> '=' >> expression;
 	auto const function_assignation_def = assigned_function >> '=' >> expression;

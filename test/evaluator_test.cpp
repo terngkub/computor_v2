@@ -89,6 +89,16 @@ BOOST_AUTO_TEST_CASE(tc_complex)
     BOOST_TEST(get_result({"(3 + 4i) * (5 + 6i) = ?"}) == "-9 + 38i");
 }
 
+BOOST_AUTO_TEST_CASE(tc_matrix)
+{
+
+}
+
+BOOST_AUTO_TEST_CASE(tc_expression)
+{
+
+}
+
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
 
 
@@ -190,6 +200,9 @@ BOOST_AUTO_TEST_CASE(tc_printing)
 BOOST_AUTO_TEST_CASE(tc_basic)
 {
     BOOST_TEST(get_result({"f(x) = (x + 3)^2 * 4 % 5"}) == "(x + 3) ^ 2 * 4 % 5");
+    BOOST_TEST(get_result({"functionName(x) = x + 1", "functionname(x) = ?"}) == "x + 1");
+    BOOST_TEST(get_result({"functionname(x) = x + 1", "functionName(x) = ?"}) == "x + 1");
+    BOOST_TEST(get_result({"i(x) = x + 1", "i(x) = ?"}) == "x + 1");
 }
 
 BOOST_AUTO_TEST_CASE(tc_unassigned_value)
@@ -236,8 +249,43 @@ BOOST_AUTO_TEST_SUITE_END() // ts_variable_assignation
 // Polynomial Resolution
 BOOST_AUTO_TEST_SUITE(ts_polynomial_resolution)
 
-BOOST_AUTO_TEST_CASE(tc_basic)
+BOOST_AUTO_TEST_CASE(tc_zero_degree)
 {
+    // BOOST_TEST(get_result({""}) == "");
+}
+
+BOOST_AUTO_TEST_CASE(tc_one_degree)
+{
+    BOOST_TEST(get_result({"x = 0 ?"}) == "x = 0");
+    BOOST_TEST(get_result({"x + 3.14 = 0 ?"}) == "x = -3.14");
+    BOOST_TEST(get_result({"x + 3.14 + 2.56i = 0 ?"}) == "x = -3.14 - 2.56i");
+
+    // TODO fix
+    // BOOST_TEST(get_result({"x^2 - x^2 + x + 3.14 = 0 ?"}) == "x = -3.14");
+
+    BOOST_TEST(get_result({"x^2 / x + 3.14 = 0 ?"}) == "x = -3.14");
+
+    // TODO fix
+    // BOOST_TEST(get_result({"x^2 / x = 0 ?"}) == "no answer");
+}
+
+BOOST_AUTO_TEST_CASE(tc_two_degree)
+{
+    BOOST_TEST(get_result({"x^2 + 2x + 1 = 0 ?"}) == "x = -1");
+    BOOST_TEST(get_result({"x^2 + 3x + 2 = 0 ?"}) == "x = -1, -2");
+    BOOST_TEST(get_result({"2x^2 + 5x + 3 = 0 ?"}) == "x = -1, -1.5");
+    BOOST_TEST(get_result({"x^2 - 4 = 0 ?"}) == "x = 2, -2");
+    BOOST_TEST(get_result({"4x^2 - 4 = 0 ?"}) == "x = 1, -1");
+}
+
+BOOST_AUTO_TEST_CASE(tc_invalid_input)
+{
+    BOOST_CHECK_THROW(get_result({"x ** 3 = 0 ?"}), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(tc_invalid_degree)
+{
+    // BOOST_TEST(get_result({""}) == "");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_polynomial_resolution
