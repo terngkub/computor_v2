@@ -259,10 +259,7 @@ BOOST_AUTO_TEST_CASE(tc_one_degree)
     BOOST_TEST(get_result({"x = 0 ?"}) == "x = 0");
     BOOST_TEST(get_result({"x + 3.14 = 0 ?"}) == "x = -3.14");
     BOOST_TEST(get_result({"x + 3.14 + 2.56i = 0 ?"}) == "x = -3.14 - 2.56i");
-
-    // TODO fix
-    // BOOST_TEST(get_result({"x^2 - x^2 + x + 3.14 = 0 ?"}) == "x = -3.14");
-
+    BOOST_TEST(get_result({"x^2 - x^2 + x + 3.14 = 0 ?"}) == "x = -3.14");
     BOOST_TEST(get_result({"x^2 / x + 3.14 = 0 ?"}) == "x = -3.14");
 
     // TODO fix

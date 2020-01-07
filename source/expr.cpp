@@ -134,7 +134,7 @@ bool expr::is_zero() const
 
 // Operations
 
-expr operation_add_sub(expr const & lhs, expr const & rhs, std::function<term (term const &, term const &)> add_or_sub)
+static expr operation_add_sub(expr const & lhs, expr const & rhs, std::function<term (term const &, term const &)> add_or_sub)
 {
 	auto const & lhs_term_map = lhs.term_map();
 	auto const & rhs_term_map = rhs.term_map();
@@ -150,13 +150,20 @@ expr operation_add_sub(expr const & lhs, expr const & rhs, std::function<term (t
 
 	for (auto const degree : degree_set)
 	{
+		term value;
 		if (lhs_term_map.find(degree) == lhs_term_map.end())
-			new_term_map[degree] = add_or_sub(term{}, rhs_term_map.at(degree));
+			value = add_or_sub(term{}, rhs_term_map.at(degree));
 		else if (rhs_term_map.find(degree) == rhs_term_map.end())
-			new_term_map[degree] = lhs_term_map.at(degree);
+			value = lhs_term_map.at(degree);
 		else
-			new_term_map[degree] = add_or_sub(lhs_term_map.at(degree), rhs_term_map.at(degree));
+			value = add_or_sub(lhs_term_map.at(degree), rhs_term_map.at(degree));
+
+		if (!value.is_zero())
+			new_term_map[degree] = value;
 	}
+
+	if (new_term_map.size() == 0)
+		new_term_map[0] = term{};
 
 	return expr{std::move(new_term_map)};
 }
@@ -192,7 +199,7 @@ expr operator*(expr const & lhs, expr const & rhs)
 	return expr{std::move(new_term_map)};
 }
 
-expr operator/(expr const & lhs, expr const & rhs)
+static expr operation_div_mod(expr const & lhs, expr const & rhs, std::function<term (term const &, term const &)> func)
 {
 	auto rhs_term_map = rhs.term_map();
 
@@ -204,28 +211,26 @@ expr operator/(expr const & lhs, expr const & rhs)
 	auto const & denom = *rhs_term_map.begin();
 
 	for (auto const & left : lhs_term_map)
-		new_term_map[left.first - denom.first] = left.second / denom.second;
+	{
+		auto degree = left.first - denom.first;
+		auto value = func(left.second, denom.second);
+		new_term_map[degree] = (degree == 0 && value.variable() != "") ? term{value.coef()} : value;
+	}
 
 	return expr{std::move(new_term_map)};
+}
+
+expr operator/(expr const & lhs, expr const & rhs)
+{
+	return operation_div_mod(lhs, rhs, [](term const & a, term const & b){ return a / b; });
 }
 
 expr operator%(expr const & lhs, expr const & rhs)
 {
-	auto rhs_term_map = rhs.term_map();
-
-	if (rhs_term_map.size() > 1)
-		throw std::runtime_error("expression can't be denominator");
-
-	auto lhs_term_map = lhs.term_map();
-	std::map<int, term> new_term_map{};
-	auto const & denom = *rhs_term_map.begin();
-
-	for (auto const & left : lhs_term_map)
-		new_term_map[left.first - denom.first] = left.second % denom.second;
-
-	return expr{std::move(new_term_map)};
+	return operation_div_mod(lhs, rhs, [](term const & a, term const & b){ return a % b; });
 }
 
+// note test 0^10
 expr operator^(expr const & lhs, expr const & rhs)
 {
 	int deg = rhs.degree();
