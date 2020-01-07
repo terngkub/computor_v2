@@ -186,13 +186,15 @@ expr operator*(expr const & lhs, expr const & rhs)
 	{
 		for (auto const & right : rhs.term_map())
 		{
-			auto new_degree = left.first + right.first;
-			auto new_value = left.second * right.second;
+			auto degree = left.first + right.first;
+			auto value = left.second * right.second;
+
+			auto new_term = (value.is_zero() || (degree == 0 && value.variable() != "")) ? term{value.coef()} : value;
 			
-			if (new_term_map.find(new_degree) == new_term_map.end() || (new_degree == 0 && new_term_map[new_degree].is_zero()))
-				new_term_map[new_degree] = new_value;
+			if (new_term_map.find(degree) == new_term_map.end())
+				new_term_map[degree] = new_term;
 			else
-				new_term_map[new_degree] = new_term_map[new_degree] + new_value;
+				new_term_map[degree] = new_term_map[degree] + new_term;
 		}
 	}
 

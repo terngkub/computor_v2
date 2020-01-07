@@ -7,6 +7,7 @@ using term = computorv2::term;
 
 BOOST_AUTO_TEST_SUITE(ts_expr)
 
+expr ex0{};
 expr ex1{"x"};
 
 BOOST_AUTO_TEST_CASE(tc_print)
@@ -23,6 +24,7 @@ BOOST_AUTO_TEST_CASE(tc_sub)
 
 BOOST_AUTO_TEST_CASE(tc_mul)
 {
+    BOOST_TEST((ex1 * ex0).str() == "0");
 }
 
 BOOST_AUTO_TEST_CASE(tc_div)
