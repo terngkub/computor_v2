@@ -90,15 +90,27 @@ std::string expr::str() const
 	{
 		if (not_first)
 		{
-			if (it->second.is_complex() && std::get<complex>(it->second.coef()).real() < 0)
+			if (it->second.is_complex())
 			{
-				ss << " - ";
-				ss << -it->second;
-			}
-			else
-			{
-				ss << " + ";
-				ss << it->second;
+				auto c = std::get<complex>(it->second.coef());
+				if (c.real() < 0)
+				{
+					ss << " - ";
+					ss << -c.real();
+					if (c.imag() == 1)
+						ss << " + i";
+					else if (c.imag() == -1)
+						ss << " - i";
+					else if (c.imag() > 0)
+						ss << " + " << c.imag() << 'i';
+					else if (c.imag() < 0)
+						ss << " - " << -c.imag() << 'i';
+				}
+				else
+				{
+					ss << " + ";
+					ss << it->second;
+				}
 			}
 		}
 		else
