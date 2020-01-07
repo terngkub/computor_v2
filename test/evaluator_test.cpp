@@ -96,7 +96,9 @@ BOOST_AUTO_TEST_CASE(tc_matrix)
 
 BOOST_AUTO_TEST_CASE(tc_expression)
 {
-
+    // plus sign in front of double
+    BOOST_CHECK_THROW(get_result({"+3 = ?"}), std::runtime_error);
+    BOOST_TEST(get_result({"x +3 = ?"}) == "x + 3");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
