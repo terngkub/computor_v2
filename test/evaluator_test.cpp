@@ -92,7 +92,8 @@ BOOST_AUTO_TEST_CASE(tc_complex)
 
 BOOST_AUTO_TEST_CASE(tc_matrix)
 {
-
+    BOOST_CHECK_THROW(get_result({"[[x]] = ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"[[[[1, 2]]]] = ?"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_CASE(tc_expression)
