@@ -87,6 +87,7 @@ BOOST_AUTO_TEST_CASE(tc_complex)
 {
     BOOST_TEST(get_result({"3 + 4i = ?"}) == "3 + 4i");
     BOOST_TEST(get_result({"(3 + 4i) * (5 + 6i) = ?"}) == "-9 + 38i");
+    BOOST_TEST(get_result({"(1 + i)^3 = ?"}) == "-2 + 2i");
 }
 
 BOOST_AUTO_TEST_CASE(tc_matrix)
@@ -99,6 +100,9 @@ BOOST_AUTO_TEST_CASE(tc_expression)
     // plus sign in front of double
     BOOST_CHECK_THROW(get_result({"+3 = ?"}), std::runtime_error);
     BOOST_TEST(get_result({"x +3 = ?"}) == "x + 3");
+
+    BOOST_TEST(get_result({"x^3 = ?"}) == "x^3");
+    BOOST_TEST(get_result({"(2x)^3 = ?"}) == "8x^3");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
@@ -284,7 +288,12 @@ BOOST_AUTO_TEST_CASE(tc_invalid_input)
 
 BOOST_AUTO_TEST_CASE(tc_invalid_degree)
 {
-    // BOOST_TEST(get_result({""}) == "");
+    // BOOST_TEST(get_result({"x^3 = 0 ?"}) == "x = 0");
+    // BOOST_CHECK_THROW(get_result({"x^3 = 0 ?"}), std::runtime_error);
+    // BOOST_CHECK_THROW(get_result({"x^-1 = 0 ?"}), std::runtime_error);
+    // BOOST_CHECK_THROW(get_result({"x/x^2 = 0 ?"}), std::runtime_error);
+    // BOOST_CHECK_THROW(get_result({"x^2 * x = 0 ?"}), std::runtime_error);
+    // BOOST_CHECK_THROW(get_result({"x/x = 0 ?"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_polynomial_resolution

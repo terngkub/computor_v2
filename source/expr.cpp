@@ -264,26 +264,12 @@ expr operator^(expr const & lhs, expr const & rhs)
 		return expr{complex{1, 0}};
 	}
 
-	std::map<int, term> new_term_map{};
+	expr ret{lhs};
 
 	for (int i = 1; i < deg; ++i)
-	{
-		for (auto const & left : lhs.term_map())
-		{
-			for (auto const & right : lhs.term_map())
-			{
-				auto new_degree = left.first + right.first;
-				auto mul_result = left.second * right.second;
+		ret = ret * lhs;
 
-				if (new_term_map.find(new_degree) == new_term_map.end())
-					new_term_map[new_degree] = mul_result;
-				else
-					new_term_map[new_degree] = new_term_map[new_degree] + mul_result;
-			}
-		}
-	}
-
-	return expr{std::move(new_term_map)};
+	return ret;
 }
 
 expr expr_matrix_mul(expr const & lhs, expr const & rhs)
