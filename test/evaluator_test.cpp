@@ -257,7 +257,9 @@ BOOST_AUTO_TEST_SUITE(ts_polynomial_resolution)
 
 BOOST_AUTO_TEST_CASE(tc_zero_degree)
 {
-    // BOOST_TEST(get_result({""}) == "");
+    BOOST_CHECK_THROW(get_result({"3.14 = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x - x = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x^0 = 0 ?"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_CASE(tc_one_degree)
@@ -268,8 +270,8 @@ BOOST_AUTO_TEST_CASE(tc_one_degree)
     BOOST_TEST(get_result({"x^2 - x^2 + x + 3.14 = 0 ?"}) == "x = -3.14");
     BOOST_TEST(get_result({"x^2 / x + 3.14 = 0 ?"}) == "x = -3.14");
 
-    // TODO fix
-    // BOOST_TEST(get_result({"x^2 / x = 0 ?"}) == "no answer");
+    // Polynomial resolution only handle the last result of expression
+    BOOST_TEST(get_result({"x^2 / x = 0 ?"}) == "x = 0");
 }
 
 BOOST_AUTO_TEST_CASE(tc_two_degree)
@@ -281,19 +283,17 @@ BOOST_AUTO_TEST_CASE(tc_two_degree)
     BOOST_TEST(get_result({"4x^2 - 4 = 0 ?"}) == "x = 1, -1");
 }
 
-BOOST_AUTO_TEST_CASE(tc_invalid_input)
+BOOST_AUTO_TEST_CASE(tc_invalid)
 {
+    // invalid input
     BOOST_CHECK_THROW(get_result({"x ** 3 = 0 ?"}), std::runtime_error);
-}
 
-BOOST_AUTO_TEST_CASE(tc_invalid_degree)
-{
-    // BOOST_TEST(get_result({"x^3 = 0 ?"}) == "x = 0");
-    // BOOST_CHECK_THROW(get_result({"x^3 = 0 ?"}), std::runtime_error);
-    // BOOST_CHECK_THROW(get_result({"x^-1 = 0 ?"}), std::runtime_error);
-    // BOOST_CHECK_THROW(get_result({"x/x^2 = 0 ?"}), std::runtime_error);
-    // BOOST_CHECK_THROW(get_result({"x^2 * x = 0 ?"}), std::runtime_error);
-    // BOOST_CHECK_THROW(get_result({"x/x = 0 ?"}), std::runtime_error);
+    // invalid degree
+    BOOST_CHECK_THROW(get_result({"x^3 = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x^-1 = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x/x^2 = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x^2 * x = 0 ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"x/x = 0 ?"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_polynomial_resolution
