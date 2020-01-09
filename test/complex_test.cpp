@@ -68,12 +68,12 @@ BOOST_AUTO_TEST_CASE(tc_remainder)
     BOOST_CHECK_THROW((complex{} % complex{}), std::runtime_error);
     BOOST_CHECK_THROW((complex{3.1} % complex{}), std::runtime_error);
 
-    BOOST_TEST((complex{0} % complex{3.1} == complex{0}));
-    BOOST_TEST((complex{3.1} % complex{-1.2} == complex{0.7}));
-    BOOST_TEST((complex{0, 3.1} % complex{0, -1.2} == complex{0, -0.5}));
+    BOOST_TEST((complex{0} % complex{3.1}) == (complex{0}));
+    BOOST_TEST((complex{3.1} % complex{-1.2}) == (complex{0.7}));
+    BOOST_TEST((complex{0, 3.1} % complex{0, -1.2}) == (complex{0, -0.5}));
 
-    BOOST_TEST((complex{26, 120} % complex{37, 226} == complex{-11, -106}));
-    BOOST_TEST((complex{26, -120} % complex{37, -226} == complex{-11, 106}));
+    BOOST_TEST((complex{26, 120} % complex{37, 226}) == (complex{-11, -106}));
+    BOOST_TEST((complex{26, -120} % complex{37, -226}) == (complex{-11, 106}));
 }
 
 BOOST_AUTO_TEST_CASE(tc_negative)

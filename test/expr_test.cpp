@@ -224,7 +224,30 @@ BOOST_AUTO_TEST_CASE(tc_div)
 
 BOOST_AUTO_TEST_CASE(tc_mod)
 {
+	// x % 0 = throw
+	BOOST_CHECK_THROW((ex1 % ex0), std::runtime_error);
 
+	// 3.14x^2 % x^2 = throw
+	BOOST_CHECK_THROW((ex3 % ex2), std::runtime_error);
+
+	// 3.14 % -3.14 = 0
+	BOOST_TEST((ex4 % ex5).str() == "0");
+
+	// 6i % 4i = -2i
+	BOOST_TEST((ex7 % ex6).str() == "-2i");
+
+	// [[1, 2]; [3, 4]] % (1 + i) = [[-1, 0]; [-1, 0]]
+	// Wolfram Alpha bug on 1 % (1 + i) == 1, the result should be -1
+	BOOST_TEST((ex9 % ex8).str() == "[[-1, 0]; [-1, 0]]");
+
+	// [[1, 2]; [3, 4]] % [[1, 0]; [0, 1]] = throw
+	BOOST_CHECK_THROW((ex9 % ex10), std::runtime_error);
+
+	// (x^2 + 2x + 1) % 0 = throw
+	BOOST_CHECK_THROW(((ex13 * ex13) % ex0), std::runtime_error);
+
+	// (-1 + i) % -1 = 0
+	BOOST_TEST((ex12 % expr{-1}).str() == "0");
 }
 
 BOOST_AUTO_TEST_CASE(tc_power)

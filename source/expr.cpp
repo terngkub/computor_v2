@@ -247,6 +247,9 @@ expr operator/(expr const & lhs, expr const & rhs)
 
 expr operator%(expr const & lhs, expr const & rhs)
 {
+	if (lhs.variable() != "" || rhs.variable() != "")
+		throw std::runtime_error("modulo with unassigned variable");
+
 	return operation_div_mod(lhs, rhs, [](term const & a, term const & b){ return a % b; });
 }
 
