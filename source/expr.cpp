@@ -201,14 +201,20 @@ expr operator*(expr const & lhs, expr const & rhs)
 			auto degree = left.first + right.first;
 			auto value = left.second * right.second;
 
-			auto new_term = (value.is_zero() || (degree == 0 && value.variable() != "")) ? term{value.coef()} : value;
-			
-			if (new_term_map.find(degree) == new_term_map.end())
-				new_term_map[degree] = new_term;
-			else
-				new_term_map[degree] = new_term_map[degree] + new_term;
+			auto new_term = (degree == 0 && value.variable() != "") ? term{value.coef()} : value;
+
+			if (!value.is_zero())
+			{
+				if (new_term_map.find(degree) == new_term_map.end())
+					new_term_map[degree] = new_term;
+				else
+					new_term_map[degree] = new_term_map[degree] + new_term;
+			}
 		}
 	}
+	
+	if (new_term_map.size() == 0)
+		new_term_map[0] = term{};
 
 	return expr{std::move(new_term_map)};
 }

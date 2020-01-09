@@ -103,6 +103,22 @@ expr ex10{std::vector<std::vector<complex>>{
 	{0, 1}
 }};
 
+// x^2 + 2x + 1
+expr ex11{std::map<int, term>{
+	{0, term{1}},
+	{1, term{2, "x"}},
+	{2, term{1, "x"}}
+}};
+
+// -1 + i
+expr ex12{complex{-1, 1}};
+
+// x + 1
+expr ex13{std::map<int, term>{
+	{0, term{1}},
+	{1, term{1, "x"}}
+}};
+
 
 BOOST_AUTO_TEST_CASE(tc_add)
 {
@@ -168,17 +184,16 @@ BOOST_AUTO_TEST_CASE(tc_mul)
 	// [[1, 2]; [3, 4]] * [[1, 0]; [0, 1]] = [[1, 0]; [0, 4]]
 	BOOST_TEST((ex9 * ex10).str() == "[[1, 0]; [0, 4]]");
 
-	/*
-	(x^2 + 2x + 1) * 0 = ?
-	0
+	// (x^2 + 2x + 1) * 0 = 0
+	BOOST_TEST((ex11 * ex0).str() == "0");
 
-	(-1 + i) * -1 = ?
-	1 - i
+	// (-1 + i) * -1 = 1 - i
+	BOOST_TEST((ex12 * expr{-1}).str() == "1 - i");
 
-	(x + 1)(x + 1)(x + 1) = ?
-	x^3 + 3x^2 + 3x + 1
-	*/
+	// (x + 1)(x + 1)(x + 1) = x^3 + 3x^2 + 3x + 1
+	BOOST_TEST((ex13 * ex13 * ex13).str() == "x^3 + 3x^2 + 3x + 1");
 }
+
 
 BOOST_AUTO_TEST_CASE(tc_div)
 {
@@ -200,17 +215,16 @@ BOOST_AUTO_TEST_CASE(tc_div)
 	// [[1, 2]; [3, 4]] / [[1, 0]; [0, 1]] = throw
 	BOOST_CHECK_THROW((ex9 / ex10), std::runtime_error);
 
-	/*
-	(x^2 + 2x + 1) / 0 = ?
-	throw
+	// (x^2 + 2x + 1) / 0 = throw
+	BOOST_CHECK_THROW(((ex13 * ex13) / ex0), std::runtime_error);
 
-	(-1 + i) / -1 = ?
-	1 - i
-	*/
+	// (-1 + i) / -1 = 1 - i
+	BOOST_TEST((ex12 / expr{-1}).str() == "1 - i");
 }
 
 BOOST_AUTO_TEST_CASE(tc_mod)
 {
+
 }
 
 BOOST_AUTO_TEST_CASE(tc_power)
