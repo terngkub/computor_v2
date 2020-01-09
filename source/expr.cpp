@@ -51,7 +51,6 @@ std::map<int, term> const & expr::term_map() const
 	return _term_map;
 }
 
-// TODO double check
 std::string expr::variable() const
 {
 	std::string var{};
@@ -95,16 +94,23 @@ std::string expr::str() const
 				auto c = std::get<complex>(it->second.coef());
 				if (c.real() < 0)
 				{
-					ss << " - ";
-					ss << -c.real();
-					if (c.imag() == 1)
-						ss << " + i";
-					else if (c.imag() == -1)
-						ss << " - i";
-					else if (c.imag() > 0)
-						ss << " + " << c.imag() << 'i';
-					else if (c.imag() < 0)
-						ss << " - " << -c.imag() << 'i';
+
+					if (c.imag() != 0 && it->second.variable() != "")
+						ss << " - (" << -it->second << ')';
+					else if (c.real() != 0 && c.imag() != 0)
+					{
+						ss << " - " << -c.real();
+						if (c.imag() == 1)
+							ss << " + i";
+						else if (c.imag() == -1)
+							ss << " - i";
+						else if (c.imag() > 0)
+							ss << " + " << c.imag() << 'i';
+						else if (c.imag() < 0)
+							ss << " - " << -c.imag() << 'i';
+					}
+					else
+						ss << " - " << -it->second;
 				}
 				else
 				{
@@ -140,7 +146,12 @@ bool expr::is_matrix() const
 
 bool expr::is_zero() const
 {
-	return is_coef() && _term_map.at(0).is_zero();
+	for (auto const & elem : _term_map)
+	{
+		if (!elem.second.is_zero())
+			return false;
+	}
+	return true;
 }
 
 
@@ -208,7 +219,11 @@ expr operator*(expr const & lhs, expr const & rhs)
 				if (new_term_map.find(degree) == new_term_map.end())
 					new_term_map[degree] = new_term;
 				else
+				{
 					new_term_map[degree] = new_term_map[degree] + new_term;
+					if (new_term_map[degree].is_zero())
+						new_term_map.erase(degree);
+				}
 			}
 		}
 	}

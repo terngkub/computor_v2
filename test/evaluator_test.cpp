@@ -88,6 +88,9 @@ BOOST_AUTO_TEST_CASE(tc_complex)
     BOOST_TEST(get_result({"3 + 4i = ?"}) == "3 + 4i");
     BOOST_TEST(get_result({"(3 + 4i) * (5 + 6i) = ?"}) == "-9 + 38i");
     BOOST_TEST(get_result({"(1 + i)^3 = ?"}) == "-2 + 2i");
+    BOOST_TEST(get_result({"0^10 = ?"}) == "0");
+    BOOST_TEST(get_result({"0^0 = ?"}) == "1");
+
 }
 
 BOOST_AUTO_TEST_CASE(tc_matrix)
@@ -104,6 +107,11 @@ BOOST_AUTO_TEST_CASE(tc_expression)
 
     BOOST_TEST(get_result({"x^3 = ?"}) == "x^3");
     BOOST_TEST(get_result({"(2x)^3 = ?"}) == "8x^3");
+
+    BOOST_TEST(get_result({"(x + 1)(x - 1)(x + 1) = ?"}) == "x^3 + x^2 - x - 1");
+    BOOST_TEST(get_result({"(x + 1)(x - 1) = ?"}) == "x^2 - 1");
+    BOOST_CHECK_THROW(get_result({"f(x) = 10^x", "f(2147) = ?"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"f(x) = 10^x", "f(-2147) = ?"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_value_resolution
