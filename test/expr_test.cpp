@@ -8,58 +8,6 @@ using complex = computorv2::complex;
 
 BOOST_AUTO_TEST_SUITE(ts_expr)
 
-/*
-// 0
-expr ex0{};
-
-// x
-expr ex1{"x"};
-
-// 2
-expr ex2{std::map<int, term>{
-	{0, term{2}}
-}};
-
-// 3x
-expr ex3{std::map<int, term>{
-	{1, term{3, "x"}}
-}};
-
-// 5x + 4
-expr ex4{std::map<int, term>{
-	{0, term{4}},
-	{1, term{5, "x"}}
-}};
-
-// 4x^2 + (1 - i)x - 2 + i
-expr ex5{std::map<int, term>{
-	{0, term{complex{-2, 1}}},
-	{1, term{complex{1, -1}, "x"}},
-	{2, term{4, "x"}}
-}};
-
-// 4x - 2 - 3i
-expr ex6{std::map<int, term>{
-	{0, term{complex{-2, -3}}},
-	{1, term{4, "x"}}
-}};
-*/
-
-
-
-BOOST_AUTO_TEST_CASE(tc_print)
-{
-	/*
-	BOOST_TEST(ex0.str() == "0");
-	BOOST_TEST(ex1.str() == "x");
-	BOOST_TEST(ex2.str() == "2");
-	BOOST_TEST(ex3.str() == "3x");
-	BOOST_TEST(ex4.str() == "5x + 4");
-	BOOST_TEST(ex5.str() == "4x^2 + (1 - i)x - 2 + i");
-	BOOST_TEST(ex6.str() == "4x - 2 - 3i");
-	*/
-}
-
 // 0
 expr ex0{};
 
@@ -119,6 +67,45 @@ expr ex13{std::map<int, term>{
 	{1, term{1, "x"}}
 }};
 
+// 5x + 4
+expr ex14{std::map<int, term>{
+	{0, term{4}},
+	{1, term{5, "x"}}
+}};
+
+// 4x^2 + (1 - i)x - 2 + i
+expr ex15{std::map<int, term>{
+	{0, term{complex{-2, 1}}},
+	{1, term{complex{1, -1}, "x"}},
+	{2, term{4, "x"}}
+}};
+
+// 4x - 2 - 3i
+expr ex16{std::map<int, term>{
+	{0, term{complex{-2, -3}}},
+	{1, term{4, "x"}}
+}};
+
+BOOST_AUTO_TEST_CASE(tc_print)
+{
+	BOOST_TEST(ex0.str() == "0");
+	BOOST_TEST(ex1.str() == "x");
+	BOOST_TEST(ex2.str() == "x^2");
+	BOOST_TEST(ex3.str() == "3.14x^2");
+	BOOST_TEST(ex4.str() == "3.14");
+	BOOST_TEST(ex5.str() == "-3.14");
+	BOOST_TEST(ex6.str() == "4i");
+	BOOST_TEST(ex7.str() == "6i");
+	BOOST_TEST(ex8.str() == "1 + i");
+	BOOST_TEST(ex9.str() == "[[1, 2]; [3, 4]]");
+	BOOST_TEST(ex10.str() == "[[1, 0]; [0, 1]]");
+	BOOST_TEST(ex11.str() == "x^2 + 2x + 1");
+	BOOST_TEST(ex12.str() == "-1 + i");
+	BOOST_TEST(ex13.str() == "x + 1");
+	BOOST_TEST(ex14.str() == "5x + 4");
+	BOOST_TEST(ex15.str() == "4x^2 + (1 - i)x - 2 + i");
+	BOOST_TEST(ex16.str() == "4x - 2 - 3i");
+}
 
 BOOST_AUTO_TEST_CASE(tc_add)
 {
@@ -141,7 +128,6 @@ BOOST_AUTO_TEST_CASE(tc_add)
 	BOOST_TEST((ex9 + ex10).str() == "[[2, 2]; [3, 5]]");
 }
 
-
 BOOST_AUTO_TEST_CASE(tc_sub)
 {
 	// x - 0 = x
@@ -162,7 +148,6 @@ BOOST_AUTO_TEST_CASE(tc_sub)
 	// [[1, 2]; [3, 4]] - [[1, 0]; [0, 1]] = [[0, 2]; [3, 3]]
 	BOOST_TEST((ex9 - ex10).str() == "[[0, 2]; [3, 3]]");
 }
-
 
 BOOST_AUTO_TEST_CASE(tc_mul)
 {
@@ -193,7 +178,6 @@ BOOST_AUTO_TEST_CASE(tc_mul)
 	// (x + 1)(x + 1)(x + 1) = x^3 + 3x^2 + 3x + 1
 	BOOST_TEST((ex13 * ex13 * ex13).str() == "x^3 + 3x^2 + 3x + 1");
 }
-
 
 BOOST_AUTO_TEST_CASE(tc_div)
 {
