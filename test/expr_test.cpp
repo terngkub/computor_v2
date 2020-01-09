@@ -229,41 +229,37 @@ BOOST_AUTO_TEST_CASE(tc_mod)
 
 BOOST_AUTO_TEST_CASE(tc_power)
 {
-	/*
-	// Integer degree
-	(1 + i) ^ 3 = ?
-	-2 + 2i
+	// (1 + i) ^ 3 = -2 + 2i
+	BOOST_TEST((ex8 ^ expr{3}).str() == "-2 + 2i");
 
-	[[1, 2]; [3, 4]] ^ 3 = ?
-	[[1, 8]; [27, 64]]
+	// [[1, 2]; [3, 4]] ^ 3 = [[1, 8]; [27, 64]]
+	BOOST_TEST((ex9 ^ expr{3}).str() == "[[1, 8]; [27, 64]]");
 
-	(x + 1) ^ 3 = ?
-	x^3 + 3x^2 + 3x + 1
+	// (x + 1) ^ 3 = x^3 + 3x^2 + 3x + 1
+	BOOST_TEST((ex13 ^ expr{3}).str() == "x^3 + 3x^2 + 3x + 1");
 
-	// Zero degree
+	// (1 + i) ^ 0 = 1
+	BOOST_TEST((ex8 ^ ex0).str() == "1");
 
-	(1 + i) ^ 0 = ?
-	1
+	// [[1, 2]; [3, 4]] ^ 0 = [[1, 1]; [1, 1]]
+	BOOST_TEST((ex9 ^ ex0).str() == "[[1, 1]; [1, 1]]");
 
-	[[1, 2]; [3, 4]] ^ 0 = ?
-	[[1, 1]; [1, 1]]
+	// (x + 1) ^ 0 = 1
+	BOOST_TEST((ex13 ^ ex0).str() == "1");
 
+	// x ^ -2 = x^-2
+	BOOST_TEST((expr{"x"} ^ expr{-2}).str() == "x^-2");
 
-	// Negative degree
+	// (1 + i) ^ -2 = -0.5i
+	BOOST_TEST((ex8 ^ expr{-2}).str() == "-0.5i");
 
-	x ^ -2 = ?
-	x^-2
+	// [[1, 2]; [3, 4]] ^ -2 = [[1, 0.25]; [0.111111, 0.0625]]
+	BOOST_TEST((ex9 ^ expr{-2}).str() == "[[1, 0.25]; [0.111111, 0.0625]]");
 
-	(1 + i) ^ -2 = ?
-	-0.5i
-
-	[[1, 2]; [4, 8]] ^ -2 = ?
-	[[1, 0.25]; [0.0625, 0.015625]]
-
-	*/
+	// (x + 1) ^ -2 = throw
+	BOOST_CHECK_THROW((ex13 ^ expr{-2}), std::runtime_error);
 
 	// Invalid degree
-	BOOST_CHECK_THROW((expr{"x"} ^ expr{-2}), std::runtime_error);
 	BOOST_CHECK_THROW((expr{"x"} ^ expr{3.14}), std::runtime_error);
 	BOOST_CHECK_THROW((expr{"x"} ^ expr{complex{1, 1}}), std::runtime_error);
 	BOOST_CHECK_THROW((expr{"x"} ^ expr{"x"}), std::runtime_error);
@@ -271,22 +267,25 @@ BOOST_AUTO_TEST_CASE(tc_power)
 
 BOOST_AUTO_TEST_CASE(tc_matrix_mul)
 {
-	/*
-	[[1, 2]; [3, 4]] ** [[1, 0]; [0, 1]] = ?
-	[[1, 2]; [3, 4]]
+	// [[1, 2]; [3, 4]] ** [[1, 0]; [0, 1]] = [[1, 2]; [3, 4]]
+	BOOST_TEST(computorv2::expr_matrix_mul(ex9, ex10).str() == "[[1, 2]; [3, 4]]");
 
-	[[1 + i, 2 + i]; [2 - i, -1 + 3i]] ** [1 + i, 2 + i]; [2 - i, -1 + 3i] = ?
-	[[5 + 2i, -4 + 8i]; [4 + 8i, -3 - 6i]]
+	// [[1 + i, 2 + i]; [2 - i, -1 + 3i]] ** [1 + i, 2 + i]; [2 - i, -1 + 3i] = [[5 + 2i, -4 + 8i]; [4 + 8i, -3 - 6i]]
+	expr ex_local1{std::vector<std::vector<complex>>{
+		{complex{1, 1}, complex{2, 1}},
+		{complex{2, -1}, complex{-1, 3}}
+	}};
+	BOOST_TEST(computorv2::expr_matrix_mul(ex_local1, ex_local1).str() == "[[5 + 2i, -4 + 8i]; [4 + 8i, -3 - 6i]]");
 
-	[[1, 2]; [3, 4]] ** [[1]] = ?
-	throw
+	// [[1, 2]; [3, 4]] ** [[1]] = throw
+	expr ex_local2{std::vector<std::vector<complex>>{{1}}};
+	BOOST_CHECK_THROW(computorv2::expr_matrix_mul(ex9, ex_local2), std::runtime_error);
 
-	[[1, 2]; [3, 4]] ** 1 = ?
-	throw
+	// [[1, 2]; [3, 4]] ** 1 = throw
+	BOOST_CHECK_THROW(computorv2::expr_matrix_mul(ex9, expr{1}), std::runtime_error);
 
-	[[1, 2]; [3, 4]] ** x = ?
-	throw
-	*/
+	// [[1, 2]; [3, 4]] ** x = throw
+	BOOST_CHECK_THROW(computorv2::expr_matrix_mul(ex9, expr{"x"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

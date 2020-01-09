@@ -270,12 +270,19 @@ expr operator^(expr const & lhs, expr const & rhs)
 		return expr{complex{1, 0}};
 	}
 
+	bool neg = false;
+	if (deg < 0)
+	{
+		deg = -deg;
+		neg = true;
+	}
+
 	expr ret{lhs};
 
 	for (int i = 1; i < deg; ++i)
 		ret = ret * lhs;
 
-	return ret;
+	return (neg) ? (expr{1} / ret) : ret;
 }
 
 expr expr_matrix_mul(expr const & lhs, expr const & rhs)

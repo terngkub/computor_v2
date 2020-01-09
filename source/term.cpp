@@ -91,9 +91,6 @@ int term::degree() const
     if (math::fmod(deg, 1.0) != 0.0)
         throw std::runtime_error("degree isn't an integer");
 
-    if (deg < 0)
-        throw std::runtime_error("degree is negative");
-
     return deg;
 }
 

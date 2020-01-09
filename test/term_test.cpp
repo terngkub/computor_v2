@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(tc_degree)
     BOOST_CHECK_THROW(tc1.degree(), std::runtime_error);
     BOOST_TEST(tc2.degree() == 4);
     BOOST_TEST(tc0.degree() == 0);
-    BOOST_CHECK_THROW(term{-3}.degree(), std::runtime_error);
+    BOOST_TEST(term{-3}.degree() == -3);
     BOOST_CHECK_THROW((term{complex{3, 2}}).degree(), std::runtime_error);
     BOOST_CHECK_THROW(tm1.degree(), std::runtime_error);
     BOOST_CHECK_THROW(tcx1.degree(), std::runtime_error);
