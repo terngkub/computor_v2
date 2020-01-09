@@ -43,7 +43,7 @@ namespace grammar
 	x3::rule<class input, ast::input> const input("input");
 
 
-	auto const rational_def = !lit("+") >> double_;
+	auto const rational_def = !lit("nan") >> (!lit("+") >> double_);
 	auto const imaginary_def = !lit("ii") >> (char_('i') | char_('I'));
 
 	auto const matrix_def = '[' >> matrix_row % ';' >> ']';
