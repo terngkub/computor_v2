@@ -120,9 +120,9 @@ static matrix term_to_term_operation(matrix const & lhs, matrix const & rhs, std
 
 	std::vector<std::vector<complex>> ret(lhs.row_nb(), std::vector<complex>(lhs.col_nb()));
 
-	for (auto i = 0; i < lhs.row_nb(); ++i)
+	for (size_t i = 0; i < lhs.row_nb(); ++i)
 	{
-		for (auto j = 0; j < lhs.col_nb(); ++j)
+		for (size_t j = 0; j < lhs.col_nb(); ++j)
 		{
 			ret[i][j] = op_func(lhs.values()[i][j], rhs.values()[i][j]);
 		}
@@ -162,9 +162,9 @@ static matrix scalar_operation(matrix const & lhs, complex const & rhs, std::fun
 {
 	std::vector<std::vector<complex>> ret(lhs.row_nb(), std::vector<complex>(lhs.col_nb()));
 
-	for (auto i = 0; i < lhs.row_nb(); ++i)
+	for (size_t i = 0; i < lhs.row_nb(); ++i)
 	{
-		for (auto j = 0; j < lhs.col_nb(); ++j)
+		for (size_t j = 0; j < lhs.col_nb(); ++j)
 		{
 			ret[i][j] = op_func(lhs.values()[i][j], rhs);
 		}
@@ -238,11 +238,11 @@ matrix mt_mul(matrix const & lhs, matrix const & rhs)
 
 	std::vector<std::vector<complex>> ret(lhs.row_nb(), std::vector<complex>(rhs.col_nb()));
 
-	for (auto lr = 0; lr < lhs.row_nb(); ++lr)
+	for (size_t lr = 0; lr < lhs.row_nb(); ++lr)
 	{
-		for (auto rc = 0; rc < rhs.col_nb(); ++rc)
+		for (size_t rc = 0; rc < rhs.col_nb(); ++rc)
 		{
-			for (auto i = 0; i < lhs.col_nb(); ++i)
+			for (size_t i = 0; i < lhs.col_nb(); ++i)
 			{
 				ret[lr][rc] = ret[lr][rc] + lhs.values()[lr][i] * rhs.values()[i][rc];
 			}
@@ -260,9 +260,9 @@ bool operator==(matrix const & lhs, matrix const & rhs)
 	if (lhs.row_nb() != rhs.row_nb() || lhs.col_nb() != rhs.col_nb())
 		return false;
 
-	for (auto r = 0; r < lhs.row_nb(); ++r)
+	for (size_t r = 0; r < lhs.row_nb(); ++r)
 	{
-		for (auto c = 0; c < lhs.col_nb(); ++c)
+		for (size_t c = 0; c < lhs.col_nb(); ++c)
 		{
 			if (lhs.values()[r][c] != rhs.values()[r][c])
 				return false;

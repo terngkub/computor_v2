@@ -54,7 +54,7 @@ std::string evaluator::operator()(ast::variable_assignation input)
 
 std::string evaluator::operator()(ast::function_assignation input)
 {
-	evaluator::function_checker{input.function_.function_, input.function_.variable_, variable_map, function_map}(input.expression_);
+	evaluator::function_checker{input.function_.function_, input.function_.variable_, variable_map, function_map, false}(input.expression_);
 
 	function_map[input.function_.function_] = {input.function_.variable_, input.expression_, variable_map, function_map};
 	return printer{function_map}(input.expression_);
@@ -83,8 +83,8 @@ expr evaluator::create_expr(ast::operand const & operand)
 {
 	return boost::apply_visitor(overloaded
 	{
-		[this](double const & rational)	{ return expr{complex{rational, 0}}; },
-		[this](char const & imaginary)	{ return expr{complex{0, 1}}; },
+		[](double const & rational)	{ return expr{complex{rational, 0}}; },
+		[](char const & imaginary)	{ (void)imaginary; return expr{complex{0, 1}}; },
 		[this](std::vector<std::vector<ast::expression>> const & input_matrix)
 		{
 			auto row_nb = input_matrix.size();
@@ -97,12 +97,12 @@ expr evaluator::create_expr(ast::operand const & operand)
 
 			std::vector<std::vector<complex>> complex_matrix(row_nb, std::vector<complex>(col_nb, complex{}));
 
-			for (auto ri = 0; ri < row_nb; ++ri)
+			for (size_t ri = 0; ri < row_nb; ++ri)
 			{
 				if (input_matrix[ri].size() != col_nb)
 					throw std::runtime_error("matrix don't have consistent column number");
 
-				for (auto ci = 0; ci < col_nb; ++ci)
+				for (size_t ci = 0; ci < col_nb; ++ci)
 				{
 					auto elem_expr = evaluate(input_matrix[ri][ci]);
 
@@ -211,11 +211,13 @@ void evaluator::function_checker::operator()(ast::operand const & x)
 void evaluator::function_checker::operator()(double x)
 {
 	// do nothing
+	(void)x;
 }
 
 void evaluator::function_checker::operator()(char x)
 {
 	// do nothing
+	(void)x;
 }
 
 void evaluator::function_checker::operator()(std::string const & x)
