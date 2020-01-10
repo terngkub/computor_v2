@@ -14,12 +14,15 @@ struct function
     ast::expression tree;
     std::map<std::string, expr> variable_map;
     std::map<std::string, function> function_map;
+	std::string input;
 
 	function() = default;
 	function(std::string param,
 		ast::expression tree,
 		std::map<std::string, expr> variable_map,
 		std::map<std::string, function> function_map);
+
+	function(function const & f, std::string input);
 
 	function(function const & f) = default;
 	function(function && f) = default;

@@ -56,8 +56,10 @@ double fmod(double a, double b)
 {
     if (b == 0)
         throw std::runtime_error("modulo by zero");
-    if (a < 0 ^ b < 0)
+    if ((a < 0) ^ (b < 0))
+    {
         return a - b * ceil(a / b);
+    }
 	return a - b * floor(a / b);
 }
 

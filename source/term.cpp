@@ -183,9 +183,13 @@ std::ostream &operator<<(std::ostream & os, term const & rhs)
 term term_matrix_mul(term const & lhs, term const & rhs)
 {
     if (lhs.has_variable() || rhs.has_variable())
+    {
         throw std::runtime_error("unknown variable in matrix multiplication");
+    }
 	if (!lhs.is_matrix() || !rhs.is_matrix())
+    {
 		throw std::runtime_error("at least one side of matrix multiplication isn't a matrix");
+    }
 	return term{mt_mul(std::get<matrix>(lhs.coef()), std::get<matrix>(rhs.coef()))};
 }
 

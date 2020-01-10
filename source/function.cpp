@@ -13,9 +13,18 @@ function::function(std::string param,
 	, tree(tree)
 	, variable_map(variable_map)
 	, function_map(function_map)
+	, input("")
 {
 	this->variable_map.erase(param);
 }
+
+function::function(function const & func, std::string input)
+	: param(func.param)
+	, tree(func.tree)
+	, variable_map(func.variable_map)
+	, function_map(func.function_map)
+	, input(input)
+{}
 
 std::string function::operator()(double const & nb) const
 {
@@ -34,7 +43,9 @@ std::string function::operator()(char const & c) const
 std::string function::operator()(std::string const & str) const
 {
     std::stringstream ss;
-    if (auto it = variable_map.find(str); it != variable_map.end())
+	if (str == param && input != "")
+		ss << '(' << input << ')';
+    else if (auto it = variable_map.find(str); it != variable_map.end())
         ss << it->second;
     else
         ss << str;
@@ -74,8 +85,11 @@ std::string function::operator()(ast::used_function const & func) const
 {
     if (auto it = function_map.find(func.function_); it != function_map.end())
     {
+		std::string input = (*this)(func.expression_);
+		function used_func{it->second, input};
+
         std::stringstream ss;
-        ss << '(' << it->second << ')';
+        ss << '(' << used_func << ')';
         return ss.str();
     }
     throw std::runtime_error("call to undefined function");

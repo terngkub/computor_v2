@@ -213,8 +213,8 @@ BOOST_AUTO_TEST_CASE(tc_printing)
     BOOST_TEST(get_result({"f(x) = x ** x"}) == "x ** x");
     BOOST_TEST(get_result({"f(x) = x ** [[1,2];[3,4]] * 3"}) == "x ** [[1, 2]; [3, 4]] * 3");
 
-    BOOST_TEST(get_result({"f(x) = 3x", "g(x) = f(x)"}) == "(3 * x)");
-    BOOST_TEST(get_result({"f(x) = 3x", "g(x) = 4f(x)"}) == "4 * (3 * x)");
+    BOOST_TEST(get_result({"f(x) = 3x", "g(x) = f(x)"}) == "(3 * (x))");
+    BOOST_TEST(get_result({"f(x) = 3x", "g(x) = 4f(x)"}) == "4 * (3 * (x))");
 }
 
 BOOST_AUTO_TEST_CASE(tc_basic)
@@ -324,11 +324,15 @@ BOOST_AUTO_TEST_CASE(tc_list)
 
     // list_functions
     BOOST_TEST(get_result({"list_functions"}) == "no defined function");
-    BOOST_TEST(get_result({"f(x) = x + 1", "g(x) = f(x)", "list_functions"}) == "f(x) = x + 1\n  g(x) = (x + 1)");
+    BOOST_TEST(get_result({"f(x) = x + 1", "g(x) = f(x)", "list_functions"}) == "f(x) = x + 1\n  g(x) = ((x) + 1)");
 
     // combine
-    BOOST_TEST(get_result({"ab = 3", "cd = 4", "f(x) = x + 1", "g(x) = f(x) ab + cd", "list_functions"}) == "f(x) = x + 1\n  g(x) = ");
-    // TODO must change x to the value of ab
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + a + b", "g(x) = f(x) + x + 5"}) == "((x) + 3 + 4) + x + 5");
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + a + b", "g(x) = f(x + 1) + x + 5"}) == "((x + 1) + 3 + 4) + x + 5");
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + a + b", "g(x) = f(6) + x + 5"}) == "((6) + 3 + 4) + x + 5");
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + 1", "g(x) = 3x + 2", "h(x) = g(f(x))"}) == "(3 * (((x) + 1)) + 2)");
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + 1", "g(x) = 3x + 2", "h(x) = g(f(x + 6 + a))"}) == "(3 * (((x + 6 + 3) + 1)) + 2)");
+    BOOST_TEST(get_result({"a = 3", "b = 4", "f(x) = x + 1", "g(x) = 3x + 2", "h(x) = g(f(x + 6 + a) + g(x + b))"}) == "(3 * (((x + 6 + 3) + 1) + (3 * (x + 4) + 2)) + 2)");
 
 }
 
