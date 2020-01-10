@@ -134,15 +134,32 @@ expr evaluator::create_expr(ast::operand const & operand)
 			variable_map = stored_function.variable_map;
 			function_map = stored_function.function_map;
 
+			// set variable value
 			variable_map[stored_function.param] = input_expr;
-			expr ret_expr = evaluate(stored_function.tree);
-			variable_map.erase(input_function.function_);
 
-			// swap maps back
-			variable_map = tmp_variable_map;
-			function_map = tmp_function_map;
+			try
+			{
+				expr ret_expr = evaluate(stored_function.tree);
 
-			return ret_expr;
+				// reset variable value
+				variable_map.erase(input_function.function_);
+
+				// swap maps back
+				variable_map = tmp_variable_map;
+				function_map = tmp_function_map;
+
+				return ret_expr;
+			}
+			catch(std::runtime_error & e)
+			{
+				// reset variable value
+				variable_map.erase(input_function.function_);
+
+				// swap maps back
+				variable_map = tmp_variable_map;
+				function_map = tmp_function_map;
+				throw e;
+			}
 		},
 		[this](ast::parenthesis const & parenthesis) { return evaluate(parenthesis.expression_); },
 		[this](ast::negate const & negate) { return create_expr(negate.operand_) * expr{complex{-1}}; },
