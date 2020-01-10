@@ -56,8 +56,11 @@ std::string evaluator::operator()(ast::function_assignation input)
 {
 	evaluator::function_checker{input.function_.function_, input.function_.variable_, variable_map, function_map, false}(input.expression_);
 
-	function_map[input.function_.function_] = {input.function_.variable_, input.expression_, variable_map, function_map};
-	return printer{function_map}(input.expression_);
+
+	function func{input.function_.variable_, input.expression_, variable_map, function_map};
+	function_map[input.function_.function_] = func;
+
+	return func.str();
 }
 
 std::string evaluator::operator()(ast::value_resolution x)
@@ -316,14 +319,14 @@ std::string evaluator::print_variables() const
 
 std::string evaluator::print_functions() const {
 	if (function_map.size() == 0)
-		return "no assigned function";
+		return "no defined function";
 
 	std::stringstream ss;
 	for (auto it = function_map.cbegin(); it != function_map.cend(); ++it)
 	{
 		if (it != function_map.cbegin())
 			ss << "  ";
-		ss << it->first << "(" << it->second.param << ") = " << printer{it->second.function_map}(it->second.tree);
+		ss << it->first << "(" << it->second.param << ") = " << it->second;
 		if (it != --function_map.cend())
 			ss << '\n';
 	}

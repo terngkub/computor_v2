@@ -313,4 +313,26 @@ BOOST_AUTO_TEST_CASE(tc_invalid)
 BOOST_AUTO_TEST_SUITE_END() // ts_polynomial_resolution
 
 
+// Other
+BOOST_AUTO_TEST_SUITE(ts_other)
+
+BOOST_AUTO_TEST_CASE(tc_list)
+{
+    // list_variables
+    BOOST_TEST(get_result({"list_variables"}) == "no assigned variable");
+    BOOST_TEST(get_result({"ab = 3", "cd = 4", "list_variables"}) == "ab = 3\n  cd = 4");
+
+    // list_functions
+    BOOST_TEST(get_result({"list_functions"}) == "no defined function");
+    BOOST_TEST(get_result({"f(x) = x + 1", "g(x) = f(x)", "list_functions"}) == "f(x) = x + 1\n  g(x) = (x + 1)");
+
+    // combine
+    BOOST_TEST(get_result({"ab = 3", "cd = 4", "f(x) = x + 1", "g(x) = f(x) ab + cd", "list_functions"}) == "f(x) = x + 1\n  g(x) = ");
+    // TODO must change x to the value of ab
+
+}
+
+BOOST_AUTO_TEST_SUITE_END() // ts_other
+
+
 BOOST_AUTO_TEST_SUITE_END() // ts_evaluator

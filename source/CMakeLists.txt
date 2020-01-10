@@ -10,14 +10,13 @@ add_library(computor
   evaluator.hpp
   expr.cpp
   expr.hpp
+  function.cpp
   function.hpp
   math.cpp
   math.hpp
   matrix.cpp
   matrix.hpp
   parser.hpp
-  printer.cpp
-  printer.hpp
   term.cpp
   term.hpp
   utils.hpp
