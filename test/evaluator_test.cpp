@@ -90,7 +90,6 @@ BOOST_AUTO_TEST_CASE(tc_complex)
     BOOST_TEST(get_result({"(1 + i)^3 = ?"}) == "-2 + 2i");
     BOOST_TEST(get_result({"0^10 = ?"}) == "0");
     BOOST_TEST(get_result({"0^0 = ?"}) == "1");
-
 }
 
 BOOST_AUTO_TEST_CASE(tc_matrix)
@@ -188,6 +187,12 @@ BOOST_AUTO_TEST_CASE(tc_uppercase)
     BOOST_TEST(get_result({"2I = ?"}) == "2i");
     BOOST_TEST(get_result({"iI = ?"}) == "ii");
     BOOST_TEST(get_result({"iI = 3", "ii = ?"}) == "3");
+}
+
+BOOST_AUTO_TEST_CASE(tc_other)
+{
+    BOOST_CHECK_THROW(get_result({"a b = 42"}), std::runtime_error);
+    BOOST_CHECK_THROW(get_result({"a b(x) = 42"}), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ts_variable_assignation

@@ -8,9 +8,9 @@ namespace grammar
 
 	using x3::char_;
 	using x3::double_;
-	using x3::string;
 	using x3::lexeme;
 	using x3::lit;
+	using x3::string;
 	using x3::ascii::alpha;
 	using x3::ascii::alnum;
 	using x3::ascii::space;
@@ -49,7 +49,7 @@ namespace grammar
 	auto const matrix_def = '[' >> matrix_row % ';' >> ']';
 	auto const matrix_row_def = '[' >> expression % ',' >> ']';
 
-	auto const name_def = alpha >> *(alnum);
+	auto const name_def = lexeme[alpha >> *(alnum)];
 	auto const variable_def = name;
 	auto const assigned_function_def = name >> '(' >> variable >> ')';
 	auto const used_function_def = name >> '(' >> expression >> ')';
