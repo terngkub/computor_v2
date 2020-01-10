@@ -16,12 +16,20 @@ complex::complex()
 complex::complex(double real)
 	: _real{real}
 	, _imag{0}
-{}
+{
+	// check for nan from 
+	if (_real != _real)
+		throw std::runtime_error("the evaluation cause the number to be NaN");
+}
 
 complex::complex(double real, double imag)
 	: _real{real}
 	, _imag{imag}
-{}
+{
+	// check for nan
+	if (_real != _real || _imag != _imag)
+		throw std::runtime_error("the evaluation cause the number to be NaN");
+}
 
 
 // Getters
