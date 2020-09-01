@@ -7,7 +7,7 @@
 namespace ast
 {
 	// used in boost spirit x3
-    namespace x3 = boost::spirit::x3;
+	namespace x3 = boost::spirit::x3;
 
 	struct expression;
 	struct parenthesis;
@@ -21,18 +21,12 @@ namespace ast
 	};
 
 	struct operand : x3::variant<
-		double
-		, char
-		, std::string
-		, x3::forward_ast<std::vector<std::vector<expression>>>
-		, x3::forward_ast<expression>
-		, x3::forward_ast<parenthesis>
-		, x3::forward_ast<used_function>
-		, x3::forward_ast<negate>
-	>
+						 double, char, std::string, x3::forward_ast<std::vector<std::vector<expression>>>, x3::forward_ast<expression>, x3::forward_ast<parenthesis>, x3::forward_ast<used_function>, x3::forward_ast<negate>>
 	{
 		using base_type::base_type;
 		using base_type::operator=;
+		operand(const operand &) = default;
+		operand &operator=(const operand &) = default;
 	};
 
 	struct operation
@@ -89,17 +83,12 @@ namespace ast
 	};
 
 	struct input : x3::variant<
-		std::string
-		, variable_assignation
-		, function_assignation
-		, value_resolution
-		, polynomial_resolution
-	>
+					   std::string, variable_assignation, function_assignation, value_resolution, polynomial_resolution>
 	{
 		using base_type::base_type;
 		using base_type::operator=;
 	};
-}
+} // namespace ast
 
 BOOST_FUSION_ADAPT_STRUCT(ast::assigned_function, function_, variable_)
 BOOST_FUSION_ADAPT_STRUCT(ast::operation, operator_, operand_)
